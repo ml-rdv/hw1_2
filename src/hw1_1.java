@@ -1,3 +1,4 @@
+// Отсортировать массив от меньшего к большему придумав свой алгоритм сортировки.
 public class hw1_1 {
     public static void main(String[] args) {
         int[] arr = new int[]{2, 524, 3, 1, 9, -1, 2345};
