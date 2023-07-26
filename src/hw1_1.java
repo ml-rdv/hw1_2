@@ -1,4 +1,4 @@
-public class Main {
+public class hw1_1 {
     public static void main(String[] args) {
         int[] arr = new int[]{2, 524, 3, 1, 9, -1, 2345};
         // первый способ. Сложность лучшего, худшего, среднего случая = n^2
@@ -11,16 +11,16 @@ public class Main {
                 }
             }
         }
-        // второй способ. Сложность лучшего = n, худшего = n^2, среднего случая = n * log(n) ???
+        // второй способ. Сложность лучшего = n, худшего = n^2, среднего случая = n * log(n) ????
         boolean correct = false;
-        while(!correct){
+        while (!correct) {
             correct = true;
             for (int i = 0; i < arr.length - 1; i++) {
                 if (arr[i] > arr[i + 1]) {
-                        int k = arr[i];
-                        arr[i] = arr[i + 1];
-                        arr[i + 1] = k;
-                        correct = false;
+                    int k = arr[i];
+                    arr[i] = arr[i + 1];
+                    arr[i + 1] = k;
+                    correct = false;
                 }
             }
         }
