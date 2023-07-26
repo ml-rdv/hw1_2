@@ -1,7 +1,7 @@
 public class hw1_1 {
     public static void main(String[] args) {
         int[] arr = new int[]{2, 524, 3, 1, 9, -1, 2345};
-        // первый способ. Сложность лучшего, худшего, среднего случая = n^2
+        // первый способ. Сложность лучшего, худшего и среднего случая = n^2
         for (int i = 0; i < arr.length; i++) {
             for (int j = 0; j < arr.length; j++) {
                 if (arr[j] > arr[i]) {
