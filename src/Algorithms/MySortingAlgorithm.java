@@ -1,8 +1,15 @@
+package Algorithms;
+
 // Отсортировать массив от меньшего к большему придумав свой алгоритм сортировки.
-public class hw1_1 {
+public class MySortingAlgorithm {
     public static void main(String[] args) {
         int[] arr = new int[]{2, 524, 3, 1, 9, -1, 2345};
-        // первый способ. Сложность лучшего, худшего и среднего случая = n^2
+        mySortingFirstMethod(arr);
+        mySortingSecondMethod(arr);
+    }
+
+    // Сложность лучшего, худшего и среднего случая = n^2
+    public static void mySortingFirstMethod(int[] arr) {
         for (int i = 0; i < arr.length; i++) {
             for (int j = 0; j < arr.length; j++) {
                 if (arr[j] > arr[i]) {
@@ -12,7 +19,13 @@ public class hw1_1 {
                 }
             }
         }
-        // второй способ. Сложность лучшего = n, худшего = n^2, среднего случая = n * log(n) ????
+        for (int i : arr) {
+            System.out.print(i + " ");
+        }
+    }
+
+    // Сложность лучшего = n, худшего = n^2, среднего случая = n^2
+    public static void mySortingSecondMethod(int[] arr) {
         boolean correct = false;
         while (!correct) {
             correct = true;

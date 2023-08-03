@@ -1,7 +1,7 @@
-// Отсортировать массив вставками.
-// Сложность лучшего = n, худшего = n^2, среднего случая = n * log(n) ????
+package Algorithms;// Отсортировать массив вставками.
+// Сложность лучшего = n, худшего = n^2, среднего случая = n^2
 
-public class hw1_3 {
+public class InsertionSort {
     public static void main(String[] args) {
         int[] arr = new int[]{2, 524, 3, 1, 9, -1, 2345, 2, 524, 3, 1, 9, -1, 2345};
         for (int i = 0; i < arr.length; i++) {
