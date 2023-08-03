@@ -8,27 +8,9 @@ public class MyDynamicArray {
     public static int position = 0;
     public static int[] dynamicArr;
 
-    public static void main(String[] args) {
-        // работа с динамическим массивом
-        dynamicArr = new int[]{2, 524, 3};
-        position = 3;
-        add(6);
-        add(1, 6);
-
-        int[] arrayAdd = new int[]{2, 5, 7, 4, 1, 6};
-        addAll(1, arrayAdd);
-
-        removeAll(arrayAdd);
-        addAll(arrayAdd);
-        System.out.println(Arrays.toString(dynamicArr));
-        set(7, -5);
-        System.out.println(Arrays.toString(dynamicArr));
-        System.out.println(contains(565));
-        System.out.println(Arrays.toString(dynamicArr));
-        sort();
-        add(1);
-        System.out.println(lastIndexOf(1));
-        System.out.println(Arrays.toString(dynamicArr));
+    public MyDynamicArray(int[] dynamicArr){
+        MyDynamicArray.dynamicArr = dynamicArr;
+        position = dynamicArr.length;
     }
 
     public static void add(int element) {
