@@ -28,7 +28,7 @@ public class MyStack {
 
     private static void checkCapacity() {
         if (stack.length <= position) {
-            int[] stackCopy = new int[position * 2 + 1];
+            int[] stackCopy = new int[position + 1];
             System.arraycopy(stack, 0, stackCopy, 0, stack.length);
             stack = stackCopy;
         }
