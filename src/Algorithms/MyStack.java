@@ -21,16 +21,9 @@ public class MyStack {
     }
 
     public static void push(int element) {
-        checkCapacity();
-        stack[position] = element;
-        position++;
-    }
-
-    private static void checkCapacity() {
-        if (stack.length <= position) {
-            int[] stackCopy = new int[position + 1];
-            System.arraycopy(stack, 0, stackCopy, 0, stack.length);
-            stack = stackCopy;
+        if (position < stack.length) {
+            stack[position] = element;
+            position++;
         }
     }
 
@@ -38,14 +31,7 @@ public class MyStack {
         int element = stack[position - 1];
         stack[position - 1] = 0;
         position--;
-        decreaseCapacity();
         return element;
-    }
-
-    private static void decreaseCapacity() {
-        int[] stackCopy = new int[stack.length - 1];
-        System.arraycopy(stack, 0, stackCopy, 0, stack.length - 1);
-        stack = stackCopy;
     }
 
     public static int peek() {
