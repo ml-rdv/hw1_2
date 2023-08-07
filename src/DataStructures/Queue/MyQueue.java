@@ -1,4 +1,4 @@
-package Algorithms;
+package DataStructures.Queue;
 
 public class MyQueue {
     public static int position = 0;

@@ -1,4 +1,6 @@
-package Algorithms;
+package DataStructures.DynamicArray;
+
+import DataStructures.DynamicArray.MyDynamicArray;
 
 import java.util.Arrays;
 

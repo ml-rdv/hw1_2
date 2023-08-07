@@ -1,6 +1,4 @@
-package Algorithms;
-
-import java.util.Arrays;
+package DataStructures.DynamicArray;
 
 // Реализовать динамический массив(список)
 
