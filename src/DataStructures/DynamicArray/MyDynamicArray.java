@@ -3,82 +3,96 @@ package DataStructures.DynamicArray;
 // Реализовать динамический массив(список)
 
 public class MyDynamicArray {
-    public static int position = 0;
-    public static int[] dynamicArr;
+    public int size = 0;
+    public int[] dynamicArr;
 
-    public MyDynamicArray(int[] dynamicArr){
-        MyDynamicArray.dynamicArr = dynamicArr;
-        position = dynamicArr.length;
+    public MyDynamicArray(int capacity) {
+        this.dynamicArr = new int[capacity];
     }
 
-    public static void add(int element) {
-        checkCapacity();
-        dynamicArr[position] = element;
-        position++;
+    public void add(int element) {
+        extendArray();
+        dynamicArr[size] = element;
+        size++;
     }
 
-    public static void add(int index, int element) {
-        checkCapacity();
+    public void add(int index, int element) {
+        extendArray();
         int[] dynamicArrCopy = new int[dynamicArr.length];
-        if (index >= 0)
-            System.arraycopy(dynamicArr, 0, dynamicArrCopy, 0, index);
+        for (int i = 0; i < index; i++) {
+            dynamicArrCopy[i] = dynamicArr[i];
+        }
         dynamicArrCopy[index] = element;
-        if (dynamicArr.length - index >= 0)
-            System.arraycopy(dynamicArr, index, dynamicArrCopy, index + 1, dynamicArr.length - index - 1);
+        for (int i = index; i < dynamicArr.length - 1; i++) {
+            dynamicArrCopy[i + 1] = dynamicArr[i];
+        }
         dynamicArr = dynamicArrCopy;
-        position++;
+        size++;
     }
 
-    private static void checkCapacity() {
-        if (dynamicArr.length <= position) {
-            int[] dynamicArrCopy = new int[position * 2 + 1];
-            System.arraycopy(dynamicArr, 0, dynamicArrCopy, 0, dynamicArr.length);
+    private void extendArray() {
+        if (dynamicArr.length <= size) {
+            int[] dynamicArrCopy = new int[size * 2 + 1];
+            for (int i = 0; i < dynamicArr.length; i++) {
+                dynamicArrCopy[i] = dynamicArr[i];
+            }
             dynamicArr = dynamicArrCopy;
         }
     }
 
-    public static void addAll(int[] arr) {
-        checkCapacityWithArray(arr.length);
-        System.arraycopy(arr, 0, dynamicArr, position, arr.length);
-        position += arr.length;
+    public void addAll(int[] arr) {
+        extendArrayWithArray(arr.length);
+        for (int i = 0; i < arr.length; i++, size++) {
+            dynamicArr[size] = arr[i];
+        }
     }
 
-    private static void checkCapacityWithArray(int lengthOfNewArr) {
-        if (dynamicArr.length <= position + lengthOfNewArr) {
-            int[] dynamicArrCopy = new int[position + lengthOfNewArr];
-            System.arraycopy(dynamicArr, 0, dynamicArrCopy, 0, dynamicArr.length);
+    private void extendArrayWithArray(int lengthOfNewArr) {
+        if (dynamicArr.length <= size + lengthOfNewArr) {
+            int[] dynamicArrCopy = new int[size + lengthOfNewArr];
+            for (int i = 0; i < dynamicArr.length; i++) {
+                dynamicArrCopy[i] = dynamicArr[i];
+            }
             dynamicArr = dynamicArrCopy;
         }
     }
 
-    public static void addAll(int index, int[] arr) {
-        checkCapacityWithArray(arr.length);
-        int[] dynamicArrCopy = new int[dynamicArr.length + arr.length];
-        System.arraycopy(dynamicArr, 0, dynamicArrCopy, 0, index);
-        System.arraycopy(arr, 0, dynamicArrCopy, index, arr.length);
-        System.arraycopy(dynamicArr, index, dynamicArrCopy, index + arr.length, dynamicArr.length - index);
-        dynamicArr = dynamicArrCopy;
-        position += arr.length;
-    }
-
-    public static void clear() {
-        dynamicArr = new int[0];
-        position = 0;
-    }
-
-    public static int[] cloneArr() {
+    public void addAll(int index, int[] arr) {
+        extendArrayWithArray(arr.length);
         int[] dynamicArrCopy = new int[dynamicArr.length];
-        System.arraycopy(dynamicArr, 0, dynamicArrCopy, 0, dynamicArr.length);
+        for (int i = 0; i < index; i++) {
+            dynamicArrCopy[i] = dynamicArr[i];
+        }
+        for (int i = 0, indexCopy = index; i < arr.length; i++, indexCopy++) {
+            dynamicArrCopy[indexCopy] = arr[i];
+        }
+        for (int i = index; i < size; i++) {
+            dynamicArrCopy[i + arr.length] = dynamicArr[i];
+        }
+        dynamicArr = dynamicArrCopy;
+        size += arr.length;
+    }
+
+    public void clear() {
+        dynamicArr = new int[0];
+        size = 0;
+    }
+
+    public int[] cloneArr() {
+        int[] dynamicArrCopy = new int[dynamicArr.length];
+        for (int i = 0; i < dynamicArr.length; i++) {
+            dynamicArrCopy[i] = dynamicArr[i];
+        }
         return dynamicArrCopy;
     }
 
-    public static boolean contains(int numb) {
+    public boolean contains(int numb) {
         return indexOf(numb) != -1;
     }
 
-    public static int indexOf(int elem) {
+    public int indexOf(int elem) {
         int positionOfSearch = -1;
-        for (int i = 0; i < dynamicArr.length; i++) {
+        for (int i = 0; i < size; i++) {
             if (dynamicArr[i] == elem) {
                 positionOfSearch = i;
                 break;
@@ -87,11 +101,11 @@ public class MyDynamicArray {
         return positionOfSearch;
     }
 
-    public static boolean isEmpty() {
-        return dynamicArr.length == 0;
+    public boolean isEmpty() {
+        return size == 0;
     }
 
-    public static int lastIndexOf(int elem) {
+    public int lastIndexOf(int elem) {
         int positionOfSearch = -1;
         for (int i = dynamicArr.length - 1; i >= 0; i--) {
             if (dynamicArr[i] == elem) {
@@ -102,18 +116,29 @@ public class MyDynamicArray {
         return positionOfSearch;
     }
 
-    public static void remove(int index) {
-        if (index >= 0 && index < dynamicArr.length) {
+    public int get(int index) {
+        if (index >= 0 && index < size) {
+            return dynamicArr[index];
+        }
+        return -1; // null
+    }
+
+    public void remove(int index) {
+        if (index >= 0 && index < size) {
             int[] dynamicArrCopy = new int[dynamicArr.length];
-            System.arraycopy(dynamicArr, 0, dynamicArrCopy, 0, index);
-            System.arraycopy(dynamicArr, index + 1, dynamicArrCopy, index, dynamicArr.length - index - 1);
+            for (int i = 0; i < index; i++) {
+                dynamicArrCopy[i] = dynamicArr[i];
+            }
+            for (int i = index; i < size - 1; i++) {
+                dynamicArrCopy[i] = dynamicArr[i + 1];
+            }
             dynamicArr = dynamicArrCopy;
-            position--;
+            size--;
         }
     }
 
-    public static void removeObject(int numb) {
-        for (int i = 0; i < dynamicArr.length; i++) {
+    public void removeObject(int numb) {
+        for (int i = 0; i < size; i++) {
             if (dynamicArr[i] == numb) {
                 remove(i);
                 i--;
@@ -121,24 +146,24 @@ public class MyDynamicArray {
         }
     }
 
-    public static void removeAll(int[] arr) {
+    public void removeAll(int[] arr) {
         for (int i : arr) {
             removeObject(i);
         }
     }
 
-    public static void set(int index, int element) {
-        if (index >= 0 && index < dynamicArr.length) {
+    public void set(int index, int element) {
+        if (index >= 0 && index < size) {
             dynamicArr[index] = element;
         }
     }
 
-    public static int size() {
-        return dynamicArr.length;
+    public int size() {
+        return size;
     }
 
-    public static void sort() {
-        for (int i = 0; i < dynamicArr.length; i++) {
+    public void sort() {
+        for (int i = 0; i < size; i++) {
             int x = dynamicArr[i];
             for (int j = i - 1; j >= 0; j--) {
                 if (dynamicArr[j] <= x) {
@@ -149,72 +174,5 @@ public class MyDynamicArray {
                 dynamicArr[j] = k;
             }
         }
-        for (int i = dynamicArr.length - 1; i >= 0; i--) {
-            if (dynamicArr[i] != 0) {
-                position = i + 1;
-                break;
-            }
-        }
     }
-
-//    public static void workWithList() {
-//        ArrayList<Integer> list = new ArrayList<Integer>();
-//        list.add(1);
-//        list.add(1);
-//        list.add(-1);
-//        list.add(-1);
-//        list.add(100);
-//        list.add(105);
-//        list.add(-1);
-//        list.add(100);
-//        list.add(107);
-//        list.add(25);
-//        list.add(15);
-//
-//        // Найти второй минимальный элемент массива
-//        Collections.sort(list);
-//        ArrayList<Integer> list3 = new ArrayList<Integer>();
-//        for (int element : list) {
-//            if (!list3.contains(element)) {
-//                list3.add(element);
-//            }
-//        }
-//        System.out.println(list3.get(1));
-//
-//        // Первые неповторяющиеся целые числа в массиве
-//        ArrayList<Integer> list2 = new ArrayList<Integer>();
-//        int previous = list.get(0), count = 1;
-//        // Сложность = n
-//        for (int i = 1; i < list.size(); i++) {
-//            int element = list.get(i);
-//            if (previous == element) {
-//                count++;
-//            } else if (count == 0) {
-//                list2.add(previous);
-//            } else {
-//                count = 0;
-//            }
-//            if (i == list.size() - 1) {
-//                if (element != list.get(i - 1)) {
-//                    list2.add(list.get(i));
-//                }
-//            }
-//            previous = list.get(i);
-//        }
-//        System.out.println(list2);
-//
-//        // Объединить два отсортированных массива
-//        list.addAll(list2);
-//        System.out.println(list);
-//
-//        // Изменение порядка положительных и отрицательных значений в массиве
-//        // Реверс массива ???
-//        ArrayList<Integer> list4 = new ArrayList<Integer>();
-//        // Сложность = n
-//        for (int i = list.size() - 1; i >= 0; i--) {
-//            list4.add(list.get(i));
-//        }
-//        System.out.println(list4);
-//    }
-
 }

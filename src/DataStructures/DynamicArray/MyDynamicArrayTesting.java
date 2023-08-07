@@ -1,27 +1,29 @@
 package DataStructures.DynamicArray;
 
-import DataStructures.DynamicArray.MyDynamicArray;
-
 import java.util.Arrays;
 
 public class MyDynamicArrayTesting {
 
-    private static MyDynamicArray buildMyDynamicArray(int[] dynamicArr) {
-        return new MyDynamicArray(dynamicArr);
+    private static MyDynamicArray buildMyDynamicArray(int capacity) {
+        return new MyDynamicArray(3);
     }
+
     public static void main(String[] args) {
-        buildMyDynamicArray(new int[] {2, 524, 3});
-        MyDynamicArray.add(6);
-        MyDynamicArray.add(1, 6);
-        System.out.println(Arrays.toString(MyDynamicArray.dynamicArr));
+        MyDynamicArray myDynArr = buildMyDynamicArray(3);
+        myDynArr.add(2);
+        myDynArr.add(524);
+        myDynArr.add(3);
+        myDynArr.add(1, 6);
 
         int[] arrayAdd = new int[]{2, 5, 7, 4, 1, 6};
-        MyDynamicArray.addAll(1, arrayAdd);
-
-        MyDynamicArray.removeAll(arrayAdd);
-        MyDynamicArray.addAll(arrayAdd);
-        System.out.println(Arrays.toString(MyDynamicArray.dynamicArr));
-        MyDynamicArray.set(7, -5);
-        System.out.println(Arrays.toString(MyDynamicArray.dynamicArr));
+        myDynArr.addAll(2, arrayAdd);
+        myDynArr.sort();
+        myDynArr.removeAll(arrayAdd);
+        myDynArr.addAll(arrayAdd);
+        myDynArr.set(1, -5);
+        System.out.println(Arrays.toString(myDynArr.dynamicArr));
+        System.out.println("element with index 6 = " + myDynArr.get(6));
+        System.out.println("size = " + myDynArr.size());
+        System.out.println(Arrays.toString(myDynArr.dynamicArr));
     }
 }
