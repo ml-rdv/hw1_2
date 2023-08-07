@@ -1,45 +1,46 @@
 package DataStructures.Queue;
 
 public class MyQueue {
-    public static int position = 0;
-    public static int[] queue;
+    public int size = 0;
+    public int[] queue;
 
-    public MyQueue(int[] queue) {
-        MyQueue.queue = queue;
-        position = queue.length;
+    public MyQueue(int size) {
+        this.queue = new int[size];
     }
 
-    public static boolean offer(int element) {
-        if (position < queue.length) {
-            queue[position] = element;
-            position++;
-            return true;
+    public void offer(int element) {
+        extendArray();
+        queue[size] = element;
+        size++;
+    }
+
+    public void remove() {
+        if (size > 0) {
+            int[] queueCopy = new int[queue.length];
+            for (int i = 0; i < size - 1; i++) {
+                queueCopy[i] = queue[i + 1];
+            }
+            queue = queueCopy;
+            size--;
         }
-        return false;
     }
 
-
-    public static void remove() {
-        if (queue.length > 0) {
-            position--;
-        }
-        decreaseCapacity();
-    }
-
-
-    public static int peek() {
-        if (queue.length > 0) {
+    public int peek() {
+        if (size > 0) {
             int element = queue[0];
             remove();
             return element;
         }
-        return 0;
+        return 0; // null
     }
 
-    private static void decreaseCapacity() {
-        int[] queueCopy = new int[queue.length];
-        System.arraycopy(queue, 1, queueCopy, 0, queue.length - 1);
-        queue = queueCopy;
+    private void extendArray() {
+        if (queue.length <= size) {
+            int[] queueCopy = new int[size * 2 + 1];
+            for (int i = 0; i < queue.length; i++) {
+                queueCopy[i] = queue[i];
+            }
+            queue = queueCopy;
+        }
     }
-
 }
