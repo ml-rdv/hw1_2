@@ -5,7 +5,7 @@ import java.util.Arrays;
 public class MyDynamicArrayTesting {
 
     private static MyDynamicArray buildMyDynamicArray(int capacity) {
-        return new MyDynamicArray(3);
+        return new MyDynamicArray(capacity);
     }
 
     public static void main(String[] args) {
