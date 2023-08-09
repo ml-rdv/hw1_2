@@ -1,46 +1,66 @@
 package DataStructures.Queue;
 
 public class MyQueue {
-    public int size = 0;
+
+    private final int n;
+    private int size = 0;
+    private int head = 0;
+    private int tail = 0;
     public int[] queue;
 
-    public MyQueue(int size) {
-        this.queue = new int[size];
+    public MyQueue(int capacity) {
+        this.queue = new int[capacity];
+        n = capacity;
     }
 
-    public void offer(int element) {
-        extendArray();
-        queue[size] = element;
-        size++;
-    }
-
-    public void remove() {
-        if (size > 0) {
-            int[] queueCopy = new int[queue.length];
-            for (int i = 0; i < size - 1; i++) {
-                queueCopy[i] = queue[i + 1];
-            }
-            queue = queueCopy;
-            size--;
+    public void enqueue(int element) {
+        if (size != n) {
+            queue[tail] = element;
+            tail = (tail + 1) % n;
+            size++;
         }
+    }
+
+    public int dequeue() {
+        if (empty()) {
+            return 0;
+        }
+        int element = queue[head];
+        head = (head + 1) % n;
+        size--;
+        return element;
+    }
+
+    public String toString() {
+        if (empty()) {
+            return "[]";
+        }
+
+        StringBuilder b = new StringBuilder();
+        b.append('[');
+        for (int i = head, j = 0; j < size; i++, j++) {
+            if (i == queue.length && tail <= head) {
+                i = 0;
+            }
+            b.append(queue[i]);
+            if (i == tail - 1) {
+                return b.append(']').toString();
+            }
+            b.append(", ");
+        }
+        return "";
     }
 
     public int peek() {
-        if (size > 0) {
-            int element = queue[0];
-            remove();
-            return element;
-        }
-        return 0; // null
+        return !empty() ? queue[head] : 0;
     }
 
-    private void extendArray() {
-        if (queue.length <= size) {
-            int[] queueCopy = new int[size * 2 + 1];
-            for (int i = 0; i < queue.length; i++) {
-                queueCopy[i] = queue[i];
-            }
-            queue = queueCopy;
-        }
+    public int size() {
+        return size;
     }
+
+    public boolean empty() {
+        return size == 0;
+    }
+
 }
