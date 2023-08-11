@@ -14,13 +14,36 @@ public class MyBidirectionalLinkedList implements Cloneable {
 
     public void insertAtHead(int number) throws CloneNotSupportedException {
         if (isEmpty()) {
-            head = new MyBidirectionalLinkedList();
-            head.data = number;
+            addHead(number);
         } else {
             MyBidirectionalLinkedList tmp = head.clone();
-            head.data = number;
-            head.next = tmp;
-            tmp.previous = head;
+            MyBidirectionalLinkedList newElement = new MyBidirectionalLinkedList();
+            newElement.data = number;
+            newElement.next = tmp;
+            tmp.previous = newElement;
+            head = newElement;
+        }
+    }
+
+    private void addHead(int number) {
+        head = new MyBidirectionalLinkedList();
+        head.data = number;
+    }
+
+    public void InsertAtEnd(int number){
+        if (isEmpty()) {
+            addHead(number);
+        }
+        MyBidirectionalLinkedList currentValue = head;
+        MyBidirectionalLinkedList newElement = new MyBidirectionalLinkedList();
+        newElement.data = number;
+        while (true) {
+            if (currentValue.next == null) {
+                currentValue.next = newElement;
+                newElement.previous = currentValue;
+                return;
+            }
+            currentValue = currentValue.next;
         }
     }
 
@@ -29,6 +52,47 @@ public class MyBidirectionalLinkedList implements Cloneable {
             head = head.next;
             head.previous = null;
         }
+    }
+
+    public void delete(int number) {
+        if (isEmpty()) {
+            return;
+        }
+        MyBidirectionalLinkedList currentValue = head;
+        boolean isHead = false;
+        MyBidirectionalLinkedList previousValue = null;
+        MyBidirectionalLinkedList nextValue = null;
+        while (true) {
+            if (currentValue == null) {
+                return;
+            }
+            if (currentValue.data == number) {
+                if (currentValue == head) {
+                    head = null;
+                    isHead = true;
+                }
+                if (currentValue.next != null) {
+                    nextValue = currentValue.next;
+                    nextValue.previous = null;
+                }
+                if (currentValue.previous != null) {
+                    previousValue = currentValue.previous;
+                    previousValue.next = null;
+                }
+                if (nextValue != null) {
+                    nextValue.previous = previousValue;
+                    if (isHead) {
+                        head = nextValue;
+                    }
+                }
+                if (previousValue != null) {
+                    currentValue.previous.next = nextValue;
+                }
+                return;
+            }
+            currentValue = currentValue.next;
+        }
+
     }
 
     public int search(int number) {
@@ -62,4 +126,5 @@ public class MyBidirectionalLinkedList implements Cloneable {
             b.append(", ");
         }
     }
+
 }
