@@ -1,56 +1,53 @@
 package DataStructures.BidirectionalLinkedList;
 
-public class MyBidirectionalLinkedList implements Cloneable {
+public class MyBidirectionalLinkedList {
 
-    private int data;
-    private MyBidirectionalLinkedList head;
-    private MyBidirectionalLinkedList previous;
-    private MyBidirectionalLinkedList next;
-
-    public MyBidirectionalLinkedList clone() throws CloneNotSupportedException {
-
-        return (MyBidirectionalLinkedList) super.clone();
-    }
+    private Node head;
+    private int size = 0; // Для чего нужна переменная size?
 
     public void insertAtHead(int number) throws CloneNotSupportedException {
         if (isEmpty()) {
             addHead(number);
         } else {
-            MyBidirectionalLinkedList tmp = head.clone();
-            MyBidirectionalLinkedList newElement = new MyBidirectionalLinkedList();
-            newElement.data = number;
-            newElement.next = tmp;
-            tmp.previous = newElement;
+            Node tmp = head.cloneNode();
+            Node newElement = new Node();
+            newElement.setData(number);
+            newElement.setNext(tmp);
+            tmp.setPrevious(newElement);
             head = newElement;
         }
+        size++;
     }
 
     private void addHead(int number) {
-        head = new MyBidirectionalLinkedList();
-        head.data = number;
+        head = new Node();
+        head.setData(number);
     }
 
-    public void InsertAtEnd(int number){
+    public void insertAtEnd(int number) {
         if (isEmpty()) {
             addHead(number);
         }
-        MyBidirectionalLinkedList currentValue = head;
-        MyBidirectionalLinkedList newElement = new MyBidirectionalLinkedList();
-        newElement.data = number;
+        Node currentValue = head;
+        Node newElement = new Node();
+        newElement.setData(number);
         while (true) {
-            if (currentValue.next == null) {
-                currentValue.next = newElement;
-                newElement.previous = currentValue;
+            if (currentValue.getNext() == null) {
+                currentValue.setNext(newElement);
+                newElement.setPrevious(currentValue);
+                size++;
                 return;
             }
-            currentValue = currentValue.next;
+            currentValue = currentValue.getNext();
         }
+
     }
 
     public void deleteAtHead() {
         if (!isEmpty()) {
-            head = head.next;
-            head.previous = null;
+            head = head.getNext();
+            head.setPrevious(null);
+            size--;
         }
     }
 
@@ -58,39 +55,40 @@ public class MyBidirectionalLinkedList implements Cloneable {
         if (isEmpty()) {
             return;
         }
-        MyBidirectionalLinkedList currentValue = head;
+        Node currentValue = head;
         boolean isHead = false;
-        MyBidirectionalLinkedList previousValue = null;
-        MyBidirectionalLinkedList nextValue = null;
+        Node previousValue = null;
+        Node nextValue = null;
         while (true) {
             if (currentValue == null) {
                 return;
             }
-            if (currentValue.data == number) {
+            if (currentValue.getData() == number) {
                 if (currentValue == head) {
                     head = null;
                     isHead = true;
                 }
-                if (currentValue.next != null) {
-                    nextValue = currentValue.next;
-                    nextValue.previous = null;
+                if (currentValue.getNext() != null) {
+                    nextValue = currentValue.getNext();
+                    nextValue.setPrevious(null);
                 }
-                if (currentValue.previous != null) {
-                    previousValue = currentValue.previous;
-                    previousValue.next = null;
+                if (currentValue.getPrevious() != null) {
+                    previousValue = currentValue.getPrevious();
+                    previousValue.setNext(null);
                 }
                 if (nextValue != null) {
-                    nextValue.previous = previousValue;
+                    nextValue.setPrevious(previousValue);
                     if (isHead) {
                         head = nextValue;
                     }
                 }
                 if (previousValue != null) {
-                    currentValue.previous.next = nextValue;
+                    currentValue.getPrevious().setNext(nextValue);
                 }
+                size--;
                 return;
             }
-            currentValue = currentValue.next;
+            currentValue = currentValue.getNext();
         }
 
     }
@@ -99,27 +97,28 @@ public class MyBidirectionalLinkedList implements Cloneable {
         if (isEmpty()) {
             return -1;
         }
-        MyBidirectionalLinkedList returnValue = head;
-        while (returnValue != null && returnValue.data != number) {
-            returnValue = returnValue.next;
+        Node returnValue = head;
+        while (returnValue != null && returnValue.getData() != number) {
+            returnValue = returnValue.getNext();
         }
-        return returnValue == null ? 0 : returnValue.data;
+        return returnValue == null ? 0 : returnValue.getData();
     }
 
     private boolean isEmpty() {
-        return head == null;
+//        return head == null;
+        return size == 0;
     }
 
     public String toString() {
         if (isEmpty()) {
             return "[]";
         }
-        MyBidirectionalLinkedList currentValue = head;
+        Node currentValue = head;
         StringBuilder b = new StringBuilder();
         b.append('[');
         while (true) {
-            b.append(currentValue.data);
-            currentValue = currentValue.next;
+            b.append(currentValue.getData());
+            currentValue = currentValue.getNext();
             if (currentValue == null) {
                 return b.append(']').toString();
             }
