@@ -19,6 +19,20 @@ public class MyDynamicArray {
         return dynamicArr;
     }
 
+    public void newMethod(int index) {
+        extendArray(1);
+        int[] dynamicArrCopy = new int[dynamicArr.length];
+        for (int i = 0; i < index; i++) {
+            dynamicArrCopy[i] = dynamicArr[i];
+        }
+        dynamicArrCopy[index] = index;
+        for (int i = index; i < dynamicArr.length - 1; i++) {
+            dynamicArrCopy[i + 1] = dynamicArr[i];
+        }
+        dynamicArr = dynamicArrCopy;
+        size++;
+    }
+
     public void add(int element) {
         extendArray(1);
         dynamicArr[size] = element;
