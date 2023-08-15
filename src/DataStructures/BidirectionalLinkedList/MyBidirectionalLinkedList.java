@@ -1,53 +1,56 @@
 package DataStructures.BidirectionalLinkedList;
 
-public class MyBidirectionalLinkedList {
+public class MyBidirectionalLinkedList implements Cloneable {
 
-    private Node head;
-    private int size = 0; // Для чего нужна переменная size?
+    private int data;
+    private MyBidirectionalLinkedList head;
+    private MyBidirectionalLinkedList previous;
+    private MyBidirectionalLinkedList next;
+
+    public MyBidirectionalLinkedList clone() throws CloneNotSupportedException {
+
+        return (MyBidirectionalLinkedList) super.clone();
+    }
 
     public void insertAtHead(int number) throws CloneNotSupportedException {
         if (isEmpty()) {
             addHead(number);
         } else {
-            Node tmp = head.cloneNode();
-            Node newElement = new Node();
-            newElement.setData(number);
-            newElement.setNext(tmp);
-            tmp.setPrevious(newElement);
+            MyBidirectionalLinkedList tmp = head.clone();
+            MyBidirectionalLinkedList newElement = new MyBidirectionalLinkedList();
+            newElement.data = number;
+            newElement.next = tmp;
+            tmp.previous = newElement;
             head = newElement;
         }
-        size++;
     }
 
     private void addHead(int number) {
-        head = new Node();
-        head.setData(number);
+        head = new MyBidirectionalLinkedList();
+        head.data = number;
     }
 
-    public void insertAtEnd(int number) {
+    public void InsertAtEnd(int number){
         if (isEmpty()) {
             addHead(number);
         }
-        Node currentValue = head;
-        Node newElement = new Node();
-        newElement.setData(number);
+        MyBidirectionalLinkedList currentValue = head;
+        MyBidirectionalLinkedList newElement = new MyBidirectionalLinkedList();
+        newElement.data = number;
         while (true) {
-            if (currentValue.getNext() == null) {
-                currentValue.setNext(newElement);
-                newElement.setPrevious(currentValue);
-                size++;
+            if (currentValue.next == null) {
+                currentValue.next = newElement;
+                newElement.previous = currentValue;
                 return;
             }
-            currentValue = currentValue.getNext();
+            currentValue = currentValue.next;
         }
-
     }
 
     public void deleteAtHead() {
         if (!isEmpty()) {
-            head = head.getNext();
-            head.setPrevious(null);
-            size--;
+            head = head.next;
+            head.previous = null;
         }
     }
 
@@ -55,40 +58,39 @@ public class MyBidirectionalLinkedList {
         if (isEmpty()) {
             return;
         }
-        Node currentValue = head;
+        MyBidirectionalLinkedList currentValue = head;
         boolean isHead = false;
-        Node previousValue = null;
-        Node nextValue = null;
+        MyBidirectionalLinkedList previousValue = null;
+        MyBidirectionalLinkedList nextValue = null;
         while (true) {
             if (currentValue == null) {
                 return;
             }
-            if (currentValue.getData() == number) {
+            if (currentValue.data == number) {
                 if (currentValue == head) {
                     head = null;
                     isHead = true;
                 }
-                if (currentValue.getNext() != null) {
-                    nextValue = currentValue.getNext();
-                    nextValue.setPrevious(null);
+                if (currentValue.next != null) {
+                    nextValue = currentValue.next;
+                    nextValue.previous = null;
                 }
-                if (currentValue.getPrevious() != null) {
-                    previousValue = currentValue.getPrevious();
-                    previousValue.setNext(null);
+                if (currentValue.previous != null) {
+                    previousValue = currentValue.previous;
+                    previousValue.next = null;
                 }
                 if (nextValue != null) {
-                    nextValue.setPrevious(previousValue);
+                    nextValue.previous = previousValue;
                     if (isHead) {
                         head = nextValue;
                     }
                 }
                 if (previousValue != null) {
-                    currentValue.getPrevious().setNext(nextValue);
+                    currentValue.previous.next = nextValue;
                 }
-                size--;
                 return;
             }
-            currentValue = currentValue.getNext();
+            currentValue = currentValue.next;
         }
 
     }
@@ -97,28 +99,27 @@ public class MyBidirectionalLinkedList {
         if (isEmpty()) {
             return -1;
         }
-        Node returnValue = head;
-        while (returnValue != null && returnValue.getData() != number) {
-            returnValue = returnValue.getNext();
+        MyBidirectionalLinkedList returnValue = head;
+        while (returnValue != null && returnValue.data != number) {
+            returnValue = returnValue.next;
         }
-        return returnValue == null ? 0 : returnValue.getData();
+        return returnValue == null ? 0 : returnValue.data;
     }
 
     private boolean isEmpty() {
-//        return head == null;
-        return size == 0;
+        return head == null;
     }
 
     public String toString() {
         if (isEmpty()) {
             return "[]";
         }
-        Node currentValue = head;
+        MyBidirectionalLinkedList currentValue = head;
         StringBuilder b = new StringBuilder();
         b.append('[');
         while (true) {
-            b.append(currentValue.getData());
-            currentValue = currentValue.getNext();
+            b.append(currentValue.data);
+            currentValue = currentValue.next;
             if (currentValue == null) {
                 return b.append(']').toString();
             }
