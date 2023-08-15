@@ -3,11 +3,16 @@ package DataStructures.Stack;
 // Реализовать стек
 
 public class MyStack {
-    public int size = 0;
-    public int[] stack;
+    private int size = 0;
+    private int[] stack;
 
     public MyStack(int capacity) {
         this.stack = new int[capacity];
+    }
+
+    public MyStack() {
+        int DEFAULT_CAPACITY = 25;
+        this.stack = new int[DEFAULT_CAPACITY];
     }
 
     public void push(int element) {
@@ -17,27 +22,15 @@ public class MyStack {
     }
 
     public int pop() {
-        int element = stack[size - 1];
-        stack[size - 1] = 0;
-        size--;
-        return element;
+        return stack[--size];
     }
 
     public int peek() {
         return stack[size - 1];
     }
 
-    public boolean empty() {
+    public boolean isEmpty() {
         return size == 0;
-    }
-
-    public int search(int element) {
-        for (int i = stack.length - 1, j = 0; i >= 0; i--, j++) {
-            if (stack[i] == element) {
-                return j;
-            }
-        }
-        return -1;
     }
 
     private void extendArray() {
@@ -48,5 +41,20 @@ public class MyStack {
             }
             stack = stackCopy;
         }
+    }
+
+    public String toString() {
+        if (isEmpty()) {
+            return "[]";
+        }
+        StringBuilder b = new StringBuilder();
+        b.append('[');
+        for (int i = 0; i < size; i++) {
+            b.append(stack[i]);
+            if (i == size - 1)
+                return b.append(']').toString();
+            b.append(", ");
+        }
+        return "";
     }
 }

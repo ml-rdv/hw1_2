@@ -1,7 +1,5 @@
 package DataStructures.Stack;
 
-import java.util.Arrays;
-
 public class MyStackTesting {
     private static MyStack buildMyStack(int capacity) {
         return new MyStack(capacity);
@@ -14,8 +12,8 @@ public class MyStackTesting {
         myStack.push(-7);
         myStack.push(548);
         myStack.push(6);
-        myStack.pop();
-        System.out.println(myStack.search(-7));
-        System.out.println(Arrays.toString(myStack.stack));
+        System.out.println(myStack.pop());
+        System.out.println(myStack.peek());
+        System.out.println(myStack);
     }
 }
