@@ -3,7 +3,7 @@ package DataStructures.BidirectionalLinkedList;
 public class MyBidirectionalLinkedList {
 
     private Node head;
-    private int size = 0;
+    private int size = 0; // Для чего нужна переменная size?
 
     public void insertAtHead(int number) throws CloneNotSupportedException {
         if (isEmpty()) {
@@ -31,8 +31,8 @@ public class MyBidirectionalLinkedList {
         Node currentValue = head;
         Node newElement = new Node();
         newElement.setData(number);
-        for (int i = 0; i < size; i++) {
-            if (i == size - 1) {
+        while (true) {
+            if (currentValue.getNext() == null) {
                 currentValue.setNext(newElement);
                 newElement.setPrevious(currentValue);
                 size++;
@@ -40,6 +40,7 @@ public class MyBidirectionalLinkedList {
             }
             currentValue = currentValue.getNext();
         }
+
     }
 
     public void deleteAtHead() {
@@ -104,6 +105,7 @@ public class MyBidirectionalLinkedList {
     }
 
     private boolean isEmpty() {
+//        return head == null;
         return size == 0;
     }
 
@@ -114,14 +116,14 @@ public class MyBidirectionalLinkedList {
         Node currentValue = head;
         StringBuilder b = new StringBuilder();
         b.append('[');
-        for (int i = 0; i < size; i++) {
+        while (true) {
             b.append(currentValue.getData());
             currentValue = currentValue.getNext();
-            if (i == size - 1) {
+            if (currentValue == null) {
                 return b.append(']').toString();
             }
             b.append(", ");
         }
-        return "";
     }
+
 }
