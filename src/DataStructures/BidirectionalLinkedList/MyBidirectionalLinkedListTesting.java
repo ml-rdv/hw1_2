@@ -13,8 +13,8 @@ public class MyBidirectionalLinkedListTesting {
         myBiLinkList.insertAtHead(54);
         myBiLinkList.insertAtHead(4);
         System.out.println(myBiLinkList);
-        myBiLinkList.delete(-5);
-        myBiLinkList.InsertAtEnd(-5);
+        myBiLinkList.delete(2);
+        myBiLinkList.insertAtEnd(-5);
         System.out.println(myBiLinkList.search(2));
         System.out.println(myBiLinkList.search(-5));
         System.out.println(myBiLinkList);
