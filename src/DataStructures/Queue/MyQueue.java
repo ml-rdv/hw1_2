@@ -2,45 +2,40 @@ package DataStructures.Queue;
 
 public class MyQueue {
 
-    private final int capacity;
+    private final int n;
     private int size = 0;
     private int head = 0;
     private int tail = 0;
-    private final int[] queue;
+    public int[] queue;
 
     public MyQueue(int capacity) {
         this.queue = new int[capacity];
-        this.capacity = capacity;
-    }
-
-    public MyQueue() {
-        int DEFAULT_CAPACITY = 25;
-        this.queue = new int[DEFAULT_CAPACITY];
-        this.capacity = DEFAULT_CAPACITY;
+        n = capacity;
     }
 
     public void enqueue(int element) {
-        if (size != capacity) {
+        if (size != n) {
             queue[tail] = element;
-            tail = (tail + 1) % capacity;
+            tail = (tail + 1) % n;
             size++;
         }
     }
 
-    public int dequeue() throws IndexOutOfBoundsException {
-        if (isEmpty()) {
-            throw new IndexOutOfBoundsException();
+    public int dequeue() {
+        if (empty()) {
+            return 0;
         }
         int element = queue[head];
-        head = (head + 1) % capacity;
+        head = (head + 1) % n;
         size--;
         return element;
     }
 
     public String toString() {
-        if (isEmpty()) {
+        if (empty()) {
             return "[]";
         }
+
         StringBuilder b = new StringBuilder();
         b.append('[');
         for (int i = head, j = 0; j < size; i++, j++) {
@@ -56,18 +51,15 @@ public class MyQueue {
         return "";
     }
 
-    public int peek() throws IndexOutOfBoundsException {
-        if(isEmpty()){
-            throw new IndexOutOfBoundsException();
-        }
-        return queue[head];
+    public int peek() {
+        return !empty() ? queue[head] : 0;
     }
 
     public int size() {
         return size;
     }
 
-    public boolean isEmpty() {
+    public boolean empty() {
         return size == 0;
     }
 
