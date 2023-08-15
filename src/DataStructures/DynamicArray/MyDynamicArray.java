@@ -2,31 +2,22 @@ package DataStructures.DynamicArray;
 
 // Реализовать динамический массив(список)
 
-public class MyDynamicArray implements Cloneable {
-    private int size = 0;
-    private int[] dynamicArr;
+public class MyDynamicArray {
+    public int size = 0;
+    public int[] dynamicArr;
 
     public MyDynamicArray(int capacity) {
         this.dynamicArr = new int[capacity];
     }
 
-    public MyDynamicArray() {
-        int DEFAULT_CAPACITY = 25;
-        this.dynamicArr = new int[DEFAULT_CAPACITY];
-    }
-
-    public int[] getDynamicArr() {
-        return dynamicArr;
-    }
-
     public void add(int element) {
-        checkArray();
+        extendArray();
         dynamicArr[size] = element;
         size++;
     }
 
     public void add(int index, int element) {
-        checkArray();
+        extendArray();
         int[] dynamicArrCopy = new int[dynamicArr.length];
         for (int i = 0; i < index; i++) {
             dynamicArrCopy[i] = dynamicArr[i];
@@ -39,19 +30,35 @@ public class MyDynamicArray implements Cloneable {
         size++;
     }
 
-    public void addAll(MyDynamicArray dynamicArray) {
-        int[] arr = dynamicArray.getDynamicArr();
-        checkArrayWithArray(arr.length);
-        int index = size;
-        for (int i = 0; i < arr.length; i++, index++) {
-            dynamicArr[index] = arr[i];
+    private void extendArray() {
+        if (dynamicArr.length <= size) {
+            int[] dynamicArrCopy = new int[size * 2 + 1];
+            for (int i = 0; i < dynamicArr.length; i++) {
+                dynamicArrCopy[i] = dynamicArr[i];
+            }
+            dynamicArr = dynamicArrCopy;
         }
-        size += arr.length;
     }
 
-    public void addAll(int index, MyDynamicArray dynamicArray) {
-        int[] arr = dynamicArray.getDynamicArr();
-        checkArrayWithArray(arr.length);
+    public void addAll(int[] arr) {
+        extendArrayWithArray(arr.length);
+        for (int i = 0; i < arr.length; i++, size++) {
+            dynamicArr[size] = arr[i];
+        }
+    }
+
+    private void extendArrayWithArray(int lengthOfNewArr) {
+        if (dynamicArr.length <= size + lengthOfNewArr) {
+            int[] dynamicArrCopy = new int[size + lengthOfNewArr];
+            for (int i = 0; i < dynamicArr.length; i++) {
+                dynamicArrCopy[i] = dynamicArr[i];
+            }
+            dynamicArr = dynamicArrCopy;
+        }
+    }
+
+    public void addAll(int index, int[] arr) {
+        extendArrayWithArray(arr.length);
         int[] dynamicArrCopy = new int[dynamicArr.length];
         for (int i = 0; i < index; i++) {
             dynamicArrCopy[i] = dynamicArr[i];
@@ -66,35 +73,17 @@ public class MyDynamicArray implements Cloneable {
         size += arr.length;
     }
 
-    private void checkArray() {
-        if (dynamicArr.length <= size) {
-            int lengthOfNewArr = size * 2 + 1;
-            extendArray(lengthOfNewArr);
-        }
-    }
-
-    private void checkArrayWithArray(int lengthOfArr) {
-        if (dynamicArr.length <= size + lengthOfArr) {
-            int lengthOfNewArr = size + lengthOfArr;
-            extendArray(lengthOfNewArr);
-        }
-    }
-
-    private void extendArray(int lengthOfNewArr) {
-        int[] dynamicArrCopy = new int[lengthOfNewArr];
-        for (int i = 0; i < dynamicArr.length; i++) {
-            dynamicArrCopy[i] = dynamicArr[i];
-        }
-        dynamicArr = dynamicArrCopy;
-    }
-
     public void clear() {
         dynamicArr = new int[0];
         size = 0;
     }
 
-    public MyDynamicArray cloneArr() throws CloneNotSupportedException {
-        return (MyDynamicArray) this.clone();
+    public int[] cloneArr() {
+        int[] dynamicArrCopy = new int[dynamicArr.length];
+        for (int i = 0; i < dynamicArr.length; i++) {
+            dynamicArrCopy[i] = dynamicArr[i];
+        }
+        return dynamicArrCopy;
     }
 
     public boolean contains(int numb) {
@@ -102,12 +91,14 @@ public class MyDynamicArray implements Cloneable {
     }
 
     public int indexOf(int elem) {
+        int positionOfSearch = -1;
         for (int i = 0; i < size; i++) {
             if (dynamicArr[i] == elem) {
-                return i;
+                positionOfSearch = i;
+                break;
             }
         }
-        return -1;
+        return positionOfSearch;
     }
 
     public boolean isEmpty() {
@@ -115,36 +106,56 @@ public class MyDynamicArray implements Cloneable {
     }
 
     public int lastIndexOf(int elem) {
+        int positionOfSearch = -1;
         for (int i = dynamicArr.length - 1; i >= 0; i--) {
             if (dynamicArr[i] == elem) {
-                return i;
+                positionOfSearch = i;
+                break;
             }
         }
-        return -1;
+        return positionOfSearch;
     }
 
-    public int get(int index) throws IndexOutOfBoundsException {
-        if (index < 0 && index >= size) {
-            throw new IndexOutOfBoundsException();
+    public int get(int index) {
+        if (index >= 0 && index < size) {
+            return dynamicArr[index];
         }
-        return dynamicArr[index];
+        return -1; // null
     }
 
-    public void remove(int index) throws IndexOutOfBoundsException {
-        if (index < 0 && index >= size) {
-            throw new IndexOutOfBoundsException();
+    public void remove(int index) {
+        if (index >= 0 && index < size) {
+            int[] dynamicArrCopy = new int[dynamicArr.length];
+            for (int i = 0; i < index; i++) {
+                dynamicArrCopy[i] = dynamicArr[i];
+            }
+            for (int i = index; i < size - 1; i++) {
+                dynamicArrCopy[i] = dynamicArr[i + 1];
+            }
+            dynamicArr = dynamicArrCopy;
+            size--;
         }
-        for (int i = index; i < size - 1; i++) {
-            dynamicArr[i] = dynamicArr[i + 1];
-        }
-        size--;
     }
 
-    public void set(int index, int element) throws IndexOutOfBoundsException {
-        if (index < 0 && index >= size) {
-            throw new IndexOutOfBoundsException();
+    public void removeObject(int numb) {
+        for (int i = 0; i < size; i++) {
+            if (dynamicArr[i] == numb) {
+                remove(i);
+                i--;
+            }
         }
-        dynamicArr[index] = element;
+    }
+
+    public void removeAll(int[] arr) {
+        for (int i : arr) {
+            removeObject(i);
+        }
+    }
+
+    public void set(int index, int element) {
+        if (index >= 0 && index < size) {
+            dynamicArr[index] = element;
+        }
     }
 
     public int size() {
@@ -164,22 +175,4 @@ public class MyDynamicArray implements Cloneable {
             }
         }
     }
-
-    public String toString() {
-        if (dynamicArr == null)
-            return "null";
-        int iMax = dynamicArr.length - 1;
-        if (iMax == -1)
-            return "[]";
-
-        StringBuilder b = new StringBuilder();
-        b.append('[');
-        for (int i = 0; ; i++) {
-            b.append(dynamicArr[i]);
-            if (i == iMax)
-                return b.append(']').toString();
-            b.append(", ");
-        }
-    }
-
 }

@@ -1,5 +1,7 @@
 package DataStructures.DynamicArray;
 
+import java.util.Arrays;
+
 public class MyDynamicArrayTesting {
 
     private static MyDynamicArray buildMyDynamicArray(int capacity) {
@@ -12,24 +14,16 @@ public class MyDynamicArrayTesting {
         myDynArr.add(524);
         myDynArr.add(3);
         myDynArr.add(1, 6);
-        System.out.println(myDynArr);
 
-        MyDynamicArray myDynArr2 = buildMyDynamicArray(6);
-        myDynArr2.add(2);
-        myDynArr2.add(5);
-        myDynArr2.add(7);
-        myDynArr2.add(4);
-        myDynArr2.add(1);
-        myDynArr2.add(6);
-        myDynArr.addAll(2, myDynArr2);
-        System.out.println(myDynArr);
+        int[] arrayAdd = new int[]{2, 5, 7, 4, 1, 6};
+        myDynArr.addAll(2, arrayAdd);
         myDynArr.sort();
-
-        myDynArr.addAll(myDynArr2);
+        myDynArr.removeAll(arrayAdd);
+        myDynArr.addAll(arrayAdd);
         myDynArr.set(1, -5);
-        System.out.println(myDynArr);
+        System.out.println(Arrays.toString(myDynArr.dynamicArr));
         System.out.println("element with index 6 = " + myDynArr.get(6));
         System.out.println("size = " + myDynArr.size());
-        System.out.println(myDynArr);
+        System.out.println(Arrays.toString(myDynArr.dynamicArr));
     }
 }
