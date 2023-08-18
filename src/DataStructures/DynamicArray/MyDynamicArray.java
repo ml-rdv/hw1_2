@@ -66,10 +66,18 @@ public class MyDynamicArray {
         size += arr.length;
     }
 
-    private void extendArray(int lengthOfArr) {
-        int lengthOfNewArr = size + lengthOfArr + 25;
-        if (dynamicArr.length <= lengthOfNewArr) {
-            int[] dynamicArrCopy = new int[lengthOfNewArr];
+    // если addedPlace = 1 (добавляется 1 эл./массив из 1 эл.) -> увеличиваем массив в 2 раза,
+    // иначе увеличивает на размер добавляемого массива
+    private void extendArray(int addedPlace) {
+        int newLength;
+        if(addedPlace == 1){
+            newLength = size * 2 + 1;
+        }
+        else {
+            newLength = size + addedPlace;
+        }
+        if (dynamicArr.length <= newLength) {
+            int[] dynamicArrCopy = new int[newLength];
             for (int i = 0; i < dynamicArr.length; i++) {
                 dynamicArrCopy[i] = dynamicArr[i];
             }
