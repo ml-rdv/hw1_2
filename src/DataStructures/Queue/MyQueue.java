@@ -29,7 +29,7 @@ public class MyQueue {
 
     public int dequeue() throws IndexOutOfBoundsException {
         if (isEmpty()) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("Queue is empty.");
         }
         int element = queue[head];
         head = (head + 1) % capacity;
@@ -57,8 +57,8 @@ public class MyQueue {
     }
 
     public int peek() throws IndexOutOfBoundsException {
-        if(isEmpty()){
-            throw new IndexOutOfBoundsException();
+        if (isEmpty()) {
+            throw new IndexOutOfBoundsException("Queue is empty.");
         }
         return queue[head];
     }
