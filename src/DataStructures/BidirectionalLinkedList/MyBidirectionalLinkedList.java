@@ -9,11 +9,10 @@ public class MyBidirectionalLinkedList {
         if (isEmpty()) {
             addHead(number);
         } else {
-            Node tmp = head.cloneNode();
             Node newElement = new Node();
             newElement.setData(number);
-            newElement.setNext(tmp);
-            tmp.setPrevious(newElement);
+            newElement.setNext(head);
+            head.setPrevious(newElement);
             head = newElement;
         }
         size++;

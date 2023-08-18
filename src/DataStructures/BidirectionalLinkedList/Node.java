@@ -1,34 +1,31 @@
 package DataStructures.BidirectionalLinkedList;
 
-public class Node implements Cloneable  {
+public class Node {
     private int data;
     private Node previous;
     private Node next;
 
-    public Node cloneNode() throws CloneNotSupportedException {
-        return (Node) this.clone();
-    }
-    public int getData(){
+    public int getData() {
         return data;
     }
 
-    public Node getPrevious(){
+    public Node getPrevious() {
         return previous;
     }
 
-    public Node getNext(){
+    public Node getNext() {
         return next;
     }
 
-    public void setData(int data){
+    public void setData(int data) {
         this.data = data;
     }
 
-    public void setPrevious(Node previous){
+    public void setPrevious(Node previous) {
         this.previous = previous;
     }
 
-    public void setNext(Node next){
-        this. next = next;
+    public void setNext(Node next) {
+        this.next = next;
     }
 }
