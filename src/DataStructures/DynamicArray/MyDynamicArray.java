@@ -2,7 +2,7 @@ package DataStructures.DynamicArray;
 
 // Реализовать динамический массив(список)
 
-public class MyDynamicArray implements Cloneable {
+public class MyDynamicArray {
     private int size = 0;
     private int[] dynamicArr;
 
@@ -15,18 +15,18 @@ public class MyDynamicArray implements Cloneable {
         this.dynamicArr = new int[DEFAULT_CAPACITY];
     }
 
-    public int[] getDynamicArr() {
+    private int[] getDynamicArr() {
         return dynamicArr;
     }
 
     public void add(int element) {
-        checkArray();
+        extendArray(1);
         dynamicArr[size] = element;
         size++;
     }
 
     public void add(int index, int element) {
-        checkArray();
+        extendArray(1);
         int[] dynamicArrCopy = new int[dynamicArr.length];
         for (int i = 0; i < index; i++) {
             dynamicArrCopy[i] = dynamicArr[i];
@@ -41,7 +41,7 @@ public class MyDynamicArray implements Cloneable {
 
     public void addAll(MyDynamicArray dynamicArray) {
         int[] arr = dynamicArray.getDynamicArr();
-        checkArrayWithArray(arr.length);
+        extendArray(arr.length);
         int index = size;
         for (int i = 0; i < arr.length; i++, index++) {
             dynamicArr[index] = arr[i];
@@ -51,7 +51,7 @@ public class MyDynamicArray implements Cloneable {
 
     public void addAll(int index, MyDynamicArray dynamicArray) {
         int[] arr = dynamicArray.getDynamicArr();
-        checkArrayWithArray(arr.length);
+        extendArray(arr.length);
         int[] dynamicArrCopy = new int[dynamicArr.length];
         for (int i = 0; i < index; i++) {
             dynamicArrCopy[i] = dynamicArr[i];
@@ -66,35 +66,20 @@ public class MyDynamicArray implements Cloneable {
         size += arr.length;
     }
 
-    private void checkArray() {
-        if (dynamicArr.length <= size) {
-            int lengthOfNewArr = size * 2 + 1;
-            extendArray(lengthOfNewArr);
+    private void extendArray(int lengthOfArr) {
+        int lengthOfNewArr = size + lengthOfArr + 25;
+        if (dynamicArr.length <= lengthOfNewArr) {
+            int[] dynamicArrCopy = new int[lengthOfNewArr];
+            for (int i = 0; i < dynamicArr.length; i++) {
+                dynamicArrCopy[i] = dynamicArr[i];
+            }
+            dynamicArr = dynamicArrCopy;
         }
-    }
-
-    private void checkArrayWithArray(int lengthOfArr) {
-        if (dynamicArr.length <= size + lengthOfArr) {
-            int lengthOfNewArr = size + lengthOfArr;
-            extendArray(lengthOfNewArr);
-        }
-    }
-
-    private void extendArray(int lengthOfNewArr) {
-        int[] dynamicArrCopy = new int[lengthOfNewArr];
-        for (int i = 0; i < dynamicArr.length; i++) {
-            dynamicArrCopy[i] = dynamicArr[i];
-        }
-        dynamicArr = dynamicArrCopy;
     }
 
     public void clear() {
         dynamicArr = new int[0];
         size = 0;
-    }
-
-    public MyDynamicArray cloneArr() throws CloneNotSupportedException {
-        return (MyDynamicArray) this.clone();
     }
 
     public boolean contains(int numb) {
@@ -125,14 +110,14 @@ public class MyDynamicArray implements Cloneable {
 
     public int get(int index) throws IndexOutOfBoundsException {
         if (index < 0 && index >= size) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("Index " + index + " is out of dynamic array.");
         }
         return dynamicArr[index];
     }
 
     public void remove(int index) throws IndexOutOfBoundsException {
         if (index < 0 && index >= size) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("Index " + index + " is out of dynamic array.");
         }
         for (int i = index; i < size - 1; i++) {
             dynamicArr[i] = dynamicArr[i + 1];
@@ -142,7 +127,7 @@ public class MyDynamicArray implements Cloneable {
 
     public void set(int index, int element) throws IndexOutOfBoundsException {
         if (index < 0 && index >= size) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("Index " + index + " is out of dynamic array.");
         }
         dynamicArr[index] = element;
     }
