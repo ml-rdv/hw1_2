@@ -67,13 +67,12 @@ public class MyDynamicArray {
     }
 
     // если addedPlace = 1 (добавляется 1 эл./массив из 1 эл.) -> увеличиваем массив в 2 раза,
-    // иначе увеличивает на размер добавляемого массива
+    // иначе увеличиваем на размер добавляемого массива
     private void extendArray(int addedPlace) {
         int newLength;
-        if(addedPlace == 1){
+        if (addedPlace == 1) {
             newLength = size * 2 + 1;
-        }
-        else {
+        } else {
             newLength = size + addedPlace;
         }
         if (dynamicArr.length <= newLength) {
