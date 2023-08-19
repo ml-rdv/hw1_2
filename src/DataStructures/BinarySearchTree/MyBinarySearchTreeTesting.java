@@ -12,11 +12,11 @@ public class MyBinarySearchTreeTesting {
         myBiLinkList.insert(10);
         myBiLinkList.insert(2);
         myBiLinkList.insert(6);
-        System.out.println(myBiLinkList);
-        myBiLinkList.insert(11);
-        myBiLinkList.insert(3);
+        myBiLinkList.insert(5);
         System.out.println(myBiLinkList);
         System.out.println(myBiLinkList.search(10));
         System.out.println(myBiLinkList.search(100));
+        myBiLinkList.remove(3);
+        System.out.println(myBiLinkList);
     }
 }
