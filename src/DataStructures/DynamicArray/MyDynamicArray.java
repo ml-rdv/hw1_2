@@ -115,14 +115,14 @@ public class MyDynamicArray {
         return -1;
     }
 
-    public int get(int index) throws IndexOutOfBoundsException {
+    public int get(int index) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of dynamic array.");
         }
         return dynamicArr[index];
     }
 
-    public void remove(int index) throws IndexOutOfBoundsException {
+    public void remove(int index) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of dynamic array.");
         }
@@ -132,7 +132,7 @@ public class MyDynamicArray {
         size--;
     }
 
-    public void set(int index, int element) throws IndexOutOfBoundsException {
+    public void set(int index, int element) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of dynamic array.");
         }

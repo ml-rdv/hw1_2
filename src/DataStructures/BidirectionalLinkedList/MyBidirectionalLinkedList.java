@@ -10,9 +10,7 @@ public class MyBidirectionalLinkedList {
         if (isEmpty()) {
             addHead(number);
         } else {
-            Node newElement = new Node();
-            newElement.setData(number);
-            newElement.setNext(head);
+            Node newElement = new Node(number, null, head);
             head.setPrevious(newElement);
             head = newElement;
             size++;
@@ -20,8 +18,7 @@ public class MyBidirectionalLinkedList {
     }
 
     private void addHead(int number) {
-        head = new Node();
-        head.setData(number);
+        head = new Node(number);
         size++;
         tail = head;
     }
@@ -30,19 +27,10 @@ public class MyBidirectionalLinkedList {
         if (isEmpty()) {
             addHead(number);
         } else {
-            Node currentValue = head;
-            Node newElement = new Node();
-            newElement.setData(number);
-            for (int i = 0; i < size; i++) {
-                if (currentValue == tail) {
-                    currentValue.setNext(newElement);
-                    newElement.setPrevious(currentValue);
-                    tail = newElement;
-                    size++;
-                    return;
-                }
-                currentValue = currentValue.getNext();
-            }
+            Node newElement = new Node(number, tail, null);
+            tail.setNext(newElement);
+            tail = newElement;
+            size++;
         }
     }
 

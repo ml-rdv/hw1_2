@@ -3,7 +3,7 @@ package DataStructures.Queue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class MyQueueTesting {
+public class MyQueueTest {
 
     @Test
     void should_enqueue_element_to_queue() {
@@ -55,6 +55,34 @@ public class MyQueueTesting {
             var myQueue = new MyQueue(5);
             myQueue.peek();
         });
+    }
+
+    @Test
+    void check_size_after_pop_in_stack() {
+        var myQueue = new MyQueue(5);
+        myQueue.enqueue(1);
+        myQueue.enqueue(2);
+        myQueue.enqueue(3);
+        myQueue.enqueue(4);
+        myQueue.dequeue();
+
+        var expectedElement = myQueue.size();
+
+        Assertions.assertEquals(expectedElement, 3);
+    }
+
+    @Test
+    void check_size_after_peek_in_stack() {
+        var myQueue = new MyQueue(5);
+        myQueue.enqueue(1);
+        myQueue.enqueue(2);
+        myQueue.enqueue(3);
+        myQueue.enqueue(4);
+        myQueue.peek();
+
+        var expectedElement = myQueue.size();
+
+        Assertions.assertEquals(expectedElement, 4);
     }
 
 }

@@ -3,7 +3,7 @@ package DataStructures.Stack;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class MyStackTesting {
+public class MyStackTest {
 
     @Test
     void should_push_element_to_stack() {
@@ -70,5 +70,33 @@ public class MyStackTesting {
             var myStack = new MyStack(5);
             myStack.peek();
         });
+    }
+
+    @Test
+    void check_size_after_pop_in_stack() {
+        var myStack = new MyStack(5);
+        myStack.push(1);
+        myStack.push(2);
+        myStack.push(3);
+        myStack.push(4);
+        myStack.pop();
+
+        var expectedElement = myStack.size();
+
+        Assertions.assertEquals(expectedElement, 3);
+    }
+
+    @Test
+    void check_size_after_peek_in_stack() {
+        var myStack = new MyStack(5);
+        myStack.push(1);
+        myStack.push(2);
+        myStack.push(3);
+        myStack.push(4);
+        myStack.peek();
+
+        var expectedElement = myStack.size();
+
+        Assertions.assertEquals(expectedElement, 4);
     }
 }

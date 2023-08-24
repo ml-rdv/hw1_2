@@ -3,7 +3,7 @@ package DataStructures.BinarySearchTree;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class MyBinarySearchTreeTesting {
+public class MyBinarySearchTreeTest {
 
     @Test
     void should_search_element_in_binarySearchTree() {

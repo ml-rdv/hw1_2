@@ -3,7 +3,7 @@ package DataStructures.DynamicArray;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class MyDynamicArrayTesting {
+public class MyDynamicArrayTest {
 
     @Test
     void check_size() {
