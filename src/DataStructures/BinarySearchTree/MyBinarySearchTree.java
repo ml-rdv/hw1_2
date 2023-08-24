@@ -12,17 +12,19 @@ public class MyBinarySearchTree {
     public void insert(int number) {
         if (isEmpty()) {
             addRoot(number);
+            size++;
         } else {
             Node node = findNode(root, number);
             Node newNode = new Node();
             newNode.setData(number);
             if (node.getData() > number) {
                 node.setLeft(newNode);
+                size++;
             } else if (node.getData() < number) {
                 node.setRight(newNode);
+                size++;
             }
         }
-        size++;
     }
 
     private void addRoot(int number) {
@@ -112,6 +114,7 @@ public class MyBinarySearchTree {
         } else {
             removeNodeWithBothChild(parent, childToRemove, itIsLeftChild);
         }
+        size--;
     }
 
     private void removeNodeWithBothChild(Node parent, Node childToRemove, boolean itIsLeftChild) {
