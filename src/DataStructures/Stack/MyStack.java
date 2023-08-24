@@ -39,6 +39,10 @@ public class MyStack {
         return size == 0;
     }
 
+    public int size() {
+        return size;
+    }
+
     private void extendArray() {
         if (stack.length <= size) {
             int[] stackCopy = new int[size * 2 + 1];
