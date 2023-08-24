@@ -1,27 +1,60 @@
 package DataStructures.Queue;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 public class MyQueueTesting {
 
-    private static MyQueue buildMyQueue(int capacity) {
-        return new MyQueue(capacity);
-    }
-
-    public static void main(String[] args) {
-        MyQueue myQueue = buildMyQueue(5);
+    @Test
+    void should_enqueue_element_to_queue() {
+        var myQueue = new MyQueue(5);
         myQueue.enqueue(2);
         myQueue.enqueue(5);
         myQueue.enqueue(-7);
+
+        var expectedElement = myQueue.size();
+
+        Assertions.assertEquals(expectedElement, 3);
+    }
+
+    @Test
+    void should_dequeue_element_from_queue() {
+        var myQueue = new MyQueue(5);
+        myQueue.enqueue(2);
         myQueue.enqueue(5);
         myQueue.enqueue(-7);
 
-        System.out.println(myQueue.dequeue());
-        myQueue.enqueue(457);
-        System.out.println(myQueue.dequeue());
-        System.out.println(myQueue);
+        var expectedElement = myQueue.dequeue();
 
-        myQueue.enqueue(-1);
-        myQueue.enqueue(-1);
-        System.out.println(myQueue.peek());
-        System.out.println(myQueue);
+        Assertions.assertEquals(expectedElement, 2);
     }
+
+    @Test
+    void should_throw_IndexOutOfBoundsException_when_dequeue() {
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
+            var myQueue = new MyQueue(5);
+            myQueue.dequeue();
+        });
+    }
+
+    @Test
+    void should_peek_element_from_queue() {
+        var myQueue = new MyQueue(5);
+        myQueue.enqueue(2);
+        myQueue.enqueue(5);
+        myQueue.enqueue(-7);
+
+        var expectedElement = myQueue.peek();
+
+        Assertions.assertEquals(expectedElement, 2);
+    }
+
+    @Test
+    void should_throw_IndexOutOfBoundsException_when_peek() {
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
+            var myQueue = new MyQueue(5);
+            myQueue.peek();
+        });
+    }
+
 }
