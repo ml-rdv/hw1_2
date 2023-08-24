@@ -20,13 +20,13 @@ public class MyDynamicArray {
     }
 
     public void add(int element) {
-        extendArray(1);
+        extendArray();
         dynamicArr[size] = element;
         size++;
     }
 
     public void add(int index, int element) {
-        extendArray(1);
+        extendArray();
         int[] dynamicArrCopy = new int[dynamicArr.length];
         for (int i = 0; i < index; i++) {
             dynamicArrCopy[i] = dynamicArr[i];
@@ -46,7 +46,7 @@ public class MyDynamicArray {
         for (int i = 0; i < arr.length; i++, index++) {
             dynamicArr[index] = arr[i];
         }
-        size += arr.length;
+        size += dynamicArray.size();
     }
 
     public void addAll(int index, MyDynamicArray dynamicArray) {
@@ -66,17 +66,17 @@ public class MyDynamicArray {
         size += arr.length;
     }
 
-    // если addedPlace = 1 (добавляется 1 эл./массив из 1 эл.) -> увеличиваем массив в 2 раза,
-    // иначе увеличиваем на размер добавляемого массива
-    private void extendArray(int addedPlace) {
-        int newLength;
-        if (addedPlace == 1) {
-            newLength = size * 2 + 1;
-        } else {
-            newLength = size + addedPlace;
-        }
-        if (dynamicArr.length <= newLength) {
-            int[] dynamicArrCopy = new int[newLength];
+    private void extendArray() {
+        extendArray(size, size * 2 + 1);
+    }
+
+    private void extendArray(int arrayLength) {
+        extendArray(size + arrayLength, size + arrayLength);
+    }
+
+    private void extendArray(int checkSize, int newSize) {
+        if (dynamicArr.length <= checkSize) {
+            int[] dynamicArrCopy = new int[newSize];
             for (int i = 0; i < dynamicArr.length; i++) {
                 dynamicArrCopy[i] = dynamicArr[i];
             }
@@ -116,14 +116,14 @@ public class MyDynamicArray {
     }
 
     public int get(int index) throws IndexOutOfBoundsException {
-        if (index < 0 && index >= size) {
+        if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of dynamic array.");
         }
         return dynamicArr[index];
     }
 
     public void remove(int index) throws IndexOutOfBoundsException {
-        if (index < 0 && index >= size) {
+        if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of dynamic array.");
         }
         for (int i = index; i < size - 1; i++) {
@@ -133,7 +133,7 @@ public class MyDynamicArray {
     }
 
     public void set(int index, int element) throws IndexOutOfBoundsException {
-        if (index < 0 && index >= size) {
+        if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of dynamic array.");
         }
         dynamicArr[index] = element;
