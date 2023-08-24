@@ -1,19 +1,45 @@
 package DataStructures.Stack;
 
-public class MyStackTesting {
-    private static MyStack buildMyStack(int capacity) {
-        return new MyStack(capacity);
-    }
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-    public static void main(String[] args) {
-        MyStack myStack = buildMyStack(5);
+public class MyStackTesting {
+
+    @Test
+    void should_pop_element_from_stack() {
+        var myStack = new MyStack(5);
         myStack.push(2);
         myStack.push(5);
-        myStack.push(-7);
-        myStack.push(548);
-        myStack.push(6);
-        System.out.println(myStack.pop());
-        System.out.println(myStack.peek());
-        System.out.println(myStack);
+
+        var expectedElement = myStack.pop();
+
+        Assertions.assertEquals(expectedElement, 5);
+    }
+
+    @Test
+    void should_throw_IndexOutOfBoundsException_when_pop() {
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
+            var myStack = new MyStack(5);
+            myStack.pop();
+        });
+    }
+
+    @Test
+    void should_peek_element_from_stack() {
+        var myStack = new MyStack(5);
+        myStack.push(2);
+        myStack.push(5);
+
+        var expectedElement = myStack.peek();
+
+        Assertions.assertEquals(expectedElement, 5);
+    }
+
+    @Test
+    void should_throw_IndexOutOfBoundsException_when_peek() {
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
+            var myStack = new MyStack(5);
+            myStack.peek();
+        });
     }
 }

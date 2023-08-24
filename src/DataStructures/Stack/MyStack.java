@@ -21,11 +21,17 @@ public class MyStack {
         size++;
     }
 
-    public int pop() {
+    public int pop() throws IndexOutOfBoundsException {
+        if (isEmpty()) {
+            throw new IndexOutOfBoundsException("Stack is empty");
+        }
         return stack[--size];
     }
 
-    public int peek() {
+    public int peek() throws IndexOutOfBoundsException {
+        if (isEmpty()) {
+            throw new IndexOutOfBoundsException("Stack is empty");
+        }
         return stack[size - 1];
     }
 
