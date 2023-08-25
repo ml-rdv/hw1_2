@@ -6,14 +6,10 @@ public class Node {
     private Node next;
 
     public Node() {
-        previous = null;
-        next = null;
     }
 
     public Node(int data) {
         this.data = data;
-        previous = null;
-        next = null;
     }
 
     public Node(int data, Node previous, Node next) {

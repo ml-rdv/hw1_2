@@ -25,8 +25,10 @@ public class MyQueueTest {
         myQueue.enqueue(-7);
 
         var expectedElement = myQueue.dequeue();
-
         Assertions.assertEquals(expectedElement, 2);
+
+        var expectedElement2 = myQueue.size();
+        Assertions.assertEquals(expectedElement2, 2);
     }
 
     @Test
@@ -45,8 +47,10 @@ public class MyQueueTest {
         myQueue.enqueue(-7);
 
         var expectedElement = myQueue.peek();
-
         Assertions.assertEquals(expectedElement, 2);
+
+        var expectedElement2 = myQueue.size();
+        Assertions.assertEquals(expectedElement2, 3);
     }
 
     @Test
@@ -56,33 +60,4 @@ public class MyQueueTest {
             myQueue.peek();
         });
     }
-
-    @Test
-    void check_size_after_pop_in_stack() {
-        var myQueue = new MyQueue(5);
-        myQueue.enqueue(1);
-        myQueue.enqueue(2);
-        myQueue.enqueue(3);
-        myQueue.enqueue(4);
-        myQueue.dequeue();
-
-        var expectedElement = myQueue.size();
-
-        Assertions.assertEquals(expectedElement, 3);
-    }
-
-    @Test
-    void check_size_after_peek_in_stack() {
-        var myQueue = new MyQueue(5);
-        myQueue.enqueue(1);
-        myQueue.enqueue(2);
-        myQueue.enqueue(3);
-        myQueue.enqueue(4);
-        myQueue.peek();
-
-        var expectedElement = myQueue.size();
-
-        Assertions.assertEquals(expectedElement, 4);
-    }
-
 }
