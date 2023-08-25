@@ -43,8 +43,8 @@ public class MyStackTest {
         var expectedElement = myStack.pop();
         Assertions.assertEquals(expectedElement, 5);
 
-        var expectedElement2 = myStack.size();
-        Assertions.assertEquals(expectedElement2, 1);
+        var expectedSize = myStack.size();
+        Assertions.assertEquals(expectedSize, 1);
     }
 
     @Test
@@ -64,8 +64,8 @@ public class MyStackTest {
         var expectedElement = myStack.peek();
         Assertions.assertEquals(expectedElement, 5);
 
-        var expectedElement2 = myStack.size();
-        Assertions.assertEquals(expectedElement2, 2);
+        var expectedSize = myStack.size();
+        Assertions.assertEquals(expectedSize, 2);
     }
 
     @Test

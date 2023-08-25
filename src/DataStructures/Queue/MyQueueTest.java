@@ -27,8 +27,8 @@ public class MyQueueTest {
         var expectedElement = myQueue.dequeue();
         Assertions.assertEquals(expectedElement, 2);
 
-        var expectedElement2 = myQueue.size();
-        Assertions.assertEquals(expectedElement2, 2);
+        var expectedSize = myQueue.size();
+        Assertions.assertEquals(expectedSize, 2);
     }
 
     @Test
@@ -49,8 +49,8 @@ public class MyQueueTest {
         var expectedElement = myQueue.peek();
         Assertions.assertEquals(expectedElement, 2);
 
-        var expectedElement2 = myQueue.size();
-        Assertions.assertEquals(expectedElement2, 3);
+        var expectedSize = myQueue.size();
+        Assertions.assertEquals(expectedSize, 3);
     }
 
     @Test
