@@ -89,8 +89,8 @@ public class MyHashTable {
         return foundElement.getValue();
     }
 
-    public int size(){
-        return  size;
+    public int size() {
+        return size;
     }
 
     public void clear() {
