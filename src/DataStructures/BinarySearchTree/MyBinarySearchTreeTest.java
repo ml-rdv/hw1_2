@@ -98,7 +98,6 @@ public class MyBinarySearchTreeTest {
         var afterRemove = myBiSearchTree.toString();
 
         Assertions.assertEquals(afterRemove, "70 30 2 50 40 35 38 100 ");
-
     }
 
     @Test
@@ -119,7 +118,26 @@ public class MyBinarySearchTreeTest {
         var afterRemove = myBiSearchTree.toString();
 
         Assertions.assertEquals(afterRemove, "8 4 2 6 5 10 ");
+    }
 
+    @Test
+    void should_remove_element_with_both_child_that_has_only_with_right_child_from_binarySearchTree() {
+        var myBiSearchTree = new MyBinarySearchTree();
+        myBiSearchTree.insert(8);
+        myBiSearchTree.insert(3);
+        myBiSearchTree.insert(100);
+        myBiSearchTree.insert(2);
+        myBiSearchTree.insert(4);
+        myBiSearchTree.insert(5);
+        myBiSearchTree.insert(6);
+        var expectedElement = myBiSearchTree.toString();
+
+        Assertions.assertEquals(expectedElement, "8 3 2 4 5 6 100 ");
+
+        myBiSearchTree.remove(3);
+        var afterRemove = myBiSearchTree.toString();
+
+        Assertions.assertEquals(afterRemove, "8 100 ");
     }
 
     @Test
