@@ -117,7 +117,7 @@ public class MyBinarySearchTree {
     }
 
     private void removeNodeWithBothChild(Node parent, Node childToRemove, boolean itIsLeftChild) {
-        Node node = closeNodeWithoutMinChild1(childToRemove.getRight());
+        Node node = closeNodeWithoutMinChild(childToRemove.getRight());
         if (node == null) {
             if (itIsLeftChild) {
                 parent.setLeft(null);
@@ -135,16 +135,6 @@ public class MyBinarySearchTree {
             } else {
                 parent.setRight(child);
             }
-        }
-    }
-
-    private Node closeNodeWithoutMinChild1(Node node) {
-        if (node == null) {
-            return null;
-        } else if (node.getLeft() != null && node.getLeft().getLeft() == null) {
-            return node;
-        } else {
-            return closeNodeWithoutMinChild(node.getLeft());
         }
     }
 
