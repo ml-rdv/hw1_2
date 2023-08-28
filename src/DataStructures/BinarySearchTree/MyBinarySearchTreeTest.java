@@ -6,6 +6,36 @@ import org.junit.jupiter.api.Test;
 public class MyBinarySearchTreeTest {
 
     @Test
+    void should_insert_element_to_binarySearchTree() {
+        var myBiSearchTree = new MyBinarySearchTree();
+        myBiSearchTree.insert(8);
+        myBiSearchTree.insert(3);
+        myBiSearchTree.insert(10);
+        myBiSearchTree.insert(2);
+        myBiSearchTree.insert(6);
+        myBiSearchTree.insert(5);
+        var expectedElement = myBiSearchTree.toString();
+
+        Assertions.assertEquals(expectedElement, "8 3 2 6 5 10 ");
+    }
+
+    @Test
+    void should_not_insert_element_to_binarySearchTree() {
+        var myBiSearchTree = new MyBinarySearchTree();
+        myBiSearchTree.insert(8);
+        myBiSearchTree.insert(3);
+        myBiSearchTree.insert(10);
+        myBiSearchTree.insert(2);
+        myBiSearchTree.insert(6);
+        myBiSearchTree.insert(5);
+        myBiSearchTree.insert(5);
+        myBiSearchTree.insert(5);
+        var expectedElement = myBiSearchTree.toString();
+
+        Assertions.assertEquals(expectedElement, "8 3 2 6 5 10 ");
+    }
+
+    @Test
     void should_search_element_in_binarySearchTree() {
         var myBiSearchTree = new MyBinarySearchTree();
         myBiSearchTree.insert(8);
@@ -30,7 +60,7 @@ public class MyBinarySearchTreeTest {
         myBiSearchTree.insert(5);
         var expectedElement = myBiSearchTree.search(100);
 
-        Assertions.assertEquals(expectedElement, 0);
+        Assertions.assertEquals(expectedElement, -1);
     }
 
     @Test

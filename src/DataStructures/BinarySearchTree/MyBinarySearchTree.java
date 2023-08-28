@@ -1,80 +1,78 @@
 package DataStructures.BinarySearchTree;
 
 public class MyBinarySearchTree {
-    private final Node root;
+    private Node root;
     private int size;
 
     public MyBinarySearchTree() {
-        root = new Node();
         size = 0;
     }
 
     public void insert(int number) {
         if (isEmpty()) {
             addRoot(number);
-            size++;
-        } else {
-            Node node = findNode(root, number);
-            Node newNode = new Node();
-            newNode.setData(number);
-            if (node.getData() > number) {
-                node.setLeft(newNode);
-                size++;
-            } else if (node.getData() < number) {
-                node.setRight(newNode);
-                size++;
-            }
+            return;
         }
+        addNode(root, number);
     }
 
     private void addRoot(int number) {
-        root.setData(number);
+        root = new Node(number, null, null);
+        size++;
     }
 
-    private Node findNode(Node node, int number) {
+    private void addNode(Node node, int number) {
         if (node.getData() == number) {
-            return node;
+            return;
         }
         if (node.getData() > number) {
             if (node.getLeft() == null) {
-                return node;
+                insertNode(node, number, true);
+                return;
             }
-            return findNode(node.getLeft(), number);
-        } else {
+            addNode(node.getLeft(), number);
+        } else if (node.getData() < number) {
             if (node.getRight() == null) {
-                return node;
+                insertNode(node, number, false);
+                return;
             }
-            return findNode(node.getRight(), number);
+            addNode(node.getRight(), number);
         }
+    }
+
+    private void insertNode(Node node, int number, boolean addLeftChild) {
+        Node newNode = new Node(number, null, null);
+        if (addLeftChild) {
+            node.setLeft(newNode);
+        } else {
+            node.setRight(newNode);
+        }
+        size++;
     }
 
     private boolean isEmpty() {
         return size == 0;
     }
 
-    private StringBuilder printBinarySearchTree(Node node, StringBuilder stringBuilder) {
+    private void printBinarySearchTree(Node node, StringBuilder stringBuilder) {
         if (node == null) {
-            return stringBuilder;
+            return;
         } else {
             stringBuilder.append(node.getData()).append(' ');
         }
         printBinarySearchTree(node.getLeft(), stringBuilder);
         printBinarySearchTree(node.getRight(), stringBuilder);
-        return stringBuilder;
     }
 
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder = printBinarySearchTree(root, stringBuilder);
+        printBinarySearchTree(root, stringBuilder);
         return stringBuilder.toString();
     }
 
     public int search(int searchNumber) {
-        if (isEmpty()) {
-            return -1;
-        }
         Node searchNode = recursiveSearch(root, searchNumber);
-        return searchNode == null ? 0 : searchNode.getData();
+        return searchNode == null ? -1 : searchNode.getData();
     }
 
     private Node recursiveSearch(Node node, int number) {
@@ -94,13 +92,14 @@ public class MyBinarySearchTree {
     public void remove(int number) {
         Node parent = findParent(root, number);
         Node childToRemove;
-        boolean itIsLeftChild = false;
+        boolean itIsLeftChild;
 
         if (parent.getLeft() != null && parent.getLeft().getData() == number) {
             childToRemove = parent.getLeft();
             itIsLeftChild = true;
         } else if (parent.getRight() != null && parent.getRight().getData() == number) {
             childToRemove = parent.getRight();
+            itIsLeftChild = false;
         } else {
             return;
         }
@@ -141,26 +140,30 @@ public class MyBinarySearchTree {
     }
 
     private void removeNodeWithRightChild(Node parent, Node childToRemove, boolean itIsLeftChild) {
-        if (itIsLeftChild) {
-            parent.setLeft(childToRemove.getRight());
-        } else {
-            parent.setRight(childToRemove.getRight());
-        }
+        removeNode(parent, itIsLeftChild, childToRemove, false);
     }
 
     private void removeNodeWithLeftChild(Node parent, Node childToRemove, boolean itIsLeftChild) {
-        if (itIsLeftChild) {
-            parent.setLeft(childToRemove.getLeft());
-        } else {
-            parent.setRight(childToRemove.getLeft());
-        }
+        removeNode(parent, itIsLeftChild, childToRemove, true);
     }
 
     private void removeNodeWithoutChild(Node parent, boolean itIsLeftChild) {
+        removeNode(parent, itIsLeftChild, null, false);
+    }
+
+    private void removeNode(Node parent, boolean itIsLeftChild, Node childToRemove, boolean nodeWithLeftChild) {
+        Node child = null;
+        if (childToRemove != null) {
+            if (nodeWithLeftChild) {
+                child = childToRemove.getLeft();
+            } else {
+                child = childToRemove.getRight();
+            }
+        }
         if (itIsLeftChild) {
-            parent.setLeft(null);
+            parent.setLeft(child);
         } else {
-            parent.setRight(null);
+            parent.setRight(child);
         }
     }
 
