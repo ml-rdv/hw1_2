@@ -35,7 +35,7 @@ public class MyHashTable {
     }
 
     private boolean hashCodeExists(int hashCode) {
-        if(hashCode >= 0){
+        if (hashCode >= 0) {
             return checkHashCodes[hashCode];
         }
         int positionOfNegativeHashCode = arr.length + hashCode;
