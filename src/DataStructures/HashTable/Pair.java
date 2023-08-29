@@ -1,30 +1,26 @@
 package DataStructures.HashTable;
 
 public class Pair {
-    private int key;
-    private int value;
-
-    public Pair() {
-    }
+    private final int key;
+    private final int hashCode;
+    private final int value;
 
     public Pair(int key, int value) {
         this.key = key;
         this.value = value;
+        this.hashCode = key;
     }
 
     public int getKey() {
         return key;
     }
 
-    public void setKey(int key) {
-        this.key = key;
-    }
-
     public int getValue() {
         return value;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public int getHashCode() {
+        return hashCode;
     }
+
 }

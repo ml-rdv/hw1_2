@@ -18,6 +18,16 @@ public class MyHashTableTest {
     }
 
     @Test
+    void should_not_insert_pair() {
+        var hashTable = new MyHashTable();
+        hashTable.insert(10000005, 1);
+
+        var expectedElement = hashTable.toString();
+
+        Assertions.assertEquals(expectedElement, "[]");
+    }
+
+    @Test
     void should_change_value() {
         var hashTable = new MyHashTable();
         hashTable.insert(5, 1);
@@ -50,6 +60,20 @@ public class MyHashTableTest {
         var hashTable = new MyHashTable();
         hashTable.insert(5, 1);
         hashTable.insert(4, 1);
+        hashTable.insert(75, 1);
+
+        var expectedElement = hashTable.size();
+
+        Assertions.assertEquals(expectedElement, 3);
+    }
+
+    @Test
+    void check_size_second_variant() {
+        var hashTable = new MyHashTable();
+        hashTable.insert(5, 1);
+        hashTable.insert(4, 1);
+        hashTable.insert(75, 1);
+        hashTable.insert(75, 1);
         hashTable.insert(75, 1);
 
         var expectedElement = hashTable.size();
@@ -103,6 +127,15 @@ public class MyHashTableTest {
         var expectedElement = hashTable.find(75);
 
         Assertions.assertEquals(expectedElement, 1);
+    }
+
+    @Test
+    void should_not_find_value() {
+        var hashTable = new MyHashTable();
+
+        var expectedElement = hashTable.find(75);
+
+        Assertions.assertEquals(expectedElement, -1);
     }
 
     @Test

@@ -1,58 +1,69 @@
 package DataStructures.HashTable;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+
 public class MyHashTable {
 
     private Pair[] arr;
     private int size = 0;
-    private final boolean[] checkPositiveKeys = new boolean[10005];
-    private final boolean[] checkNegativeKeys = new boolean[10005];
+    private final boolean[] checkPositiveKeys = new boolean[1000005];
+    private final boolean[] checkNegativeKeys = new boolean[1000005];
+    LinkedList<Integer> hashCodes = new LinkedList<>();
 
     public MyHashTable() {
-        int DEFAULT_CAPACITY = 25;
+        int DEFAULT_CAPACITY = 1000005;
         arr = new Pair[DEFAULT_CAPACITY];
     }
 
     public void insert(int key, int value) {
+        if (key >= arr.length) {
+            System.out.println("Key is too big.");
+            return;
+        }
         if (keyExists(key)) {
-            int position = findPosition(key);
             Pair newElement = new Pair(key, value);
+            int position = newElement.getHashCode();
+            if (position < 0) {
+                position = arr.length + position;
+            }
             arr[position] = newElement;
             return;
         }
-        extendArray();
         Pair newElement = new Pair(key, value);
-        arr[size] = newElement;
+        int position = newElement.getHashCode();
+        if (position < 0) {
+            position = arr.length + position;
+        }
+        arr[position] = newElement;
         if (key >= 0) {
             checkPositiveKeys[key] = true;
         } else {
             int positionOfKey = key * -1;
             checkNegativeKeys[positionOfKey] = true;
         }
+        hashCodes.add(position);
         size++;
     }
 
     private boolean keyExists(int key) {
-        int positionOfKey = key * -1;
+        int positionOfNegativeKey = key * -1;
         if ((key >= 0 && checkPositiveKeys[key]) ||
-                (key < 0 && checkNegativeKeys[positionOfKey])) {
+                (key < 0 && checkNegativeKeys[positionOfNegativeKey])) {
             return true;
         }
         return false;
     }
 
-    private void extendArray() {
-        if (arr.length <= size) {
-            Pair[] arrCopy = new Pair[size * 2 + 1];
-            for (int i = 0; i < size; i++) {
-                arrCopy[i] = arr[i];
-            }
-            arr = arrCopy;
+    private int hashCode(int key) {
+        if (key >= 0) {
+            return key;
         }
+        return arr.length + key;
     }
 
     public void remove(int key) {
-        int position = findPosition(key);
-        if (position == -1) {
+        if (!keyExists(key)) {
             throw new NullPointerException("Key " + key + " is absent.");
         }
         if (key >= 0) {
@@ -61,32 +72,18 @@ public class MyHashTable {
             int positionOfKey = key * -1;
             checkNegativeKeys[positionOfKey] = false;
         }
-        for (int i = position; i < size - 1; i++) {
-            arr[i] = arr[i + 1];
-        }
+        int position = hashCode(key);
+        hashCodes.remove((Object) position);
         size--;
     }
 
-    private int findPosition(int key) {
-        Pair element;
-        for (int i = 0; i < size; i++) {
-            element = arr[i];
-            int currentKey = element.getKey();
-            if (currentKey == key) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     public int find(int key) {
-        int position = findPosition(key);
-        if (position == -1) {
+        if (!keyExists(key)) {
             System.out.println("Key " + key + " is absent");
             return -1;
         }
-        Pair foundElement = arr[position];
-        return foundElement.getValue();
+        int position = hashCode(key);
+        return arr[position].getValue();
     }
 
     public int size() {
@@ -107,14 +104,16 @@ public class MyHashTable {
 
         StringBuilder b = new StringBuilder();
         b.append('[');
-        for (int i = 0; ; i++) {
-            Pair element = arr[i];
+        Iterator<Integer> itr = hashCodes.iterator();
+        while (itr.hasNext()) {
+            Pair element = arr[itr.next()];
             int key = element.getKey();
             int value = element.getValue();
             b.append('(').append(key).append(", ").append(value).append(')');
-            if (i == iMax)
+            if (!itr.hasNext())
                 return b.append(']').toString();
             b.append(", ");
         }
+        return b.toString();
     }
 }
