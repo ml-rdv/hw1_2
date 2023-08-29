@@ -7,8 +7,7 @@ public class MyHashTable {
 
     private Pair[] arr;
     private int size = 0;
-    private final boolean[] checkPositiveKeys = new boolean[1000005];
-    private final boolean[] checkNegativeKeys = new boolean[1000005];
+    private final boolean[] checkHashCodes = new boolean[1000005];
     LinkedList<Integer> hashCodes = new LinkedList<>();
 
     public MyHashTable() {
@@ -21,68 +20,55 @@ public class MyHashTable {
             System.out.println("Key is too big.");
             return;
         }
-        if (keyExists(key)) {
-            Pair newElement = new Pair(key, value);
-            int position = newElement.getHashCode();
-            if (position < 0) {
-                position = arr.length + position;
-            }
-            arr[position] = newElement;
-            return;
-        }
         Pair newElement = new Pair(key, value);
         int position = newElement.getHashCode();
         if (position < 0) {
             position = arr.length + position;
         }
         arr[position] = newElement;
-        if (key >= 0) {
-            checkPositiveKeys[key] = true;
-        } else {
-            int positionOfKey = key * -1;
-            checkNegativeKeys[positionOfKey] = true;
+        if (hashCodeExists(position)) {
+            return;
         }
+        checkHashCodes[position] = true;
         hashCodes.add(position);
         size++;
     }
 
-    private boolean keyExists(int key) {
-        int positionOfNegativeKey = key * -1;
-        if ((key >= 0 && checkPositiveKeys[key]) ||
-                (key < 0 && checkNegativeKeys[positionOfNegativeKey])) {
-            return true;
+    private boolean hashCodeExists(int hashCode) {
+        if(hashCode >= 0){
+            return checkHashCodes[hashCode];
         }
-        return false;
+        int positionOfNegativeHashCode = arr.length + hashCode;
+        return checkHashCodes[positionOfNegativeHashCode];
     }
 
     private int hashCode(int key) {
-        if (key >= 0) {
-            return key;
-        }
-        return arr.length + key;
+        return key;
     }
 
     public void remove(int key) {
-        if (!keyExists(key)) {
+        if (!hashCodeExists(key)) {
             throw new NullPointerException("Key " + key + " is absent.");
         }
-        if (key >= 0) {
-            checkPositiveKeys[key] = false;
-        } else {
-            int positionOfKey = key * -1;
-            checkNegativeKeys[positionOfKey] = false;
+        int hashCode = hashCode(key);
+        hashCodes.remove((Object) hashCode);
+        int position = hashCode;
+        if (position < 0) {
+            position = arr.length + hashCode;
         }
-        int position = hashCode(key);
-        hashCodes.remove((Object) position);
+        checkHashCodes[position] = false;
         size--;
     }
 
     public int find(int key) {
-        if (!keyExists(key)) {
+        if (!hashCodeExists(key)) {
             System.out.println("Key " + key + " is absent");
             return -1;
         }
         int position = hashCode(key);
+        if (position < 0) {
+            position = arr.length + key;
+        }
         return arr[position].getValue();
     }
 
