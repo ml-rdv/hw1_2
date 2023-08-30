@@ -20,7 +20,7 @@ public class MyBinarySearchTreeTest {
     }
 
     @Test
-    void should_not_insert_element_to_binarySearchTree() {
+    void should_not_insert_same_elements_to_binarySearchTree() {
         var myBiSearchTree = new MyBinarySearchTree();
         myBiSearchTree.insert(8);
         myBiSearchTree.insert(3);
