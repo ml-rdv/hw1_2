@@ -103,16 +103,52 @@ public class MyBinarySearchTree {
         boolean hasLeftChild = childToRemove.getLeft() != null && childToRemove.getRight() == null;
         boolean hasRightChild = childToRemove.getLeft() == null && childToRemove.getRight() != null;
 
-        if (hasNotChildren) {
-            removeNode(parent, itIsLeftChild, null, false);
-        } else if (hasLeftChild) {
-            removeNode(parent, itIsLeftChild, childToRemove, true);
-        } else if (hasRightChild) {
-            removeNode(parent, itIsLeftChild, childToRemove, false);
+        if (itIsLeftChild) {
+            if (hasNotChildren) {
+                removeLeftNode(parent, null, false);
+            } else if (hasLeftChild) {
+                removeLeftNode(parent, childToRemove, true);
+            } else if (hasRightChild) {
+                removeLeftNode(parent, childToRemove, false);
+            } else {
+                removeNodeWithBothChild(parent, childToRemove, true);
+            }
         } else {
-            removeNodeWithBothChild(parent, childToRemove, itIsLeftChild);
+            if (hasNotChildren) {
+                removeRightNode(parent, null, false);
+            } else if (hasLeftChild) {
+                removeRightNode(parent, childToRemove, true);
+            } else if (hasRightChild) {
+                removeRightNode(parent, childToRemove, false);
+            } else {
+                removeNodeWithBothChild(parent, childToRemove, false);
+            }
         }
         size--;
+    }
+
+    private void removeLeftNode(Node parent, Node childToRemove, boolean nodeWithLeftChild) {
+        Node child = null;
+        if (childToRemove != null) {
+            if (nodeWithLeftChild) {
+                child = childToRemove.getLeft();
+            } else {
+                child = childToRemove.getRight();
+            }
+        }
+        parent.setLeft(child);
+    }
+
+    private void removeRightNode(Node parent, Node childToRemove, boolean nodeWithLeftChild) {
+        Node child = null;
+        if (childToRemove != null) {
+            if (nodeWithLeftChild) {
+                child = childToRemove.getLeft();
+            } else {
+                child = childToRemove.getRight();
+            }
+        }
+        parent.setRight(child);
     }
 
     private void removeNodeWithBothChild(Node parent, Node childToRemove, boolean itIsLeftChild) {
@@ -130,22 +166,6 @@ public class MyBinarySearchTree {
         parentOfChildToRemove.setLeft(newChild);
         child.setLeft(childToRemove.getLeft());
         child.setRight(childToRemove.getRight());
-        if (itIsLeftChild) {
-            parent.setLeft(child);
-        } else {
-            parent.setRight(child);
-        }
-    }
-
-    private void removeNode(Node parent, boolean itIsLeftChild, Node childToRemove, boolean nodeWithLeftChild) {
-        Node child = null;
-        if (childToRemove != null) {
-            if (nodeWithLeftChild) {
-                child = childToRemove.getLeft();
-            } else {
-                child = childToRemove.getRight();
-            }
-        }
         if (itIsLeftChild) {
             parent.setLeft(child);
         } else {
