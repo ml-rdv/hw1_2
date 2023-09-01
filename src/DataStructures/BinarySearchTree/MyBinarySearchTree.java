@@ -146,7 +146,7 @@ public class MyBinarySearchTree {
     private Node removeNodeWithBothChild(Node childToRemove) {
         Node child;
         Node rightNode = childToRemove.getRight();
-        if(rightNode.getLeft() != null){
+        if (rightNode.getLeft() != null) {
             Node parentOfNewChild = closeNodeWithoutMinLeftChild(rightNode);
             child = parentOfNewChild.getLeft();
             parentOfNewChild.setLeft(child.getRight());
