@@ -2,13 +2,12 @@ package DataStructures.HashTable;
 
 public class Pair {
     private final int key;
-    private final int hashCode;
-    private final int value;
+    private int value;
+    private Pair next;
 
     public Pair(int key, int value) {
         this.key = key;
         this.value = value;
-        this.hashCode = key;
     }
 
     public int getKey() {
@@ -19,8 +18,15 @@ public class Pair {
         return value;
     }
 
-    public int getHashCode() {
-        return hashCode;
+    public Pair getNext() {
+        return next;
     }
 
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    public void setNext(Pair next) {
+        this.next = next;
+    }
 }
