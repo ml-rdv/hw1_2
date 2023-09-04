@@ -64,7 +64,7 @@ public class MyBinarySearchTreeTest {
     }
 
     @Test
-    void should_remove_element_with_both_child_from_binarySearchTree() {
+    void should_remove_element_with_both_child_and_minimal_left_child() {
         var myBiSearchTree = new MyBinarySearchTree();
         myBiSearchTree.insert(8);
         myBiSearchTree.insert(3);
@@ -79,7 +79,7 @@ public class MyBinarySearchTreeTest {
     }
 
     @Test
-    void should_remove_element_with_both_child_second_version_from_binarySearchTree() {
+    void should_remove_element_with_both_child_and_minimal_left_child_has_its_children() {
         var myBiSearchTree = new MyBinarySearchTree();
         myBiSearchTree.insert(70);
         myBiSearchTree.insert(3);
@@ -101,7 +101,7 @@ public class MyBinarySearchTreeTest {
     }
 
     @Test
-    void should_remove_element_with_both_child_third_version_from_binarySearchTree() {
+    void should_remove_element_with_both_child_and_minimal_left_child_has_one_right_child() {
         var myBiSearchTree = new MyBinarySearchTree();
         myBiSearchTree.insert(8);
         myBiSearchTree.insert(3);
@@ -233,5 +233,13 @@ public class MyBinarySearchTreeTest {
 
         var afterRemoving = myBiSearchTree.size();
         Assertions.assertEquals(afterRemoving, 2);
+    }
+
+    @Test
+    void should_throw_exception_NullPointerException_when_we_remove() {
+        Assertions.assertThrows(NullPointerException.class, () -> {
+            var myBiSearchTree = new MyBinarySearchTree();
+            myBiSearchTree.remove(5);
+        });
     }
 }

@@ -85,22 +85,14 @@ public class MyBinarySearchTree {
     }
 
     public void remove(int number) {
+        if (isEmpty())
+            throw new NullPointerException("Binary search tree is empty.");
         if (root.getData() == number) {
             root = getNodeForReplace(root);
+            size--;
         } else {
             removeNode(root, number);
         }
-        size = 0;
-        checkSize(root);
-    }
-
-    private void checkSize(Node node) {
-        if (node == null) {
-            return;
-        }
-        size++;
-        checkSize(node.getLeft());
-        checkSize(node.getRight());
     }
 
     private Node getNodeForReplace(Node node) {
@@ -130,6 +122,7 @@ public class MyBinarySearchTree {
             if (parent.getLeft() != null && parent.getLeft().getData() == number) {
                 Node nodeForDelete = getNodeForReplace(parent.getLeft());
                 parent.setLeft(nodeForDelete);
+                size--;
                 return;
             }
             removeNode(parent.getLeft(), number);
@@ -137,6 +130,7 @@ public class MyBinarySearchTree {
             if (parent.getRight() != null && parent.getRight().getData() == number) {
                 Node nodeForDelete = getNodeForReplace(parent.getRight());
                 parent.setRight(nodeForDelete);
+                size--;
                 return;
             }
             removeNode(parent.getRight(), number);

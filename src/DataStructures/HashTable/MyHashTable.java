@@ -32,10 +32,7 @@ public class MyHashTable {
     }
 
     private int hashCode(int key) {
-        if (key < 0) {
-            key = key * -1;
-        }
-        return key % arr.length;
+        return Math.abs(key) % arr.length;
     }
 
     public void remove(int key) {
@@ -65,7 +62,7 @@ public class MyHashTable {
             pair = pair.getNext();
         }
         if (pair == null) {
-            throw new NullPointerException("Key " + key + " is absent.");
+            throw new RuntimeException("Key " + key + " is absent.");
         }
         return pair.getValue();
     }

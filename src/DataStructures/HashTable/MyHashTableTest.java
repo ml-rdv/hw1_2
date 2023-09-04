@@ -20,7 +20,7 @@ public class MyHashTableTest {
     }
 
     @Test
-    void should_insert_forth_pairs() {
+    void should_insert_forth_pairs_with_same_hashCodes() {
         var hashTable = new MyHashTable();
         hashTable.insert(5, 1);
         hashTable.insert(4, 1);
