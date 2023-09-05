@@ -27,7 +27,7 @@ public class MyQueue {
         }
     }
 
-    public int dequeue() throws IndexOutOfBoundsException {
+    public int dequeue() {
         if (isEmpty()) {
             throw new IndexOutOfBoundsException("Queue is empty.");
         }
@@ -56,7 +56,7 @@ public class MyQueue {
         return "";
     }
 
-    public int peek() throws IndexOutOfBoundsException {
+    public int peek() {
         if (isEmpty()) {
             throw new IndexOutOfBoundsException("Queue is empty.");
         }

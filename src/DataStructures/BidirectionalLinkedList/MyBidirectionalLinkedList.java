@@ -3,41 +3,34 @@ package DataStructures.BidirectionalLinkedList;
 public class MyBidirectionalLinkedList {
 
     private Node head;
+    private Node tail;
     private int size = 0;
 
-    public void insertAtHead(int number) throws CloneNotSupportedException {
+    public void insertAtHead(int number) {
         if (isEmpty()) {
             addHead(number);
         } else {
-            Node newElement = new Node();
-            newElement.setData(number);
-            newElement.setNext(head);
+            Node newElement = new Node(number, null, head);
             head.setPrevious(newElement);
             head = newElement;
+            size++;
         }
-        size++;
     }
 
     private void addHead(int number) {
-        head = new Node();
-        head.setData(number);
+        head = new Node(number);
+        size++;
+        tail = head;
     }
 
     public void insertAtEnd(int number) {
         if (isEmpty()) {
             addHead(number);
-        }
-        Node currentValue = head;
-        Node newElement = new Node();
-        newElement.setData(number);
-        for (int i = 0; i < size; i++) {
-            if (i == size - 1) {
-                currentValue.setNext(newElement);
-                newElement.setPrevious(currentValue);
-                size++;
-                return;
-            }
-            currentValue = currentValue.getNext();
+        } else {
+            Node newElement = new Node(number, tail, null);
+            tail.setNext(newElement);
+            tail = newElement;
+            size++;
         }
     }
 
@@ -53,42 +46,36 @@ public class MyBidirectionalLinkedList {
         if (isEmpty()) {
             return;
         }
-        Node currentValue = head;
-        boolean isHead = false;
-        Node previousValue = null;
-        Node nextValue = null;
-        while (true) {
-            if (currentValue == null) {
-                return;
-            }
-            if (currentValue.getData() == number) {
-                if (currentValue == head) {
-                    head = null;
-                    isHead = true;
+        if (number == head.getData() && number == tail.getData()) {
+            head = null;
+            tail = null;
+            size--;
+        } else if (number == head.getData()) {
+            head = head.getNext();
+            head.setPrevious(null);
+            size--;
+        } else if (number == tail.getData()) {
+            tail = tail.getPrevious();
+            tail.setNext(null);
+            size--;
+        } else {
+            Node currentValue = head;
+            while (true) {
+                if (currentValue == null) {
+                    return;
                 }
-                if (currentValue.getNext() != null) {
-                    nextValue = currentValue.getNext();
-                    nextValue.setPrevious(null);
-                }
-                if (currentValue.getPrevious() != null) {
-                    previousValue = currentValue.getPrevious();
-                    previousValue.setNext(null);
-                }
-                if (nextValue != null) {
-                    nextValue.setPrevious(previousValue);
-                    if (isHead) {
-                        head = nextValue;
-                    }
-                }
-                if (previousValue != null) {
-                    currentValue.getPrevious().setNext(nextValue);
-                }
-                size--;
-                return;
-            }
-            currentValue = currentValue.getNext();
-        }
+                if (currentValue.getData() == number) {
+                    Node nextValue = currentValue.getNext();
+                    Node previousValue = currentValue.getPrevious();
 
+                    nextValue.setPrevious(previousValue);
+                    previousValue.setNext(nextValue);
+                    size--;
+                    return;
+                }
+                currentValue = currentValue.getNext();
+            }
+        }
     }
 
     public int search(int number) {

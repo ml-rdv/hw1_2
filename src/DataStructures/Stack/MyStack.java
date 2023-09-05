@@ -22,15 +22,25 @@ public class MyStack {
     }
 
     public int pop() {
+        if (isEmpty()) {
+            throw new IndexOutOfBoundsException("Stack is empty");
+        }
         return stack[--size];
     }
 
     public int peek() {
+        if (isEmpty()) {
+            throw new IndexOutOfBoundsException("Stack is empty");
+        }
         return stack[size - 1];
     }
 
     public boolean isEmpty() {
         return size == 0;
+    }
+
+    public int size() {
+        return size;
     }
 
     private void extendArray() {

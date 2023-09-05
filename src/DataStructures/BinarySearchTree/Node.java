@@ -5,6 +5,15 @@ public class Node {
     private Node left = null;
     private Node right = null;
 
+    public Node() {
+    }
+
+    public Node(int data, Node left, Node right) {
+        this.data = data;
+        this.left = left;
+        this.right = right;
+    }
+
     public int getData() {
         return data;
     }
