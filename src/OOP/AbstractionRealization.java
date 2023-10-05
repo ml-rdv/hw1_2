@@ -18,7 +18,7 @@ class AbstractionRealization extends Abstraction {
 
     @Override
     public void method3() {
-        System.out.println("Overriding of public abstract method");
+        System.out.println("Overriding of publicс abstract method");
     }
 
     public static void main(String[] args) {
