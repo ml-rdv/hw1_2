@@ -3,7 +3,7 @@ package InternetCafe;
 import java.util.Date;
 
 public class DiscountBirthday implements Discount {
-    private final Date birthday; // protected ???
+    private final Date birthday;
 
     public DiscountBirthday(Date birthday) {
         this.birthday = birthday;
