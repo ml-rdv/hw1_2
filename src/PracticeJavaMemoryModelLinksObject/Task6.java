@@ -2,7 +2,9 @@ package PracticeJavaMemoryModelLinksObject;
 
 public class Task6 {
     public static String method(String str) {
-        if (str == null || str.isEmpty()) return "";
+        if (str == null || str.isEmpty()) {
+            return "";
+        }
         String trim = str.trim();
         String[] strings = trim.split(";");
         if (strings.length < 3) {
