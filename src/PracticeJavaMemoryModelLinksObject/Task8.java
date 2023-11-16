@@ -1,3 +1,6 @@
+/*
+Сделать тоже самое, что в предыдущем задание, но с использованием  регулярных выражений.
+ */
 package PracticeJavaMemoryModelLinksObject;
 
 public class Task8 {
@@ -6,8 +9,8 @@ public class Task8 {
             return "Other";
         }
         str = str.trim();
-        // FullName ????????
-        if (str.matches("^[а-яА-Я]*(\\s)^[а-яА-Я]*(\\s)^[а-яА-Я]$")) {
+        // FullName
+        if (str.matches("^[А-ЯЁ][а-яё]+(\\s[А-ЯЁ][а-яё]+){2}$")) {
             return "FullName";
         }
 
@@ -16,11 +19,11 @@ public class Task8 {
             return "Email";
         }
         // PhoneNumber
-        if (str.matches("(\\+)\\d(\\()\\d{3}(\\))\\d{7}")) {
+        if (str.matches("\\+\\d\\(\\d{3}\\)\\d{7}$")) {
             return "PhoneNumber";
         }
         // Number
-        if (str.matches("^\\d*$")) {
+        if (str.matches("^\\d+$")) {
             return "Number";
         }
         return "Other";

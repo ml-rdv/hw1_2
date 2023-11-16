@@ -2,47 +2,39 @@ package PracticeJavaMemoryModelLinksObject;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class Task7Test {
     @Test
-    public void should_return_FullName(){
+    public void should_return_FullName() {
         String fullName = Task7.stringDefinition("Иванов Иван Иванович");
         Assertions.assertEquals(fullName, "FullName");
     }
 
-    @Test
-    public void should_return_Email(){
-        String email1 = Task7.stringDefinition("test@test.ru");
+    @ParameterizedTest
+    @ValueSource(strings = {"test@test.ru", "name.surname111@test.ru", "d@."})
+    public void should_return_Email(String email) {
+        String email1 = Task7.stringDefinition(email);
         Assertions.assertEquals(email1, "Email");
-
-        String email2 = Task7.stringDefinition("name.surname111@test.ru");
-        Assertions.assertEquals(email2, "Email");
     }
 
     @Test
-    public void should_return_PhoneNumber(){
+    public void should_return_PhoneNumber() {
         String phoneNumber = Task7.stringDefinition("+7(999)9999999");
         Assertions.assertEquals(phoneNumber, "PhoneNumber");
     }
 
     @Test
-    public void should_return_Number(){
+    public void should_return_Number() {
         String number = Task7.stringDefinition("0123456");
         Assertions.assertEquals(number, "Number");
     }
 
-    @Test
-    public void should_return_Other() {
-        String str = Task7.stringDefinition("");
-        Assertions.assertEquals(str, "Other");
-
-        String str2 = Task7.stringDefinition("Иванов 1Иван Иванович");
-        Assertions.assertEquals(str2, "Other");
-
-        String str3 = Task7.stringDefinition("test@@@test.ru");
-        Assertions.assertEquals(str3, "Other");
-
-        String str4 = Task7.stringDefinition("0123456sdf");
-        Assertions.assertEquals(str4, "Other");
+    @ParameterizedTest
+    @ValueSource(strings = {"", "Иванов 1Иван Иванович", "test@@@test.ru", "0123456sdf"})
+    public void should_return_Other(String other) {
+        String other1 = Task7.stringDefinition(other);
+        Assertions.assertEquals(other1, "Other");
     }
 }

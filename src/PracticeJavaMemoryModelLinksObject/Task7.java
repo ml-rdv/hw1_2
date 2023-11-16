@@ -1,3 +1,11 @@
+/*
+Написать метод (с тестами) без использования регулярных выражений, который принимает строку и определяет чем является строка . Примеры данных и типов:
+“Иванов Иван Иванович” -> FullName
+“test@test.ru” -> Email
+“+7(999)9999999” -> PhoneNumber
+“123456” -> Number
+всё остальное -> Other
+ */
 package PracticeJavaMemoryModelLinksObject;
 
 public class Task7 {
@@ -20,13 +28,13 @@ public class Task7 {
             return "FullName";
         }
         // Email
-        if (str.contains("@") && (str.contains(".ru") || str.contains(".com"))) {
+        if (str.contains("@") && (str.contains("."))
+                && str.indexOf("@") > 0 && str.length() > str.indexOf("@") + 1) {
             str = str.replaceFirst("@", "");
-            str = str.replace(".ru", "");
-            str = str.replace(".com", "");
+            str = str.replaceAll("\\.", "");
             for (int j = 0; j < str.length(); j++) {
                 char c = str.charAt(j);
-                if (!(c >= 'A' && c <= 'Z') && !(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && c!='.') {
+                if (!(c >= 'A' && c <= 'Z') && !(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && c != '.') {
                     return "Other";
                 }
             }

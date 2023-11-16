@@ -1,5 +1,7 @@
 /*
 Ошибка OutOfMemoryError происходит, т.к. память кучи heap заполнена из-за бесконечного создания объектов.
+- Как не допустить появление OutOfMemoryError в данном примере?
+Добавить условие выхода из цикла с помощью оператора break или добавить list.clear() в конец цикла
 */
 
 package PracticeJavaMemoryModelLinksObject;
