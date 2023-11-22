@@ -1,14 +1,15 @@
-/*
-Ссылки на объекты Test копируются и передаются в метод новые ссылки
-1)	Новая ссылка на объект test обнуляется, из-за чего в методе null, а в main testField='test'
-2)	Новая ссылка на объект test2 изменяет содержимое объекта,
-    из-за чего в методе testField='newTest2' и в main testField='newTest2'
-3)	Новая ссылка на объект test3 указывает на новый объект
-    new Test("newRefTest");
-    из-за чего в методе testField='newRefTest', а в main ссылка указывает на старый объект,
-    следовательно testField='test3'
-*/
 package PracticeJavaMemoryModelLinksObject;
+
+/**
+ * Ссылки на объекты Test копируются и передаются в метод новые ссылки
+ * 1)	Новая ссылка на объект test обнуляется, из-за чего в методе null, а в main testField='test'
+ * 2)	Новая ссылка на объект test2 изменяет содержимое объекта,
+ * из-за чего в методе testField='newTest2' и в main testField='newTest2'
+ * 3)	Новая ссылка на объект test3 указывает на новый объект
+ * new Test("newRefTest");
+ * из-за чего в методе testField='newRefTest', а в main ссылка указывает на старый объект,
+ * следовательно testField='test3'
+ */
 
 public class Task3 {
     public static void main(String[] args) {

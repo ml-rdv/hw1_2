@@ -1,9 +1,3 @@
-/*
-Написать метод (с тестами) который,
-Принимает дату и время с часовым поясом
-Метод должен сконвертировать дату и время к часовому поясу
-Метод возвращает дату и время в новом часовом поясе
- */
 package PracticeJavaMemoryModelLinksObject;
 
 import java.time.LocalDateTime;
@@ -11,6 +5,12 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Написать метод (с тестами) который,
+ * Принимает дату и время с часовым поясом
+ * Метод должен сконвертировать дату и время к часовому поясу
+ * Метод возвращает дату и время в новом часовом поясе
+ */
 public class Task14 {
 
     public static String dateConverting(String dateInString, String timeZoneFrom, String timeZoneTo) {

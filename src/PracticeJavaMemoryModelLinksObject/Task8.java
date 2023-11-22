@@ -1,7 +1,8 @@
-/*
-Сделать тоже самое, что в предыдущем задание, но с использованием  регулярных выражений.
- */
 package PracticeJavaMemoryModelLinksObject;
+
+/**
+ * Сделать тоже самое, что в предыдущем задание, но с использованием  регулярных выражений.
+ */
 
 public class Task8 {
     public static String stringDefinition(String str) {
