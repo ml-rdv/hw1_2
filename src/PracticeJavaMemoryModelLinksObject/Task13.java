@@ -14,13 +14,17 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 public class Task13 {
-    public static String changeDate(String action, String unit, int count) {
-        LocalDateTime date = LocalDateTime.now();
-        ChronoUnit cu = ChronoUnit.valueOf(unit);
+    public static String changeDate(String action, ChronoUnit unit, int count, LocalDateTime... ldt) {
+        LocalDateTime date;
+        if (ldt.length > 0) {
+            date = ldt[0];
+        } else {
+            date = LocalDateTime.now();
+        }
         if (action.equals("PLUS")) {
-            date = date.plus(count, cu);
+            date = date.plus(count, unit);
         } else if (action.equals("MINUS")) {
-            date = date.minus(count, cu);
+            date = date.minus(count, unit);
         } else {
             return "";
         }
