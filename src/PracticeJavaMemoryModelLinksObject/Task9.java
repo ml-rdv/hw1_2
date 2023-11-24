@@ -11,16 +11,14 @@ package PracticeJavaMemoryModelLinksObject;
 public class Task9 {
     public static void printChars() {
         StringBuilder stringBuilder = new StringBuilder();
-        int i = 0;
         for (char ch = Character.MIN_VALUE; ch <= Character.MAX_VALUE; ch++) {
-            if (i % 32 == 0) {
+            if (ch % 32 == 0) {
                 stringBuilder.append('\n');
             }
             stringBuilder.append(ch).append('\t');
             if (ch == Character.MAX_VALUE) {
                 break;
             }
-            i++;
         }
         System.out.println(stringBuilder);
     }
