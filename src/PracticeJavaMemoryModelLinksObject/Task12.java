@@ -1,17 +1,18 @@
-/*
-Написать метод (с тестами) который,
-Принимает строку в формате "yyyy-MM-dd HH:mm" и преобразовывает её в формат даты и времени (использовать DateTimeFormatter.ofPattern())
-Метод должен вернуть строку:
-“Before”, если входящая дата до текущей даты и времени.
-“After”, если входящая дата после текущей даты и времени.
-“Equal”, если даты совпадают (Сравнить только по дате, время игнорировать)
- */
 package PracticeJavaMemoryModelLinksObject;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
+
+/**
+ * Написать метод (с тестами) который,
+ * Принимает строку в формате "yyyy-MM-dd HH:mm" и преобразовывает её в формат даты и времени (использовать DateTimeFormatter.ofPattern())
+ * Метод должен вернуть строку:
+ * “Before”, если входящая дата до текущей даты и времени.
+ * “After”, если входящая дата после текущей даты и времени.
+ * “Equal”, если даты совпадают (Сравнить только по дате, время игнорировать)
+ */
 
 public class Task12 {
     public static String dateCheck(String dateInString) {
