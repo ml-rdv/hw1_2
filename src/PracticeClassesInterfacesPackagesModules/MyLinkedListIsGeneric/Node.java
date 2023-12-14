@@ -1,12 +1,9 @@
 package PracticeClassesInterfacesPackagesModules.MyLinkedListIsGeneric;
 
 public class Node {
-    private Object data;
+    private final Object data;
     private Node previous;
     private Node next;
-
-    public Node() {
-    }
 
     public Node(Object data) {
         this.data = data;
@@ -28,10 +25,6 @@ public class Node {
 
     public Node getNext() {
         return next;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
     }
 
     public void setPrevious(Node previous) {

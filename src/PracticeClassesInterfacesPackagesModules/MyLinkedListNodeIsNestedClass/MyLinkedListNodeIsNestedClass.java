@@ -6,12 +6,9 @@ package PracticeClassesInterfacesPackagesModules.MyLinkedListNodeIsNestedClass;
 public class MyLinkedListNodeIsNestedClass {
 
     public static class Node {
-        private int data;
+        private final int data;
         private Node previous;
         private Node next;
-
-        public Node() {
-        }
 
         public Node(int data) {
             this.data = data;
@@ -33,10 +30,6 @@ public class MyLinkedListNodeIsNestedClass {
 
         public Node getNext() {
             return next;
-        }
-
-        public void setData(int data) {
-            this.data = data;
         }
 
         public void setPrevious(Node previous) {
