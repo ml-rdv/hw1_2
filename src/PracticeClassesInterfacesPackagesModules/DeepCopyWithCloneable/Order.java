@@ -1,6 +1,9 @@
 package PracticeClassesInterfacesPackagesModules.DeepCopyWithCloneable;
 
+import java.util.Date;
+
 // Класс упрощён
+
 public class Order implements Cloneable {
 
     protected OrderStatus status;

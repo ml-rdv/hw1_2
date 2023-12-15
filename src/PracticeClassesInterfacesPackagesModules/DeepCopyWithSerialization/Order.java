@@ -1,6 +1,7 @@
 package PracticeClassesInterfacesPackagesModules.DeepCopyWithSerialization;
 
 import java.io.Serializable;
+import java.util.Date;
 
 // Класс упрощён
 public class Order implements Serializable {

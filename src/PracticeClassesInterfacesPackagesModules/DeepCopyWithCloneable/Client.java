@@ -2,6 +2,7 @@ package PracticeClassesInterfacesPackagesModules.DeepCopyWithCloneable;
 
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 // Класс упрощён
 public class Client implements Cloneable {

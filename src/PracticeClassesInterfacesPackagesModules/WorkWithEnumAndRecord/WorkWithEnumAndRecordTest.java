@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import java.time.Year;
 import java.util.ArrayList;
-
+import java.util.Date;
 
 public class WorkWithEnumAndRecordTest {
     @ParameterizedTest
@@ -16,44 +16,21 @@ public class WorkWithEnumAndRecordTest {
         MonthWithInfo monthWithInformation = MethodGetsJustOneEnum.makeRecord(month);
         MonthWithInfo expectedElement = null;
         switch (month) {
-            case January -> {
-                expectedElement = new MonthWithInfo(Season.Winter, 31, 1, "Январь");
-            }
+            case January -> expectedElement = new MonthWithInfo(Season.Winter, 31, 1, "Январь");
             case February -> {
                 int daysInMonth = Year.now().getValue() % 4 == 0 ? 29 : 28;
                 expectedElement = new MonthWithInfo(Season.Winter, daysInMonth, 2, "Февраль");
             }
-            case March -> {
-                expectedElement = new MonthWithInfo(Season.Spring, 31, 3, "Март");
-            }
-            case April -> {
-                expectedElement = new MonthWithInfo(Season.Spring, 30, 4, "Апрель");
-            }
-            case May -> {
-                expectedElement = new MonthWithInfo(Season.Spring, 31, 5, "Май");
-            }
-            case June -> {
-                expectedElement = new MonthWithInfo(Season.Summer, 30, 6, "Июнь");
-            }
-            case July -> {
-                expectedElement = new MonthWithInfo(Season.Summer, 31, 7, "Июль");
-            }
-            case August -> {
-                expectedElement = new MonthWithInfo(Season.Summer, 31, 8, "Август");
-            }
-            case September -> {
-                expectedElement = new MonthWithInfo(Season.Autumn, 30, 9, "Сентябрь");
-            }
-            case October -> {
-                expectedElement = new MonthWithInfo(Season.Autumn, 31, 10, "Октябрь");
-
-            }
-            case November -> {
-                expectedElement = new MonthWithInfo(Season.Autumn, 30, 11, "Ноябрь");
-            }
-            case December -> {
-                expectedElement = new MonthWithInfo(Season.Winter, 31, 12, "Декабрь");
-            }
+            case March -> expectedElement = new MonthWithInfo(Season.Spring, 31, 3, "Март");
+            case April -> expectedElement = new MonthWithInfo(Season.Spring, 30, 4, "Апрель");
+            case May -> expectedElement = new MonthWithInfo(Season.Spring, 31, 5, "Май");
+            case June -> expectedElement = new MonthWithInfo(Season.Summer, 30, 6, "Июнь");
+            case July -> expectedElement = new MonthWithInfo(Season.Summer, 31, 7, "Июль");
+            case August -> expectedElement = new MonthWithInfo(Season.Summer, 31, 8, "Август");
+            case September -> expectedElement = new MonthWithInfo(Season.Autumn, 30, 9, "Сентябрь");
+            case October -> expectedElement = new MonthWithInfo(Season.Autumn, 31, 10, "Октябрь");
+            case November -> expectedElement = new MonthWithInfo(Season.Autumn, 30, 11, "Ноябрь");
+            case December -> expectedElement = new MonthWithInfo(Season.Winter, 31, 12, "Декабрь");
         }
         Assertions.assertEquals(expectedElement, monthWithInformation);
     }

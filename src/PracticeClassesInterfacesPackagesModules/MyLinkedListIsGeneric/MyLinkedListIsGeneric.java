@@ -1,5 +1,7 @@
 package PracticeClassesInterfacesPackagesModules.MyLinkedListIsGeneric;
 
+import java.util.Date;
+
 /**
  * Перевести связанный список на Generic.
  */

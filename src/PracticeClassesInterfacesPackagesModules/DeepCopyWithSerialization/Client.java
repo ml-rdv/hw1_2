@@ -3,6 +3,8 @@ package PracticeClassesInterfacesPackagesModules.DeepCopyWithSerialization;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import java.util.Date;
+
 // Класс упрощён
 public class Client implements Serializable {
     protected String fullName;

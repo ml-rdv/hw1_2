@@ -1,5 +1,7 @@
 package PracticeClassesInterfacesPackagesModules.MyLinkedListNodeIsNestedClass;
 
+import java.util.Date;
+
 /**
  * Класс узла для связанного списка переделать на вложенный класс.
  */

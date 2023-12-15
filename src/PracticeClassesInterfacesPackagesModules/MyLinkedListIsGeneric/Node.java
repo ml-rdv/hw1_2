@@ -1,5 +1,7 @@
 package PracticeClassesInterfacesPackagesModules.MyLinkedListIsGeneric;
 
+import java.util.Date;
+
 public class Node {
     private final Object data;
     private Node previous;
