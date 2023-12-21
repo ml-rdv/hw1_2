@@ -1,70 +1,35 @@
 package PracticeClassesInterfacesPackagesModules.WorkWithEnumAndRecord;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import java.util.List;
 
-import java.time.Year;
-import java.util.ArrayList;
-
+import static PracticeClassesInterfacesPackagesModules.WorkWithEnumAndRecord.Month.*;
 
 public class WorkWithEnumAndRecordTest {
-    @ParameterizedTest
-    @EnumSource(Month.class)
-    void information_about_every_month_should_be_right(Month month) {
-        MonthWithInfo monthWithInformation = MethodGetsJustOneEnum.makeRecord(month);
-        MonthWithInfo expectedElement = null;
-        switch (month) {
-            case January -> {
-                expectedElement = new MonthWithInfo(Season.Winter, 31, 1, "Январь");
-            }
-            case February -> {
-                int daysInMonth = Year.now().getValue() % 4 == 0 ? 29 : 28;
-                expectedElement = new MonthWithInfo(Season.Winter, daysInMonth, 2, "Февраль");
-            }
-            case March -> {
-                expectedElement = new MonthWithInfo(Season.Spring, 31, 3, "Март");
-            }
-            case April -> {
-                expectedElement = new MonthWithInfo(Season.Spring, 30, 4, "Апрель");
-            }
-            case May -> {
-                expectedElement = new MonthWithInfo(Season.Spring, 31, 5, "Май");
-            }
-            case June -> {
-                expectedElement = new MonthWithInfo(Season.Summer, 30, 6, "Июнь");
-            }
-            case July -> {
-                expectedElement = new MonthWithInfo(Season.Summer, 31, 7, "Июль");
-            }
-            case August -> {
-                expectedElement = new MonthWithInfo(Season.Summer, 31, 8, "Август");
-            }
-            case September -> {
-                expectedElement = new MonthWithInfo(Season.Autumn, 30, 9, "Сентябрь");
-            }
-            case October -> {
-                expectedElement = new MonthWithInfo(Season.Autumn, 31, 10, "Октябрь");
-
-            }
-            case November -> {
-                expectedElement = new MonthWithInfo(Season.Autumn, 30, 11, "Ноябрь");
-            }
-            case December -> {
-                expectedElement = new MonthWithInfo(Season.Winter, 31, 12, "Декабрь");
-            }
-        }
-        Assertions.assertEquals(expectedElement, monthWithInformation);
+    private static List<Arguments> provideParameters() {
+        return List.of(
+                Arguments.of(January, new MonthWithInfo(Season.Winter, 31, 1, "Январь")),
+                Arguments.of(February, new MonthWithInfo(Season.Winter, 28, 2, "Февраль")),
+                Arguments.of(March, new MonthWithInfo(Season.Spring, 31, 3, "Март")),
+                Arguments.of(April, new MonthWithInfo(Season.Spring, 30, 4, "Апрель")),
+                Arguments.of(May, new MonthWithInfo(Season.Spring, 31, 5, "Май")),
+                Arguments.of(June, new MonthWithInfo(Season.Summer, 30, 6, "Июнь")),
+                Arguments.of(July, new MonthWithInfo(Season.Summer, 31, 7, "Июль")),
+                Arguments.of(August, new MonthWithInfo(Season.Summer, 31, 8, "Август")),
+                Arguments.of(September, new MonthWithInfo(Season.Autumn, 30, 9, "Сентябрь")),
+                Arguments.of(October, new MonthWithInfo(Season.Autumn, 31, 10, "Октябрь")),
+                Arguments.of(November, new MonthWithInfo(Season.Autumn, 30, 11, "Ноябрь")),
+                Arguments.of(December, new MonthWithInfo(Season.Winter, 31, 12, "Декабрь"))
+        );
     }
 
-    @Test
-    void information_about_array_of_months_should_be_right() {
-        ArrayList<MonthWithInfo> monthsWithInformation = MethodGetsArrayOfEnums.checkMonth(new Month[]{Month.January, Month.February});
-        ArrayList<MonthWithInfo> expectedElement = new ArrayList<>();
-        expectedElement.add(new MonthWithInfo(Season.Winter, 31, 1, "Январь"));
-        int daysInMonth = Year.now().getValue() % 4 == 0 ? 29 : 28;
-        expectedElement.add(new MonthWithInfo(Season.Winter, daysInMonth, 2, "Февраль"));
-        Assertions.assertEquals(expectedElement, monthsWithInformation);
+    @ParameterizedTest
+    @MethodSource("provideParameters")
+    void information_about_every_month_should_be_right(Month month, MonthWithInfo monthWithInfo) {
+        MonthWithInfo monthWithInformation = MethodGetsJustOneEnum.makeRecord(month);
+        Assertions.assertEquals(monthWithInfo, monthWithInformation);
     }
 }

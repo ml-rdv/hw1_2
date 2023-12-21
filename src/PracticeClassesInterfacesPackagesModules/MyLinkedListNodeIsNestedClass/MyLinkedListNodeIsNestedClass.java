@@ -5,7 +5,7 @@ package PracticeClassesInterfacesPackagesModules.MyLinkedListNodeIsNestedClass;
  */
 public class MyLinkedListNodeIsNestedClass {
 
-    public static class Node {
+    private static class Node {
         private final int data;
         private Node previous;
         private Node next;

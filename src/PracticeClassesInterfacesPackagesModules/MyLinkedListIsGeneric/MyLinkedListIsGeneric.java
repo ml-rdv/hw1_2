@@ -5,15 +5,15 @@ package PracticeClassesInterfacesPackagesModules.MyLinkedListIsGeneric;
  */
 public class MyLinkedListIsGeneric<E> {
 
-    private Node head;
-    private Node tail;
+    private Node<E> head;
+    private Node<E> tail;
     private int size = 0;
 
     public void insertAtHead(E data) {
         if (isEmpty()) {
             addHead(data);
         } else {
-            Node newElement = new Node(data, null, head);
+            Node<E> newElement = new Node<>(data, null, head);
             head.setPrevious(newElement);
             head = newElement;
             size++;
@@ -21,7 +21,7 @@ public class MyLinkedListIsGeneric<E> {
     }
 
     private void addHead(E data) {
-        head = new Node(data);
+        head = new Node<>(data);
         size++;
         tail = head;
     }
@@ -30,7 +30,7 @@ public class MyLinkedListIsGeneric<E> {
         if (isEmpty()) {
             addHead(data);
         } else {
-            Node newElement = new Node(data, tail, null);
+            Node<E> newElement = new Node<>(data, tail, null);
             tail.setNext(newElement);
             tail = newElement;
             size++;
@@ -63,14 +63,14 @@ public class MyLinkedListIsGeneric<E> {
             tail.setNext(null);
             size--;
         } else {
-            Node currentValue = head;
+            Node<E> currentValue = head;
             while (true) {
                 if (currentValue == null) {
                     return;
                 }
                 if (currentValue.getData().equals(data)) {
-                    Node nextValue = currentValue.getNext();
-                    Node previousValue = currentValue.getPrevious();
+                    Node<E> nextValue = currentValue.getNext();
+                    Node<E> previousValue = currentValue.getPrevious();
 
                     nextValue.setPrevious(previousValue);
                     previousValue.setNext(nextValue);
@@ -90,11 +90,11 @@ public class MyLinkedListIsGeneric<E> {
         if (isEmpty()) {
             return null;
         }
-        Node returnValue = head;
+        Node<E> returnValue = head;
         while (returnValue != null && !returnValue.getData().equals(data)) {
             returnValue = returnValue.getNext();
         }
-        return returnValue == null ? null : (E) returnValue.getData();
+        return returnValue == null ? null : returnValue.getData();
     }
 
     private boolean isEmpty() {
@@ -105,7 +105,7 @@ public class MyLinkedListIsGeneric<E> {
         if (isEmpty()) {
             return "[]";
         }
-        Node currentValue = head;
+        Node<E> currentValue = head;
         StringBuilder b = new StringBuilder();
         b.append('[');
         for (int i = 0; i < size; i++) {

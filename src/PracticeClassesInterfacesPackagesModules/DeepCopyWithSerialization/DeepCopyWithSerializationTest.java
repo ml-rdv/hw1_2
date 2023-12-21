@@ -40,6 +40,10 @@ public class DeepCopyWithSerializationTest {
             outputStrm.writeObject(object);
             ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
             ObjectInputStream objInputStream = new ObjectInputStream(inputStream);
+            objInputStream.close();
+            inputStream.close();
+            outputStream.close();
+            outputStream.close();
             return objInputStream.readObject();
         } catch (Exception e) {
             e.printStackTrace();

@@ -2,13 +2,15 @@ package PracticeClassesInterfacesPackagesModules.WorkWithEnumAndRecord;
 
 import java.time.Year;
 import java.time.YearMonth;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Изначально  неправильно поняла условие задачи и подумала, что метод должед принимать
  * массив, состоящий из Enum
  * Поэтому решила уже оставить этой способ и второй в классе MethodGetsJustOneEnum
- *
+ * <p>
  * Задача:
  * Реализовать метод (с тестами),  который
  *    Принимает Enum с перечислением названиев месяцев
@@ -31,74 +33,18 @@ public class MethodGetsArrayOfEnums {
     }
 
     public static MonthWithInfo makeRecord(Month month) {
-        Season s = null;
-        int index = 0;
-        String name = null;
-        switch (month) {
-            case January -> {
-                s = Season.Winter;
-                index = 1;
-                name = "Январь";
-            }
-            case February -> {
-                s = Season.Winter;
-                index = 2;
-                name = "Февраль";
-            }
-            case March -> {
-                s = Season.Spring;
-                index = 3;
-                name = "Март";
-            }
-            case April -> {
-                s = Season.Spring;
-                index = 4;
-                name = "Апрель";
-            }
-            case May -> {
-                s = Season.Spring;
-                index = 5;
-                name = "Май";
-            }
-            case June -> {
-                s = Season.Summer;
-                index = 6;
-                name = "Июнь";
-            }
-            case July -> {
-                s = Season.Summer;
-                index = 7;
-                name = "Июль";
-            }
-            case August -> {
-                s = Season.Summer;
-                index = 8;
-                name = "Август";
-            }
-            case September -> {
-                s = Season.Autumn;
-                index = 9;
-                name = "Сентябрь";
-            }
-            case October -> {
-                s = Season.Autumn;
-                index = 10;
-                name = "Октябрь";
-            }
-            case November -> {
-                s = Season.Autumn;
-                index = 11;
-                name = "Ноябрь";
-            }
-            case December -> {
-                s = Season.Winter;
-                index = 12;
-                name = "Декабрь";
-            }
-            default -> System.out.println("It is impossible date.");
-        }
+        int index = Month.valueOf(month.name()).ordinal() + 1;
+
         YearMonth yearMonthObject = YearMonth.of(Year.now().getValue(), index);
         int daysInMonth = yearMonthObject.lengthOfMonth();
+
+        java.time.Month monthCopy = java.time.Month.of(index);
+        Locale loc = Locale.forLanguageTag("ru");
+        String name = monthCopy.getDisplayName(TextStyle.FULL_STANDALONE, loc);
+        name = name.substring(0, 1).toUpperCase() + name.substring(1);
+
+        Season s = Season.of(month);
+
         return new MonthWithInfo(s, daysInMonth, index, name);
     }
 
