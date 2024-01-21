@@ -7,17 +7,14 @@ package Exceptions.dividingTwoDoubles;
  * Вывести результат деления в консоль
  */
 public class dividingTwoDoubles {
-    public static double dividing(Double firstNum, Double secondNum) throws IllegalArgumentException, ArithmeticException {
-        double result;
-        try {
-            result = firstNum / secondNum;
-            System.out.println(result);
-            if (result == Double.POSITIVE_INFINITY) {
-                throw new ArithmeticException("Double overflowed");
-            }
-        } catch (NullPointerException ex) {
+    public static double dividing(Double firstNum, Double secondNum) throws IllegalArgumentException, ArithmeticException, DividerIsNull {
+        if (firstNum == null || secondNum == null) {
             throw new IllegalArgumentException("Number is null");
+        } else if (secondNum == 0) {
+            throw new DividerIsNull("Divider is null");
         }
+        double result = firstNum / secondNum;
+        System.out.println(result);
         return result;
     }
 }
