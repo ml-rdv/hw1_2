@@ -7,8 +7,8 @@ import java.util.Objects;
  * Затем написать тест в котором сортируется список с объектами класса из задачи по  ООП
  */
 public class ClientComparableRealization implements Comparable<ClientComparableRealization> {
-    private int id;
-    private String fullName;
+    private final int id;
+    private final String fullName;
 
     public ClientComparableRealization(int id, String fullName) {
         this.id = id;
@@ -34,7 +34,18 @@ public class ClientComparableRealization implements Comparable<ClientComparableR
 
     @Override
     public int compareTo(ClientComparableRealization o) {
-        return this.id - o.getId();
+        if (this.id > o.getId()) {
+            return 1;
+        } else if (o.getId() > this.id) {
+            return -1;
+        } else {
+            return 0;
+        }
+        // Вариант 2
+//        return this.id - o.getId();
+
+        // Вариант 3
+//        return Integer.compare(this.id, o.getId());
     }
 
     @Override
