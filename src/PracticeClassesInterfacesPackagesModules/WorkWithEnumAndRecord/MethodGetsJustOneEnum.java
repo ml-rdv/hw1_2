@@ -25,7 +25,7 @@ public class MethodGetsJustOneEnum {
     };
 
     public static MonthWithInfo makeRecord(Month month) {
-        int index = Month.valueOf(month.name()).ordinal() + 1;
+        int index = month.ordinal() + 1;
 
         YearMonth yearMonthObject = YearMonth.of(Year.now().getValue(), index);
         int daysInMonth = yearMonthObject.lengthOfMonth();

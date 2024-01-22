@@ -12,7 +12,7 @@ public class WorkWithEnumAndRecordTest {
     private static List<Arguments> provideParameters() {
         return List.of(
                 Arguments.of(January, new MonthWithInfo(Season.Winter, 31, 1, "Январь")),
-                Arguments.of(February, new MonthWithInfo(Season.Winter, 28, 2, "Февраль")),
+                Arguments.of(February, new MonthWithInfo(Season.Winter, 29, 2, "Февраль")),
                 Arguments.of(March, new MonthWithInfo(Season.Spring, 31, 3, "Март")),
                 Arguments.of(April, new MonthWithInfo(Season.Spring, 30, 4, "Апрель")),
                 Arguments.of(May, new MonthWithInfo(Season.Spring, 31, 5, "Май")),
