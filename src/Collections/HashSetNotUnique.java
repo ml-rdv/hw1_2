@@ -18,7 +18,7 @@ class HashSetNotUnique {
     static class Person {
         String name;
 
-        // Метод добавлен
+        // Метод  добавлен
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;

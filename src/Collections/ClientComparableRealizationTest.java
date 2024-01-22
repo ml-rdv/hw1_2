@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ClientComparableRealizationTest {
 
-    // Сортировка по id
+    // Сортировка по  id
     @Test
     void should_sort_using_Comparable() {
         List<ClientComparableRealization> clients = new ArrayList<>();

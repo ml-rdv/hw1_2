@@ -4,7 +4,7 @@ import java.util.Objects;
 
 /**
  * Выбрать класс из задачи по ООП и реализовать в нём интерфейс Comparable.
- * Затем написать тест в котором сортируется список с объектами класса из задачи по ООП
+ * Затем написать тест в котором сортируется список с объектами класса из задачи по  ООП
  */
 public class ClientComparableRealization implements Comparable<ClientComparableRealization> {
     private int id;

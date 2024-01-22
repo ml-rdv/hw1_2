@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // ДОРАБОТАТЬ
-// ПРОБЛЕМА С NULL
+// ПРОБЛЕМА С  NULL
 
 public class ComparatorRealizationTest {
 

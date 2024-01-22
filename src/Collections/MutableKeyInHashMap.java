@@ -11,7 +11,7 @@ import java.util.Objects;
  * отличается от хэшкода переменной, которая изначально помещалась в hashMap.
  * <p>
  * Соответсвенно, когда мы хотим вывести hashMap.get(key) по измененному ключу, возвращается
- * значение null, т.к. по данному ключу (который вычисляется по hashCode()) отсутсвует value.
+ * значение null, т.к. по данному ключу (который вычисляется по hashCode()) отсутсвует  value.
  */
 public class MutableKeyInHashMap {
     static class MapTestObject {
