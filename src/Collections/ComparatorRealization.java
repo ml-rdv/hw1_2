@@ -19,10 +19,10 @@ public class ComparatorRealization implements Comparator<Client> {
         // Вариант 2
         /*
         if (a == null) {
-            return Integer.MIN_VALUE;
+            return -1;
         }
         if (b == null) {
-            return Integer.MAX_VALUE;
+            return 1;
         }
 
         String fullName1 = a.getFullName();
