@@ -7,11 +7,11 @@ package Exceptions.dividingTwoDoubles;
  * Вывести результат деления в консоль
  */
 public class dividingTwoDoubles {
-    public static double dividing(Double firstNum, Double secondNum) throws IllegalArgumentException, ArithmeticException, DividerIsNull {
+    public static double dividing(Double firstNum, Double secondNum) throws IllegalArgumentException, ArithmeticException, DividerIsNullException {
         if (firstNum == null || secondNum == null) {
             throw new IllegalArgumentException("Number is null");
         } else if (secondNum == 0) {
-            throw new DividerIsNull("Divider is null");
+            throw new DividerIsNullException("Divider is null");
         }
         double result = firstNum / secondNum;
         System.out.println(result);

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 public class dividingTwoDoublesTest {
     @Test
     void should_throw_exception_ArithmeticException_when_we_divide_by_zero() {
-        Assertions.assertThrows(DividerIsNull.class, () -> dividingTwoDoubles.dividing(8.0, 0.0));
+        Assertions.assertThrows(DividerIsNullException.class, () -> dividingTwoDoubles.dividing(8.0, 0.0));
     }
 
     @Test
@@ -15,7 +15,7 @@ public class dividingTwoDoublesTest {
     }
 
     @Test
-    void should_divide_two_doubles() throws DividerIsNull {
+    void should_divide_two_doubles() throws DividerIsNullException {
         var expectedElement = dividingTwoDoubles.dividing(8.0, 2.0);
         Assertions.assertEquals(expectedElement, 4.0);
     }
