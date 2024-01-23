@@ -1,5 +1,6 @@
 package Collections;
 
+import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -9,8 +10,12 @@ public class TreeSetWithReverseSort {
         // Вариант 2 без создания отдельного класса, с использованием лямбда-выражения
         // Comparator<Integer> comp = (Integer o1, Integer o2) -> (o2 - o1);
 
+        // Вариант 3
+        // Set<Integer> ts = new TreeSet<>(Comparator.reverseOrder());
+
         final TreeSetComparator comparator = new TreeSetComparator();
         Set<Integer> ts = new TreeSet<>(comparator);
+
         ts.add(50);
         ts.add(1);
         ts.add(3);
