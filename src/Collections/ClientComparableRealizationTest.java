@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ClientComparableRealizationTest {
@@ -18,6 +19,15 @@ public class ClientComparableRealizationTest {
         clients.add(new ClientComparableRealization(12, "Egor"));
         clients.add(new ClientComparableRealization(1, "Anastasia"));
         Collections.sort(clients);
+
+        // Вариант 2
+        // null`ы вначале, сортировка по id, если id равны, то сортировка по fullName
+        clients.sort(Comparator.nullsFirst
+                (Comparator.comparing(
+                        (ClientComparableRealization client) -> client.getId()).
+                thenComparing(
+                        (ClientComparableRealization client) -> client.getFullName())));
+
         System.out.println(clients);
 
         List<ClientComparableRealization> clients2 = new ArrayList<>();

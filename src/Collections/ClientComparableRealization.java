@@ -32,6 +32,10 @@ public class ClientComparableRealization implements Comparable<ClientComparableR
         return id;
     }
 
+    public String getFullName() {
+        return fullName;
+    }
+
     @Override
     public int compareTo(ClientComparableRealization o) {
         if (this.id > o.getId()) {
