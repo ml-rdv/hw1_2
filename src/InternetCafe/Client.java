@@ -38,4 +38,19 @@ public class Client {
         return true;
     }
 
+    public String getFullName() {
+        return fullName;
+    }
+
+    @Override
+    public String toString() {
+        return "Client {" +
+                "id=" + id +
+                ", fullName='" + fullName + '\'' +
+                ", phoneNumber=" + phoneNumber +
+                ", email='" + email + '\'' +
+                ", birthday=" + birthday +
+                ", orders=" + orders +
+                '}';
+    }
 }
