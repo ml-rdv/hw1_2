@@ -13,21 +13,34 @@ public class ComparatorRealization implements Comparator<Client> {
 
     public int compare(Client a, Client b) {
 
+        // Вариант 1
+
         String fullName1 = a == null ? "" : a.getFullName();
         String fullName2 = b == null ? "" : b.getFullName();
 
-        // Вариант 2
-        /*
-        if (a == null) {
-            return -1;
-        }
-        if (b == null) {
-            return 1;
-        }
+        // для обработки случаев, когда имя = null
+        // (заменяю имя на символ с минимальным аски кодом)
+        fullName1 = fullName1 == null ? String.valueOf(0) : fullName1;
+        fullName2 = fullName2 == null ? String.valueOf(0) : fullName2;
 
-        String fullName1 = a.getFullName();
-        String fullName2 = b.getFullName();
-        */
+        // Вариант 2
+
+//        if (a == null) {
+//            return -1;
+//        }
+//        if (b == null) {
+//            return 1;
+//        }
+//
+//        String fullName1 = a.getFullName();
+//        String fullName2 = b.getFullName();
+//
+//        if (fullName1 == null) {
+//            return -1;
+//        }
+//        if (fullName2 == null) {
+//            return 1;
+//        }
 
         return fullName1.compareTo(fullName2);
     }

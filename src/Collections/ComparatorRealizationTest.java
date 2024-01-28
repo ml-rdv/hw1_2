@@ -12,22 +12,23 @@ import java.util.List;
 public class ComparatorRealizationTest {
 
     // Сортировка по fullName
-    // Доработать
-    // Если имя = null
     @Test
     void should_sort_using_Comparator() {
         final ComparatorRealization comparator = new ComparatorRealization();
         List<Client> clients = new ArrayList<>();
+        clients.add(new Client(null, 1, "email", Date.valueOf("1997-03-10")));
         clients.add(new Client("Ivan", 1, "email", Date.valueOf("1997-03-10")));
         clients.add(null);
         clients.add(new Client("Maria", 1, "email", Date.valueOf("1997-03-10")));
         clients.add(null);
+        clients.add(new Client(null, 1, "email", Date.valueOf("1997-03-10")));
         clients.add(new Client("Egor", 1, "email", Date.valueOf("1997-03-10")));
         clients.add(null);
         clients.add(new Client("Anastasia", 1, "email", Date.valueOf("1997-03-10")));
-//        clients.sort(comparator);
-        clients.sort(Comparator.nullsFirst(Comparator.comparing(Client::getFullName)));
-        // Если имя = null !!!
+        clients.add(new Client(null, 1, "email", Date.valueOf("1997-03-10")));
+        clients.sort(comparator);
+        // пример ниже не учитывает случай, когда имя = null
+        // clients.sort(Comparator.nullsFirst(Comparator.comparing(client -> client.getFullName())));
         System.out.println(clients);
     }
 }
