@@ -2,7 +2,10 @@ package DataStructures.DynamicArray;
 
 // Реализовать динамический массив(список)
 
-public class MyDynamicArray {
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+public class MyDynamicArray implements Iterable<Integer> {
     private int size = 0;
     private int[] dynamicArr;
 
@@ -174,4 +177,30 @@ public class MyDynamicArray {
         }
     }
 
+    @Override
+    public Iterator<Integer> iterator() {
+        return new Iterator<Integer>() {
+            int index = -1;
+
+            @Override
+            public boolean hasNext() {
+                return index + 1 < size;
+            }
+
+            @Override
+            public Integer next() {
+                index++;
+                if (index >= 0 && index < size) {
+                    return dynamicArr[index];
+                } else {
+                    throw new NoSuchElementException();
+                }
+            }
+
+            @Override
+            public void remove() {
+                Iterator.super.remove();
+            }
+        };
+    }
 }

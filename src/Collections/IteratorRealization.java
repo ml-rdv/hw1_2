@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class IterableRealization {
+public class IteratorRealization {
     public static void main(String[] args) {
         List<Integer> list1 = new ArrayList<>();
         list1.add(2);
@@ -28,6 +28,8 @@ public class IterableRealization {
                 iterator.remove();
             }
         }
+        // Аналогично тому, что выше
+        list1.removeIf(num -> num == 7);
 
         // Выкидывает ошибку ConcurrentModificationException
 //        int index = 0;
