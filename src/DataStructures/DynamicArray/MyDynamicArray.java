@@ -163,7 +163,7 @@ public class MyDynamicArray implements Iterable<Integer> {
     public String toString() {
         if (dynamicArr == null)
             return "null";
-        int iMax = dynamicArr.length - 1;
+        int iMax = size - 1;
         if (iMax == -1)
             return "[]";
 
@@ -179,7 +179,7 @@ public class MyDynamicArray implements Iterable<Integer> {
 
     @Override
     public Iterator<Integer> iterator() {
-        return new Iterator<Integer>() {
+        return new Iterator<>() {
             int index = -1;
 
             @Override
@@ -199,7 +199,11 @@ public class MyDynamicArray implements Iterable<Integer> {
 
             @Override
             public void remove() {
-                Iterator.super.remove();
+                if (index >= 0 && index < size) {
+                    MyDynamicArray.this.remove(index);
+                } else {
+                    throw new NoSuchElementException();
+                }
             }
         };
     }

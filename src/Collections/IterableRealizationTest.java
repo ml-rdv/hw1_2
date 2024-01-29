@@ -11,19 +11,22 @@ public class IterableRealizationTest {
         array.add(1);
         array.add(4);
         array.add(6);
-        array.add(1);
+        array.add(7);
         Iterator<Integer> iterator = array.iterator();
         while (iterator.hasNext()) {
             int num = iterator.next();
-            System.out.print(num + " ");
+            if (num == 1) {
+                iterator.remove();
+            }
         }
+        System.out.println(array);
         // Цикл foreach доступен, т.к. класс MyDynamicArray реализует интерфейс Iterable
-        System.out.println();
         for (int a : array) {
             System.out.print(a + " ");
         }
+        System.out.println();
         // Аналогично тому, что выше
-        array.forEach(System.out::println);
+        array.forEach(System.out::print);
     }
 
 }
