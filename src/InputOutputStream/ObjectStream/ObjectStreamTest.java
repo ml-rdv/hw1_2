@@ -2,6 +2,11 @@ package InputOutputStream.ObjectStream;
 
 import java.io.*;
 
+/**
+ * Реализовать 2 метода:
+ * Первый сохраняет объект класса в файл в виде байтов
+ * Второй из файла загружает байты и десериализует их в объект
+ */
 public class ObjectStreamTest {
     public static void main(String[] args) {
         Worker worker = new Worker("John", 45);
