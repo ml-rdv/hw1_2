@@ -5,6 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -44,7 +47,7 @@ import java.util.Scanner;
 public class ConsoleTextFileEditor {
     private static File currentDirectory = new File(".");
 
-    public static File getCurrentDirectory() {
+    public File getCurrentDirectory() {
         return currentDirectory;
     }
 
@@ -110,34 +113,46 @@ public class ConsoleTextFileEditor {
             case "info" -> {
                 String path = currentDirectory.getPath() + "\\" + splittedInput[1];
                 Map<String, String> info = getInfo(path);
-                printInfo(info);
+                if (info != null) {
+                    printInfo(info);
+                }
             }
             default -> System.out.println("Command is not correct. Try again.");
         }
         System.out.println("Current path: " + currentDirectory.getPath());
     }
 
-    public void openFile(String filePath) {
-        if (!currentDirectoryExists(filePath)) {
-            return;
-        }
-        File fileDirectory = new File(filePath);
+    private boolean extensionIsCorrect(File fileDirectory) {
         String fileName = fileDirectory.getName();
         int dotIndex = fileName.lastIndexOf('.');
         String extension = (dotIndex == -1) ? "" : fileName.substring(dotIndex);
         if (extension.equals(".txt")) {
+            return true;
+        } else {
+            System.out.println("The file extension is incorrect.");
+            return false;
+        }
+    }
+
+    public boolean openFile(String filePath) {
+        if (!currentDirectoryExists(filePath)) {
+            return false;
+        }
+        File fileDirectory = new File(filePath);
+        if (extensionIsCorrect(fileDirectory)) {
             try (BufferedReader reader = new BufferedReader(new FileReader(fileDirectory))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     System.out.println(line);
                 }
+                System.out.println();
+                return true;
             } catch (IOException e) {
                 e.printStackTrace();
+                return false;
             }
-        } else {
-            System.out.println("The file format is incorrect.");
         }
-        System.out.println();
+        return false;
     }
 
     public void openDirectory(String path) {
@@ -235,13 +250,19 @@ public class ConsoleTextFileEditor {
         info.put("Absolute path: ", directory.getAbsolutePath());
         info.put("Size: ", directory.length() + " bytes");
         Path file = Paths.get(directory.getPath());
-        FileTime creationTime = null;
+        FileTime creationTimeFileTime = null;
         try {
-            creationTime = (FileTime) Files.getAttribute(file, "creationTime");
+            creationTimeFileTime = (FileTime) Files.getAttribute(file, "creationTime");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        info.put("Creation time: ", creationTime != null ? creationTime.toString() : "");
+        LocalDateTime localDateTime = creationTimeFileTime != null ? creationTimeFileTime
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime() : null;
+        String creationTime = localDateTime != null ? localDateTime.format(
+                DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm")) : null;
+        info.put("Creation time: ", creationTime);
         if (directory.isDirectory()) {
             int numberNestedElements = countNestedElements(directory, -1);
             info.put("Number of nested elements: ", String.valueOf(numberNestedElements));
