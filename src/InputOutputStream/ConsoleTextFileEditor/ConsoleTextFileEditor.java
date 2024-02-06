@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import static java.lang.Runtime.getRuntime;
-
 /**
  * Реализовать консольный мини-редактор текстовых файлов. Редактор должен:
  * При запуске отображать списком файлы и папки текущей папки из которой запускается программа
@@ -43,12 +41,12 @@ import static java.lang.Runtime.getRuntime;
  * Если папка, то выводить кол-во вложенных элементов
  * Желательно перед выполнением команд делать очистку консоли
  */
-public class Main {
-    private static String currentPath = ".";
-    static File currentDirectory = new File(currentPath);
+public class ConsoleTextFileEditor {
+    private static File currentDirectory = new File(".");
+    private static final ConsoleTextFileEditor console = new ConsoleTextFileEditor();
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        start();
+        console.start();
         Scanner in = new Scanner(System.in);
         String input;
         while (true) {
@@ -56,7 +54,7 @@ public class Main {
             System.out.print("\033[H\033[J");
             System.out.flush();
             if (!input.equals("finish")) {
-                continueWork(input);
+                console.continueWork(input);
             } else {
                 in.close();
                 break;
@@ -64,79 +62,77 @@ public class Main {
         }
     }
 
-    private static void start() {
-        openDirectory();
+    private void start() {
+        openDirectory(currentDirectory.getPath());
     }
 
-    private static void continueWork(String input) {
+    private void continueWork(String input) {
         String[] splittedInput = input.split(" ");
         String command = splittedInput[0];
         switch (command) {
             case "open" -> {
-                updateCurrentDirectory(currentPath + "/" + splittedInput[1]);
-                if (currentDirectory.isFile()) {
-                    openFile();
+                String path = currentDirectory.getPath() + "/" + splittedInput[1];
+                File directory = new File(path);
+                if (directory.isFile()) {
+                    openFile(path);
                 } else {
-                    openDirectory();
+                    openDirectory(path);
                 }
             }
             case "create" -> {
-                if (splittedInput[1].equals("-d")) {
-                    updateCurrentDirectory(currentPath + "/" + splittedInput[2]);
+                if (splittedInput[1].equals("-f")) {
                     createFile(input);
                 } else {
-                    updateCurrentDirectory(currentDirectory + "/" + splittedInput[1]);
-                    createDirectory();
+                    String path = currentDirectory.getPath() + "/" + splittedInput[1];
+                    createDirectory(path);
                 }
             }
             case "back" -> {
-                if (currentPath.equals(".")) {
+                if (currentDirectory.getPath().equals(".")) {
                     System.out.println("It is root directory.");
                     return;
                 }
-                updateCurrentDirectory(currentDirectory.getParent());
-                openDirectory();
+                openDirectory(currentDirectory.getParent());
             }
             case "edit" -> {
-                updateCurrentDirectory(currentDirectory + "/" + splittedInput[1]);
                 editFile(input);
             }
             case "delete" -> {
-                updateCurrentDirectory(currentPath + "/" + splittedInput[1]);
-                delete();
+                String path = currentDirectory.getPath() + "/" + splittedInput[1];
+                delete(path);
             }
             case "rename" -> {
                 if (splittedInput.length == 3) {
-                    updateCurrentDirectory(currentPath + "/" + splittedInput[1]);
-                    renameTo(splittedInput[2]);
+                    String path = currentDirectory.getPath() + "/" + splittedInput[1];
+                    renameTo(path, splittedInput[2]);
                 } else {
                     System.out.println("Input 3 parameters");
                 }
             }
             case "info" -> {
-                updateCurrentDirectory(currentPath + "/" + splittedInput[1]);
-                printInfo();
+                String path = currentDirectory.getPath() + "/" + splittedInput[1];
+                printInfo(path);
             }
             default -> System.out.println("Command is not correct. Try again.");
         }
-        System.out.println("Current path: " + currentPath);
+        System.out.println("Current path: " + currentDirectory.getPath());
     }
 
-    private static void openFile() {
-        if (!currentDirectoryExists()) {
+    private void openFile(String filePath) {
+        if (!currentDirectoryExists(filePath)) {
             return;
         }
-        String fileName = currentDirectory.getName();
+        File fileDirectory = new File(filePath);
+        String fileName = fileDirectory.getName();
         int dotIndex = fileName.lastIndexOf('.');
         String extension = (dotIndex == -1) ? "" : fileName.substring(dotIndex);
         if (extension.equals(".txt")) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(currentDirectory))) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(fileDirectory))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     System.out.println(line);
                 }
             } catch (IOException e) {
-                updateCurrentDirectory(currentDirectory.getParent());
                 e.printStackTrace();
             }
         } else {
@@ -145,10 +141,11 @@ public class Main {
         System.out.println();
     }
 
-    private static void openDirectory() {
-        if (!currentDirectoryExists()) {
+    private void openDirectory(String path) {
+        if (!currentDirectoryExists(path)) {
             return;
         }
+        currentDirectory = new File(path);
         File[] list = currentDirectory.listFiles();
         for (File f : list != null ? list : new File[0]) {
             if (f.isFile()) {
@@ -159,101 +156,102 @@ public class Main {
         }
     }
 
-    private static void createFile(String input) {
+    private void createFile(String input) {
         String[] splittedInput = input.split(" ");
         String fileText = null;
         if (splittedInput.length > 3) {
             int dotIndex = input.lastIndexOf(splittedInput[3]);
             fileText = input.substring(dotIndex);
         }
+        File fileDirectory = new File(currentDirectory.getPath() + "/" + splittedInput[2]);
         try {
-            if (currentDirectory.createNewFile()) {
-                System.out.println("File created: " + currentDirectory.getName());
+            if (fileDirectory.createNewFile()) {
+                System.out.println("File created: " + fileDirectory.getName());
                 if (fileText != null) {
                     try {
-                        fillOutFile(fileText, false);
-                        System.out.println("File " + currentDirectory.getName()
+                        fillOutFile(fileDirectory.getPath(), fileText, false);
+                        System.out.println("File " + fileDirectory.getName()
                                 + " has been successfully filled.");
                     } catch (RuntimeException e) {
-                        System.out.println("File " + currentDirectory.getName()
+                        System.out.println("File " + fileDirectory.getName()
                                 + " has not been filled.");
                         e.printStackTrace();
                     }
                 }
             } else {
                 System.out.println("File already exists.");
-                updateCurrentDirectory(currentDirectory.getParent());
             }
         } catch (IOException e) {
-            System.out.println("File " + currentDirectory.getName()
+            System.out.println("File " + fileDirectory.getName()
                     + " has not been created.");
-            updateCurrentDirectory(currentDirectory.getParent());
             e.printStackTrace();
         }
     }
 
-    private static void createDirectory() {
-        if (currentDirectory.mkdir()) {
-            System.out.println("Directory " + currentDirectory.getName() + " has been created.");
+    private void createDirectory(String path) {
+        File directory = new File(path);
+        if (directory.mkdir()) {
+            System.out.println("Directory " + directory.getName() + " has been created.");
         } else {
-            System.out.println("Directory " + currentDirectory.getName() + " exists.");
-            updateCurrentDirectory(currentDirectory.getParent());
+            System.out.println("Directory " + directory.getName() + " exists.");
         }
     }
 
-    private static void editFile(String input) {
-        if (!currentDirectoryExists()) {
+    private void editFile(String input) {
+        String[] splittedInput = input.split(" ");
+        String filePath = currentDirectory.getPath() + "/" + splittedInput[1];
+        if (!currentDirectoryExists(filePath)) {
             return;
         }
-        String[] splittedInput = input.split(" ");
+        File fileDirectory = new File(filePath);
         if (splittedInput.length > 2) {
             int dotIndex = input.lastIndexOf(splittedInput[2]);
             String fileText = "\n" + input.substring(dotIndex);
             try {
-                fillOutFile(fileText, true);
-                System.out.println("File " + currentDirectory.getName() + " has been successfully edited.");
+                fillOutFile(fileDirectory.getPath(), fileText, true);
+                System.out.println("File " + fileDirectory.getName() + " has been successfully edited.");
             } catch (RuntimeException e) {
-                System.out.println("File " + currentDirectory.getName() + " has not been edited.");
-                updateCurrentDirectory(currentDirectory.getParent());
+                System.out.println("File " + fileDirectory.getName() + " has not been edited.");
                 e.printStackTrace();
             }
         } else {
             System.out.println("Input is empty.");
-            updateCurrentDirectory(currentDirectory.getParent());
         }
     }
 
-    private static void fillOutFile(String fileText, boolean append) throws RuntimeException {
-        try (FileWriter output = new FileWriter(currentPath, append)) {
+    private void fillOutFile(String path, String fileText, boolean append) throws RuntimeException {
+        File fileDirectory = new File(path);
+        try (FileWriter output = new FileWriter(fileDirectory.getPath(), append)) {
             output.write(fileText);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static void renameTo(String newName) {
-        if (!currentDirectoryExists()) {
+    private void renameTo(String path, String newName) {
+        if (!currentDirectoryExists(path)) {
             return;
         }
-        File newDir = new File(currentDirectory.getParent() + "/" + newName);
-        if (currentDirectory.renameTo(newDir)) {
-            System.out.println("Directory of file" + currentDirectory.getName()
+        File oldNameDirectory = new File(path);
+        File newNameDirectory = new File(oldNameDirectory.getParent() + "/" + newName);
+        if (oldNameDirectory.renameTo(newNameDirectory)) {
+            System.out.println("Directory or file " + oldNameDirectory.getName()
                     + " has been successfully renamed.");
         } else {
-            System.out.println("Directory of file" + currentDirectory.getName()
+            System.out.println("Directory or file " + oldNameDirectory.getName()
                     + " has not been renamed.");
         }
-        updateCurrentDirectory(currentDirectory.getParent());
     }
 
-    private static void printInfo() {
-        if (!currentDirectoryExists()) {
+    private void printInfo(String path) {
+        if (!currentDirectoryExists(path)) {
             return;
         }
+        File directory = new File(path);
         Map<String, String> info = new HashMap<>();
-        info.put("Absolute path: ", currentDirectory.getAbsolutePath());
-        info.put("Size: ", currentDirectory.length() + " bytes");
-        Path file = Paths.get(currentPath);
+        info.put("Absolute path: ", directory.getPath());
+        info.put("Size: ", directory.length() + " bytes");
+        Path file = Paths.get(directory.getPath());
         FileTime creationTime = null;
         try {
             creationTime = (FileTime) Files.getAttribute(file, "creationTime");
@@ -261,14 +259,14 @@ public class Main {
             e.printStackTrace();
         }
         info.put("Creation time: ", creationTime != null ? creationTime.toString() : "");
-        if (currentDirectory.isDirectory()) {
-            int numberNestedElements = countNestedElements(currentDirectory, -1);
+        if (directory.isDirectory()) {
+            int numberNestedElements = countNestedElements(directory, -1);
             info.put("Number of nested elements: ", String.valueOf(numberNestedElements));
         }
         info.forEach((key, value) -> System.out.println(key + " " + value));
     }
 
-    public static int countNestedElements(File directory, int count) {
+    private int countNestedElements(File directory, int count) {
         if (directory.isDirectory()) {
             count += 1;
             File[] files = directory.listFiles();
@@ -282,7 +280,7 @@ public class Main {
         return count + 1;
     }
 
-    public static void deleteDirectory(File directory) {
+    private void deleteDirectory(File directory) {
         if (directory.isDirectory()) {
             File[] files = directory.listFiles();
             if (files != null) {
@@ -294,30 +292,28 @@ public class Main {
         directory.delete();
     }
 
-    private static void delete() {
-        if (!currentDirectoryExists()) {
+    private void delete(String path) {
+        if (!currentDirectoryExists(path)) {
             return;
         }
-        File[] list = currentDirectory.isDirectory() ? currentDirectory.listFiles() : null;
-        if (currentDirectory.isFile() || (list != null && list.length == 0)) {
-            deleteDirectory(currentDirectory);
-            System.out.println("Directory or file " + currentDirectory.getName() + " has been successfully deleted.");
-            updateCurrentDirectory(currentDirectory.getParent());
+        File directory = new File(path);
+        File[] list = directory.isDirectory() ? directory.listFiles() : null;
+        if (directory.isFile() || (list != null && list.length == 0)) {
+            deleteDirectory(directory);
+            System.out.println("Directory or file " + directory.getName() + " has been successfully deleted.");
             return;
         }
-        System.out.println("Directory " + currentDirectory.getName() + " is not empty. Are you sure you want to delete it? Yes/No");
+        System.out.println("Directory " + directory.getName() + " is not empty. Are you sure you want to delete it? Yes/No");
         Scanner in = new Scanner(System.in);
         String input;
         while (true) {
             input = in.nextLine();
             if (input.equals("Yes")) {
-                deleteDirectory(currentDirectory);
-                System.out.println("Directory " + currentDirectory.getName() + " has been successfully deleted.");
-                updateCurrentDirectory(currentDirectory.getParent());
+                deleteDirectory(directory);
+                System.out.println("Directory " + directory.getName() + " has been successfully deleted.");
                 return;
             } else if (input.equals("No")) {
-                System.out.println("Directory " + currentDirectory.getName() + " has not been deleted.");
-                updateCurrentDirectory(currentDirectory.getParent());
+                System.out.println("Directory " + directory.getName() + " has not been deleted.");
                 return;
             } else {
                 System.out.println("Incorrect command. Try again.");
@@ -325,15 +321,10 @@ public class Main {
         }
     }
 
-    private static void updateCurrentDirectory(String newCurrentPath) {
-        currentPath = newCurrentPath;
-        currentDirectory = new File(currentPath);
-    }
-
-    private static boolean currentDirectoryExists() {
-        if (!currentDirectory.exists()) {
-            System.out.println("Directory of file with this name does not exist.");
-            updateCurrentDirectory(currentDirectory.getParent());
+    private boolean currentDirectoryExists(String path) {
+        File directory = new File(path);
+        if (!directory.exists()) {
+            System.out.println("Directory or file with this name does not exist.");
             return false;
         }
         return true;
