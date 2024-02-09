@@ -1,14 +1,7 @@
 package InputOutputStream.ConsoleTextFileEditor;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.FileTime;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -45,301 +38,196 @@ import java.util.Scanner;
  * Желательно перед выполнением команд делать очистку консоли
  */
 public class ConsoleTextFileEditor {
-    private static File currentDirectory = new File(".");
+    private final FileSystemManagement manager = new FileSystemManagement();
 
     public File getCurrentDirectory() {
-        return currentDirectory;
+        return manager.getCurrentDirectory();
     }
 
     public void start() {
-        openDirectory(currentDirectory.getPath());
+        openDirectory(".");
+        Scanner in = new Scanner(System.in);
+        String input;
+        while (true) {
+            input = in.nextLine();
+            System.out.print("\033[H\033[J");
+            System.out.flush();
+            if (!input.equals("finish")) {
+                continueWork(input);
+            } else {
+                in.close();
+                break;
+            }
+        }
     }
 
     public void continueWork(String input) {
         String[] splittedInput = input.split(" ");
         String command = splittedInput[0];
+        String MESSAGE_FORMAT_SUCCESS = "%s %s has been successfully %s.\n";
+        String MESSAGE_FORMAT_NOT_SUCCESS = "%s %s has not been %s.\n";
         switch (command) {
             case "open" -> {
-                String path = currentDirectory.getPath() + "\\" + splittedInput[1];
+                String path = manager.getCurrentDirectory().getPath() + "\\" + splittedInput[1];
                 File directory = new File(path);
                 if (directory.isFile()) {
-                    openFile(path);
+                    openFile(splittedInput[1]);
                 } else {
                     openDirectory(path);
                 }
             }
             case "create" -> {
+                boolean success;
                 if (splittedInput[1].equals("-f")) {
-                    boolean success = createFile(input);
-                    printWhetherTheCommandIsSuccessful(success, splittedInput[2], "created");
-                } else {
-                    String path = currentDirectory.getPath() + "\\" + splittedInput[1];
-                    boolean success = createDirectory(path);
-                    if (!success) {
-                        System.out.println("Directory " + splittedInput[1] + " exists.");
+                    String fileText = "";
+                    if (splittedInput.length > 3) {
+                        int dotIndex = input.lastIndexOf(splittedInput[3]);
+                        fileText = input.substring(dotIndex);
                     }
-                    printWhetherTheCommandIsSuccessful(success, splittedInput[1], "created");
+                    success = createFile(splittedInput[2], fileText);
+                    System.out.printf((success ? MESSAGE_FORMAT_SUCCESS : MESSAGE_FORMAT_NOT_SUCCESS),
+                            "File", splittedInput[2], "created");
+                } else {
+                    success = createDirectory(splittedInput[1]);
+                    System.out.printf((success ? MESSAGE_FORMAT_SUCCESS : MESSAGE_FORMAT_NOT_SUCCESS),
+                            "Directory", splittedInput[1], "created");
                 }
             }
             case "back" -> {
-                if (currentDirectory.getPath().equals(".")) {
-                    System.out.println("It is root directory.");
-                    return;
-                }
-                openDirectory(currentDirectory.getParent());
+                back();
             }
             case "edit" -> {
                 if (splittedInput.length > 2) {
-                    boolean success = editFile(input);
-                    printWhetherTheCommandIsSuccessful(success, splittedInput[1], "edited");
+                    int dotIndex = input.lastIndexOf(splittedInput[2]);
+                    String fileText = "\n" + input.substring(dotIndex);
+                    boolean success = editFile(splittedInput[1], fileText);
+                    System.out.printf((success ? MESSAGE_FORMAT_SUCCESS : MESSAGE_FORMAT_NOT_SUCCESS),
+                            "File", splittedInput[1], "edited");
                 } else {
-                    System.out.println("Input is empty.");
+                    System.out.println("Input all parameters.");
                 }
             }
             case "delete" -> {
-                String path = currentDirectory.getPath() + "\\" + splittedInput[1];
+                String path = manager.getCurrentDirectory().getPath() + "\\" + splittedInput[1];
                 boolean success = delete(path);
-                printWhetherTheCommandIsSuccessful(success, splittedInput[1], "deleted");
+                System.out.printf((success ? MESSAGE_FORMAT_SUCCESS : MESSAGE_FORMAT_NOT_SUCCESS),
+                        "Directory of file", splittedInput[1], "deleted");
             }
             case "rename" -> {
                 if (splittedInput.length == 3) {
-                    String path = currentDirectory.getPath() + "\\" + splittedInput[1];
-                    boolean success = renameTo(path, splittedInput[2]);
-                    printWhetherTheCommandIsSuccessful(success, splittedInput[1], "renamed");
+                    boolean success = renameTo(splittedInput[1], splittedInput[2]);
+                    System.out.printf((success ? MESSAGE_FORMAT_SUCCESS : MESSAGE_FORMAT_NOT_SUCCESS),
+                            "Directory of file", splittedInput[1], "renamed");
                 } else {
                     System.out.println("Input 3 parameters");
                 }
             }
             case "info" -> {
-                String path = currentDirectory.getPath() + "\\" + splittedInput[1];
-                Map<String, String> info = getInfo(path);
-                if (info != null) {
-                    printInfo(info);
-                }
+                printInfo(splittedInput[1]);
             }
             default -> System.out.println("Command is not correct. Try again.");
         }
-        System.out.println("Current path: " + currentDirectory.getPath());
+        System.out.println("Current path: " + manager.getCurrentDirectory().getPath());
     }
 
-    private boolean extensionIsCorrect(File fileDirectory) {
-        String fileName = fileDirectory.getName();
-        int dotIndex = fileName.lastIndexOf('.');
-        String extension = (dotIndex == -1) ? "" : fileName.substring(dotIndex);
-        if (extension.equals(".txt")) {
-            return true;
-        } else {
-            System.out.println("The file extension is incorrect.");
-            return false;
+    private void back() {
+        FileSystemResponse<Boolean> fileSystemResponse = manager.back();
+        if (fileSystemResponse.getMessageError() != null) {
+            System.out.println(fileSystemResponse.getMessageError());
+            return;
         }
+        openDirectory(manager.getCurrentDirectory().getPath());
     }
 
-    public boolean openFile(String filePath) {
-        if (!currentDirectoryExists(filePath)) {
+    public boolean openFile(String name) {
+        FileSystemResponse<StringBuilder> fileSystemResponse = manager.getFile(name);
+        if (fileSystemResponse.getMessageError() != null) {
+            System.out.println(fileSystemResponse.getMessageError());
             return false;
         }
-        File fileDirectory = new File(filePath);
-        if (extensionIsCorrect(fileDirectory)) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(fileDirectory))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                }
-                System.out.println();
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-        return false;
+        System.out.println(fileSystemResponse.getBody());
+        return true;
     }
 
     public void openDirectory(String path) {
-        if (!currentDirectoryExists(path)) {
+        FileSystemResponse<List<String>> fileSystemResponse = manager.getDirectory(path);
+        if (fileSystemResponse.getMessageError() != null) {
+            System.out.println(fileSystemResponse.getMessageError());
             return;
         }
-        currentDirectory = new File(path);
-        File[] list = currentDirectory.listFiles();
-        for (File f : list != null ? list : new File[0]) {
-            if (f.isFile()) {
-                System.out.println("-f " + f.getName());
-            } else {
-                System.out.println("-d " + f.getName());
-            }
-        }
+        List<String> listFiles = fileSystemResponse.getBody();
+        listFiles.forEach(System.out::println);
     }
 
-    public boolean createFile(String input) {
-        String[] splittedInput = input.split(" ");
-        String fileText = null;
-        if (splittedInput.length > 3) {
-            int dotIndex = input.lastIndexOf(splittedInput[3]);
-            fileText = input.substring(dotIndex);
-        }
-        File fileDirectory = new File(currentDirectory.getPath() + "\\" + splittedInput[2]);
-        try {
-            if (fileDirectory.createNewFile()) {
-                if (fileText != null) {
-                    try {
-                        fillOutFile(fileDirectory.getPath(), fileText, false);
-                        printWhetherTheCommandIsSuccessful(true, splittedInput[2], "filled");
-                    } catch (RuntimeException e) {
-                        printWhetherTheCommandIsSuccessful(false, splittedInput[2], "filled");
-                        e.printStackTrace();
-                    }
-                }
-                return true;
-            } else {
-                System.out.println("File already exists.");
-                return false;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    public boolean createFile(String name, String fileText) {
+        FileSystemResponse<Boolean> fileSystemResponse = manager.createFile(name, fileText);
+        if (fileSystemResponse.getMessageError() != null) {
+            System.out.println(fileSystemResponse.getMessageError());
             return false;
         }
+        return fileSystemResponse.getBody();
     }
 
-    public boolean createDirectory(String path) {
-        File directory = new File(path);
-        return directory.mkdir();
-    }
-
-    public boolean editFile(String input) {
-        String[] splittedInput = input.split(" ");
-        String filePath = currentDirectory.getPath() + "\\" + splittedInput[1];
-        if (!currentDirectoryExists(filePath)) {
+    public boolean createDirectory(String name) {
+        FileSystemResponse<Boolean> fileSystemResponse = manager.createDirectory(name);
+        if (fileSystemResponse.getMessageError() != null) {
+            System.out.println(fileSystemResponse.getMessageError());
             return false;
         }
-        File fileDirectory = new File(filePath);
-        int dotIndex = input.lastIndexOf(splittedInput[2]);
-        String fileText = "\n" + input.substring(dotIndex);
-        try {
-            fillOutFile(fileDirectory.getPath(), fileText, true);
-            return true;
-        } catch (RuntimeException e) {
-            e.printStackTrace();
+        return fileSystemResponse.getBody();
+    }
+
+    public boolean editFile(String nameFile, String text) {
+        FileSystemResponse<Boolean> fileSystemResponse = manager.editFile(nameFile, text);
+        if (fileSystemResponse.getMessageError() != null) {
+            System.out.println(fileSystemResponse.getMessageError());
             return false;
         }
+        return fileSystemResponse.getBody();
     }
 
-    private void fillOutFile(String path, String fileText, boolean append) throws RuntimeException {
-        File fileDirectory = new File(path);
-        try (FileWriter output = new FileWriter(fileDirectory.getPath(), append)) {
-            output.write(fileText);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public boolean renameTo(String path, String newName) {
-        if (!currentDirectoryExists(path)) {
+    public boolean renameTo(String oldName, String newName) {
+        FileSystemResponse<Boolean> fileSystemResponse = manager.renameTo(oldName, newName);
+        if (fileSystemResponse.getMessageError() != null) {
+            System.out.println(fileSystemResponse.getMessageError());
             return false;
         }
-        File oldNameDirectory = new File(path);
-        File newNameDirectory = new File(oldNameDirectory.getParent() + "\\" + newName);
-        return oldNameDirectory.renameTo(newNameDirectory);
+        return fileSystemResponse.getBody();
     }
 
-    public Map<String, String> getInfo(String path) {
-        if (!currentDirectoryExists(path)) {
-            return null;
+    public void printInfo(String name) {
+        FileSystemResponse<Map<String, String>> fileSystemResponse = manager.getInfo(name);
+        if (fileSystemResponse.getMessageError() != null) {
+            System.out.println(fileSystemResponse.getMessageError());
+            return;
         }
-        File directory = new File(path);
-        Map<String, String> info = new HashMap<>();
-        info.put("Absolute path: ", directory.getAbsolutePath());
-        info.put("Size: ", directory.length() + " bytes");
-        Path file = Paths.get(directory.getPath());
-        FileTime creationTimeFileTime = null;
-        try {
-            creationTimeFileTime = (FileTime) Files.getAttribute(file, "creationTime");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        LocalDateTime localDateTime = creationTimeFileTime != null ? creationTimeFileTime
-                .toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime() : null;
-        String creationTime = localDateTime != null ? localDateTime.format(
-                DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm")) : null;
-        info.put("Creation time: ", creationTime);
-        if (directory.isDirectory()) {
-            int numberNestedElements = countNestedElements(directory, -1);
-            info.put("Number of nested elements: ", String.valueOf(numberNestedElements));
-        }
-        return info;
-    }
-
-    private int countNestedElements(File directory, int count) {
-        if (directory.isDirectory()) {
-            count += 1;
-            File[] files = directory.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    count = countNestedElements(file, count);
-                }
-            }
-            return count;
-        }
-        return count + 1;
-    }
-
-    private void deleteDirectory(File directory) {
-        if (directory.isDirectory()) {
-            File[] files = directory.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    deleteDirectory(file);
-                }
-            }
-        }
-        directory.delete();
+        Map<String, String> info = fileSystemResponse.getBody();
+        info.forEach((key, value) -> System.out.println(key + " " + value));
     }
 
     public boolean delete(String path) {
-        if (!currentDirectoryExists(path)) {
+        FileSystemResponse<Boolean> fileSystemResponse = manager.delete(path, false);
+        if (fileSystemResponse.getMessageError() != null ||
+                (fileSystemResponse.getMessageError() != null && !fileSystemResponse.getMessageError().equals("Directory is not empty."))) {
+            System.out.println(fileSystemResponse.getMessageError());
             return false;
         }
-        File directory = new File(path);
-        File[] list = directory.isDirectory() ? directory.listFiles() : null;
-        if (directory.isFile() || (list != null && list.length == 0)) {
-            deleteDirectory(directory);
-            return true;
+        if (fileSystemResponse.getBody()) {
+            return fileSystemResponse.getBody();
         }
-        System.out.println("Directory " + directory.getName() + " is not empty. Are you sure you want to delete it? Yes/No");
+        System.out.println("Directory is not empty. Are you sure you want to delete it? Yes/No/Cansel");
         Scanner in = new Scanner(System.in);
         String input;
         while (true) {
             input = in.nextLine();
             if (input.equals("Yes")) {
-                deleteDirectory(directory);
+                manager.delete(path, true);
                 return true;
-            } else if (input.equals("No")) {
+            } else if (input.equals("No") || input.equals("Cansel")) {
                 return false;
             } else {
                 System.out.println("Incorrect command. Try again.");
             }
-        }
-    }
-
-    private boolean currentDirectoryExists(String path) {
-        File directory = new File(path);
-        if (!directory.exists()) {
-            System.out.println("Directory or file " + directory.getName() + " does not exist.");
-            return false;
-        }
-        return true;
-    }
-
-    private void printInfo(Map<String, String> info) {
-        info.forEach((key, value) -> System.out.println(key + " " + value));
-    }
-
-    private void printWhetherTheCommandIsSuccessful(boolean success, String name, String command) {
-        if (success) {
-            System.out.println("Directory or file " + name + " has been successfully " + command + ".");
-        } else {
-            System.out.println("Directory or file " + name + " has not been " + command + ".");
         }
     }
 }
