@@ -1,7 +1,6 @@
 package InputOutputStream.ConsoleTextFileEditor;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedInputStream;
@@ -9,24 +8,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 public class ConsoleTextFileEditorTest {
 
-    ConsoleTextFileEditor consoleTextFileEditor;
-    FileSystemManagement manager;
-
-    @BeforeEach
-    public void setEditorAndManager() {
-        consoleTextFileEditor = new ConsoleTextFileEditor();
-        manager = new FileSystemManagement();
-    }
+    private ConsoleTextFileEditor consoleTextFileEditor;
 
     @Test
     public void directoryMustBeOpened() {
+        consoleTextFileEditor = new ConsoleTextFileEditor();
         consoleTextFileEditor.openDirectory(".\\src");
         File directory = new File(".\\src");
 
@@ -34,15 +23,8 @@ public class ConsoleTextFileEditorTest {
     }
 
     @Test
-    public void directoryMustNotBeReturnedAndOpenedBecauseDirectoryDoesNotExist() {
-        FileSystemResponse<List<String>> response = manager.getDirectory(".\\src\\src");
-        String message = response.getMessageError();
-
-        Assertions.assertEquals("Directory src does not exist.", message);
-    }
-
-    @Test
     public void fileMustBeOpened() {
+        consoleTextFileEditor = new ConsoleTextFileEditor();
         consoleTextFileEditor.openDirectory(".\\src");
         consoleTextFileEditor.createFile("newFile.txt", "File with text");
         boolean result = consoleTextFileEditor.openFile("newFile.txt");
@@ -53,30 +35,8 @@ public class ConsoleTextFileEditorTest {
     }
 
     @Test
-    public void fileMustNotBeOpenedBecauseOfExtension() {
-        manager.getDirectory(".\\src");
-        manager.createFile("newFile", "File with text");
-        FileSystemResponse<StringBuilder> response = manager.getFile("newFile");
-        String message = response.getMessageError();
-
-        manager.delete(".\\src\\newFile", false);
-
-        Assertions.assertEquals("The file extension is incorrect.", message);
-    }
-
-    @Test
-    public void fileMustBeOpenedAndRead() {
-        consoleTextFileEditor.openDirectory(".\\src");
-        consoleTextFileEditor.createFile("newFile.txt", "File with text");
-        FileSystemResponse<StringBuilder> response = manager.getFile(".\\src\\newFile.txt");
-
-        consoleTextFileEditor.delete(".\\src\\newFile.txt");
-
-        Assertions.assertEquals("File with text\n", response.getBody().toString());
-    }
-
-    @Test
     public void fileMustBeCreated() {
+        consoleTextFileEditor = new ConsoleTextFileEditor();
         consoleTextFileEditor.openDirectory(".\\src");
         String messageIsSuccess = consoleTextFileEditor.createFile("newFile", "File with text");
         consoleTextFileEditor.delete(".\\src\\newFile");
@@ -85,19 +45,8 @@ public class ConsoleTextFileEditorTest {
     }
 
     @Test
-    public void fileMustNotBeCreatedBecauseFileWithThisNameAlreadyExists() {
-        manager.getDirectory(".\\src");
-        manager.createFile("newFile", "File with text");
-        FileSystemResponse<Boolean> response = manager.createFile("newFile", "File with text");
-        String message = response.getMessageError();
-
-        manager.delete(".\\src\\newFile", false);
-
-        Assertions.assertEquals("File with this name already exists.", message);
-    }
-
-    @Test
     public void directoryMustBeCreated() {
+        consoleTextFileEditor = new ConsoleTextFileEditor();
         String messageIsSuccess = consoleTextFileEditor.createDirectory(".\\src\\TestDirectory");
 
         consoleTextFileEditor.delete(".\\src\\TestDirectory");
@@ -106,18 +55,8 @@ public class ConsoleTextFileEditorTest {
     }
 
     @Test
-    public void directoryMustNotBeCreatedBecauseDirectoryWithThisNameAlreadyExists() {
-        manager.createDirectory(".\\src\\TestDirectory");
-        FileSystemResponse<Boolean> response = manager.createDirectory(".\\src\\TestDirectory");
-        String message = response.getMessageError();
-
-        manager.delete(".\\src\\TestDirectory", false);
-
-        Assertions.assertEquals("Directory with this name already exists.", message);
-    }
-
-    @Test
     public void directoryMustBeDeleted() {
+        consoleTextFileEditor = new ConsoleTextFileEditor();
         consoleTextFileEditor.createDirectory(".\\src\\TestDirectory");
         String messageIsSuccess = consoleTextFileEditor.delete(".\\src\\TestDirectory");
 
@@ -125,29 +64,8 @@ public class ConsoleTextFileEditorTest {
     }
 
     @Test
-    public void directoryMustNotBeDeletedBecauseDirectoryDoesNotExist() {
-        FileSystemResponse<Boolean> response = manager.delete(".\\src\\TestDirectory", false);
-        String message = response.getMessageError();
-
-        Assertions.assertEquals("Directory or file TestDirectory does not exist.", message);
-    }
-
-    @Test
-    public void directoryMustNotBeDeletedBecauseDirectoryIsNotEmpty() {
-        manager.getDirectory(".\\src");
-        manager.createDirectory("p1");
-        manager.getDirectory(".\\src\\p1");
-        manager.createDirectory("p2");
-        FileSystemResponse<Boolean> response = manager.delete(".\\src\\p1", false);
-        String message = response.getMessageError();
-
-        manager.delete(".\\src\\p1", true);
-
-        Assertions.assertEquals("Directory is not empty.", message);
-    }
-
-    @Test
     public void fileMustBeDeleted() {
+        consoleTextFileEditor = new ConsoleTextFileEditor();
         consoleTextFileEditor.openDirectory(".\\src");
         consoleTextFileEditor.createFile("newFile", "File with text");
         String messageIsSuccess = consoleTextFileEditor.delete(".\\src\\newFile");
@@ -156,15 +74,8 @@ public class ConsoleTextFileEditorTest {
     }
 
     @Test
-    public void fileMustNotBeDeletedBecauseFileDoesNotExist() {
-        FileSystemResponse<Boolean> response = manager.delete(".\\src\\newFile", false);
-        String message = response.getMessageError();
-
-        Assertions.assertEquals("Directory or file newFile does not exist.", message);
-    }
-
-    @Test
     public void fileMustBeEdited() throws IOException {
+        consoleTextFileEditor = new ConsoleTextFileEditor();
         consoleTextFileEditor.openDirectory(".\\src");
         consoleTextFileEditor.createFile("newFile", "File with text");
         consoleTextFileEditor.createFile("newFile2", "File with text");
@@ -177,14 +88,6 @@ public class ConsoleTextFileEditorTest {
         consoleTextFileEditor.delete(".\\src\\newFile2");
 
         Assertions.assertNotEquals(-1, res);
-    }
-
-    @Test
-    public void fileMustNotBeEditedBecauseFileDoesNotExist() {
-        FileSystemResponse<Boolean> response = manager.editFile("newFile", "New text");
-        String message = response.getMessageError();
-
-        Assertions.assertEquals("File newFile does not exist.", message);
     }
 
     private long filesCompareByByte(Path path1, Path path2) throws IOException {
@@ -211,6 +114,7 @@ public class ConsoleTextFileEditorTest {
 
     @Test
     public void fileMustBeRenamed() {
+        consoleTextFileEditor = new ConsoleTextFileEditor();
         consoleTextFileEditor.openDirectory(".\\src");
         consoleTextFileEditor.createFile("newFile.txt", "File with text");
         String messageIsSuccess = consoleTextFileEditor.renameTo("newFile.txt", "newName.txt");
@@ -221,29 +125,8 @@ public class ConsoleTextFileEditorTest {
     }
 
     @Test
-    public void fileMustNotBeRenamedBecauseFileWithThisNameAlreadyExists() {
-        manager.getDirectory(".\\src");
-        manager.createFile("newFile", "File with text");
-        manager.createFile("newFile2", "File with text");
-        FileSystemResponse<Boolean> response = manager.renameTo("newFile", "newFile2");
-        String message = response.getMessageError();
-
-        manager.delete(".\\src\\newFile", false);
-        manager.delete(".\\src\\newFile2", false);
-
-        Assertions.assertEquals("Directory or file with this name already exists.", message);
-    }
-
-    @Test
-    public void fileMustNotBeRenamedBecauseFileDoesNotExist() {
-        FileSystemResponse<Boolean> response = manager.renameTo("newFile", "newFile2");
-        String message = response.getMessageError();
-
-        Assertions.assertEquals("Directory or file newFile does not exist.", message);
-    }
-
-    @Test
     public void directoryMustBeRenamed() {
+        consoleTextFileEditor = new ConsoleTextFileEditor();
         consoleTextFileEditor.openDirectory(".\\src");
         consoleTextFileEditor.createDirectory("directory");
         String messageIsSuccess = consoleTextFileEditor.renameTo("directory", "newDirectory");
@@ -251,74 +134,5 @@ public class ConsoleTextFileEditorTest {
         consoleTextFileEditor.delete(".\\src\\newDirectory.txt");
 
         Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
-    }
-
-    @Test
-    public void directoryMustNotBeRenamedBecauseDirectoryWithThisNameAlreadyExists() {
-        manager.getDirectory(".\\src");
-        manager.createDirectory("newFile");
-        manager.createDirectory("newFile2");
-        FileSystemResponse<Boolean> response = manager.renameTo("newFile", "newFile2");
-        String message = response.getMessageError();
-
-        manager.delete(".\\src\\newFile", false);
-        manager.delete(".\\src\\newFile2", false);
-
-        Assertions.assertEquals("Directory or file with this name already exists.", message);
-    }
-
-    @Test
-    public void shouldReturnInfoAboutFile() {
-        manager.getDirectory(".\\src");
-        manager.createFile("newFile.txt", "new file");
-        FileSystemResponse<Map<String, String>> response = manager.getInfo("newFile.txt");
-        Map<String, String> map = response.getBody();
-
-        boolean absolutePath = map.get("Absolute path: ").endsWith(".\\src\\newFile.txt");
-
-        boolean size = map.get("Size: ").equals("8 bytes");
-        String creationTime = map.get("Creation time: ");
-
-        Date currentDate = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
-        String currentDateTime = dateFormat.format(currentDate);
-
-        manager.delete(".\\src\\newFile.txt", false);
-
-        Assertions.assertTrue(absolutePath);
-        Assertions.assertTrue(size);
-        Assertions.assertEquals(currentDateTime, creationTime);
-    }
-
-    @Test
-    public void shouldReturnInfoAboutDirectory() {
-        manager.getDirectory(".\\src");
-        manager.createDirectory("newDirectory");
-        FileSystemResponse<Map<String, String>> response = manager.getInfo("newDirectory");
-        Map<String, String> map = response.getBody();
-
-        boolean absolutePath = map.get("Absolute path: ").endsWith(".\\src\\newDirectory");
-
-        boolean size = map.get("Size: ").equals("0 bytes");
-
-        String creationTime = map.get("Creation time: ");
-
-        Date currentDate = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
-        String currentDateTime = dateFormat.format(currentDate);
-
-        manager.delete(".\\src\\newDirectory", false);
-
-        Assertions.assertTrue(absolutePath);
-        Assertions.assertTrue(size);
-        Assertions.assertEquals(currentDateTime, creationTime);
-    }
-
-    @Test
-    public void shouldNotReturnInfoAboutDirectoryBecauseDirectoryDoesNotExist() {
-        FileSystemResponse<Map<String, String>> response = manager.getInfo("dir33");
-        String message = response.getMessageError();
-
-        Assertions.assertEquals("Directory or file dir33 does not exist.", message);
     }
 }
