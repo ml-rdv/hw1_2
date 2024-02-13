@@ -47,50 +47,57 @@ public class ConsoleTextFileEditor {
     public void start() {
         openDirectory(".");
         Scanner in = new Scanner(System.in);
-        String input;
+        String command;
         while (true) {
-            input = in.nextLine();
-            System.out.print("\033[H\033[J");
-            System.out.flush();
-            if (!input.equals("finish")) {
-                continueWork(input);
-            } else {
+            command = in.nextLine();
+            clearConsole();
+            if (command.equals("finish")) {
                 in.close();
                 break;
             }
+            processCommand(command);
         }
     }
 
-    public void continueWork(String input) {
+    private void clearConsole() {
+        System.out.print("\033[H\033[J");
+        System.out.flush();
+    }
+
+    public void processCommand(String input) {
         String[] splittedInput = input.split(" ");
         String command = splittedInput[0];
         String MESSAGE_FORMAT_SUCCESS = "%s %s has been successfully %s.\n";
         String MESSAGE_FORMAT_NOT_SUCCESS = "%s %s has not been %s.\n";
         switch (command) {
             case "open" -> {
-                String path = manager.getCurrentDirectory().getPath() + "\\" + splittedInput[1];
+                String name = splittedInput[1];
+                String path = manager.getCurrentDirectory().getPath() + "\\" + name;
                 File directory = new File(path);
                 if (directory.isFile()) {
-                    openFile(splittedInput[1]);
+                    openFile(name);
                 } else {
                     openDirectory(path);
                 }
             }
             case "create" -> {
                 boolean success;
-                if (splittedInput[1].equals("-f")) {
+                boolean isFile = splittedInput[1].equals("-f");
+                if (isFile) {
                     String fileText = "";
                     if (splittedInput.length > 3) {
-                        int dotIndex = input.lastIndexOf(splittedInput[3]);
-                        fileText = input.substring(dotIndex);
+                        int indexFileText = input.lastIndexOf(splittedInput[3]);
+                        fileText = input.substring(indexFileText);
                     }
-                    success = createFile(splittedInput[2], fileText);
+                    String nameFile = splittedInput[2];
+                    success = createFile(nameFile, fileText);
                     System.out.printf((success ? MESSAGE_FORMAT_SUCCESS : MESSAGE_FORMAT_NOT_SUCCESS),
-                            "File", splittedInput[2], "created");
+                            "File", nameFile, "created");
                 } else {
-                    success = createDirectory(splittedInput[1]);
+                    String nameDirectory = splittedInput[1];
+                    success = createDirectory(nameDirectory);
                     System.out.printf((success ? MESSAGE_FORMAT_SUCCESS : MESSAGE_FORMAT_NOT_SUCCESS),
-                            "Directory", splittedInput[1], "created");
+                            "Directory", nameDirectory, "created");
                 }
             }
             case "back" -> {
@@ -98,32 +105,37 @@ public class ConsoleTextFileEditor {
             }
             case "edit" -> {
                 if (splittedInput.length > 2) {
-                    int dotIndex = input.lastIndexOf(splittedInput[2]);
-                    String fileText = "\n" + input.substring(dotIndex);
-                    boolean success = editFile(splittedInput[1], fileText);
+                    int indexFileText = input.lastIndexOf(splittedInput[2]);
+                    String fileText = "\n" + input.substring(indexFileText);
+                    String nameFile = splittedInput[1];
+                    boolean success = editFile(nameFile, fileText);
                     System.out.printf((success ? MESSAGE_FORMAT_SUCCESS : MESSAGE_FORMAT_NOT_SUCCESS),
-                            "File", splittedInput[1], "edited");
+                            "File", nameFile, "edited");
                 } else {
                     System.out.println("Input all parameters.");
                 }
             }
             case "delete" -> {
-                String path = manager.getCurrentDirectory().getPath() + "\\" + splittedInput[1];
+                String name = splittedInput[1];
+                String path = manager.getCurrentDirectory().getPath() + "\\" + name;
                 boolean success = delete(path);
                 System.out.printf((success ? MESSAGE_FORMAT_SUCCESS : MESSAGE_FORMAT_NOT_SUCCESS),
-                        "Directory of file", splittedInput[1], "deleted");
+                        "Directory or file", name, "deleted");
             }
             case "rename" -> {
                 if (splittedInput.length == 3) {
-                    boolean success = renameTo(splittedInput[1], splittedInput[2]);
+                    String oldName = splittedInput[1];
+                    String newName = splittedInput[2];
+                    boolean success = renameTo(oldName, newName);
                     System.out.printf((success ? MESSAGE_FORMAT_SUCCESS : MESSAGE_FORMAT_NOT_SUCCESS),
-                            "Directory of file", splittedInput[1], "renamed");
+                            "Directory or file", oldName, "renamed");
                 } else {
                     System.out.println("Input 3 parameters");
                 }
             }
             case "info" -> {
-                printInfo(splittedInput[1]);
+                String name = splittedInput[1];
+                printInfo(name);
             }
             default -> System.out.println("Command is not correct. Try again.");
         }
