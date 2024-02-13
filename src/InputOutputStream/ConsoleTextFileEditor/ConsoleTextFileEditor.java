@@ -112,7 +112,7 @@ public class ConsoleTextFileEditor {
                 }
             }
             case "back" -> {
-                back();
+                backToParentDirectory();
             }
             case "edit" -> {
                 if (splittedInput.length > 2) {
@@ -165,8 +165,8 @@ public class ConsoleTextFileEditor {
         return FileSystemManagement.MESSAGE_FORMAT_SUCCESS;
     }
 
-    private void back() {
-        FileSystemResponse<Boolean> fileSystemResponse = manager.back();
+    private void backToParentDirectory() {
+        FileSystemResponse<Boolean> fileSystemResponse = manager.backToParentDirectory();
         if (checkIsError(fileSystemResponse)) {
             return;
         }

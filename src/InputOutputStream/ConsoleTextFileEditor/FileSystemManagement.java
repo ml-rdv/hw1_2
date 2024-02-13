@@ -111,8 +111,8 @@ public class FileSystemManagement {
         return new FileSystemResponse<>(directory.mkdir());
     }
 
-    public FileSystemResponse<Boolean> back() {
-        if (currentDirectory.getPath().equals(".")) {
+    public FileSystemResponse<Boolean> backToParentDirectory() {
+        if (currentDirectory.getParent() == null) {
             return new FileSystemResponse<>("It is a root directory.");
         }
         currentDirectory = new File(currentDirectory.getParent());
