@@ -171,9 +171,8 @@ public class FileSystemManagement {
             return new FileSystemResponse<>("Directory or file " + oldNameDirectory.getName() + " does not exist.");
         }
         File newNameDirectory = new File(currentDirectory.getPath() + "\\" + newName);
-        FileSystemResponse<Boolean> result = new FileSystemResponse<>(oldNameDirectory.renameTo(newNameDirectory));
-        if (result.getBody()) {
-            return result;
+        if (oldNameDirectory.renameTo(newNameDirectory)) {
+            return new FileSystemResponse<>(true);
         } else {
             return new FileSystemResponse<>("Directory or file with this name already exists.");
         }
@@ -193,8 +192,7 @@ public class FileSystemManagement {
         try {
             creationTimeFileTime = (FileTime) Files.getAttribute(file, "creationTime");
         } catch (IOException e) {
-            e.printStackTrace();
-            return new FileSystemResponse<>(e.toString());
+            return new FileSystemResponse<>("Could not determine creation time");
         }
         if (creationTimeFileTime != null) {
             LocalDateTime localDateTime = creationTimeFileTime
