@@ -84,70 +84,77 @@ public class ConsoleTextFileEditor {
         String[] splittedInput = input.split(" ");
         String command = splittedInput[0];
         switch (command) {
-            case "open" -> {
-                String name = splittedInput[1];
-                String path = manager.getCurrentDirectory().getPath() + "\\" + name;
-                File directory = new File(path);
-                if (directory.isFile()) {
-                    openFile(name);
-                } else {
-                    openDirectory(path);
-                }
-            }
-            case "create" -> {
-                boolean isFile = splittedInput[1].equals("-f");
-                if (isFile) {
-                    String fileText = "";
-                    if (splittedInput.length > 3) {
-                        int indexFileText = input.lastIndexOf(splittedInput[3]);
-                        fileText = input.substring(indexFileText);
-                    }
-                    String nameFile = splittedInput[2];
-                    String messageResult = createFile(nameFile, fileText);
-                    System.out.printf(messageResult, "File", nameFile, "created");
-                } else {
-                    String nameDirectory = splittedInput[1];
-                    String messageResult = createDirectory(nameDirectory);
-                    System.out.printf(messageResult, "Directory", nameDirectory, "created");
-                }
-            }
-            case "back" -> {
-                backToParentDirectory();
-            }
-            case "edit" -> {
-                if (splittedInput.length > 2) {
-                    int indexFileText = input.lastIndexOf(splittedInput[2]);
-                    String fileText = "\n" + input.substring(indexFileText);
-                    String nameFile = splittedInput[1];
-                    String messageResult = editFile(nameFile, fileText);
-                    System.out.printf(messageResult, "File", nameFile, "edited");
-                } else {
-                    System.out.println("Input all parameters.");
-                }
-            }
-            case "delete" -> {
-                String name = splittedInput[1];
-                String path = manager.getCurrentDirectory().getPath() + "\\" + name;
-                String messageResult = delete(path);
-                System.out.printf(messageResult, "Directory or file", name, "deleted");
-            }
-            case "rename" -> {
-                if (splittedInput.length == 3) {
-                    String oldName = splittedInput[1];
-                    String newName = splittedInput[2];
-                    String messageResult = renameTo(oldName, newName);
-                    System.out.printf(messageResult, "Directory or file", oldName, "renamed");
-                } else {
-                    System.out.println("Input 3 parameters");
-                }
-            }
-            case "info" -> {
-                String name = splittedInput[1];
-                printInfo(name);
-            }
+            case "open" -> beforeOpen(splittedInput);
+            case "create" -> beforeCreate(input);
+            case "back" -> backToParentDirectory();
+            case "edit" -> beforeEdit(input);
+            case "delete" -> beforeDelete(splittedInput);
+            case "rename" -> beforeRename(splittedInput);
+            case "info" -> printInfo(input);
             default -> System.out.println("Command is not correct. Try again.");
         }
         System.out.println("Current path: " + manager.getCurrentDirectory().getPath());
+    }
+
+    private void beforeRename(String[] splittedInput) {
+        if (splittedInput.length == 3) {
+            String oldName = splittedInput[1];
+            String newName = splittedInput[2];
+            String messageResult = renameTo(oldName, newName);
+            System.out.printf(messageResult, "Directory or file", oldName, "renamed");
+        } else {
+            System.out.println("Input 3 parameters");
+        }
+    }
+
+    private void beforeDelete(String[] splittedInput) {
+        String name = splittedInput[1];
+        String path = manager.getCurrentDirectory().getPath() + "\\" + name;
+        String messageResult = delete(path);
+        System.out.printf(messageResult, "Directory or file", name, "deleted");
+    }
+
+    private void beforeEdit(String input) {
+        String[] splittedInput = input.split(" ");
+        if (splittedInput.length > 2) {
+            int indexFileText = input.lastIndexOf(splittedInput[2]);
+            String fileText = "\n" + input.substring(indexFileText);
+            String nameFile = splittedInput[1];
+            String messageResult = editFile(nameFile, fileText);
+            System.out.printf(messageResult, "File", nameFile, "edited");
+        } else {
+            System.out.println("Input all parameters.");
+        }
+    }
+
+    private void beforeOpen(String[] splittedInput) {
+        String name = splittedInput[1];
+        String path = manager.getCurrentDirectory().getPath() + "\\" + name;
+        File directory = new File(path);
+        if (directory.isFile()) {
+            openFile(name);
+        } else {
+            openDirectory(path);
+        }
+    }
+
+    private void beforeCreate(String input) {
+        String[] splittedInput = input.split(" ");
+        boolean isFile = splittedInput[1].equals("-f");
+        if (isFile) {
+            String fileText = "";
+            if (splittedInput.length > 3) {
+                int indexFileText = input.lastIndexOf(splittedInput[3]);
+                fileText = input.substring(indexFileText);
+            }
+            String nameFile = splittedInput[2];
+            String messageResult = createFile(nameFile, fileText);
+            System.out.printf(messageResult, "File", nameFile, "created");
+        } else {
+            String nameDirectory = splittedInput[1];
+            String messageResult = createDirectory(nameDirectory);
+            System.out.printf(messageResult, "Directory", nameDirectory, "created");
+        }
     }
 
     private <T> boolean checkIsError(FileSystemResponse<T> fileSystemResponse) {
@@ -211,7 +218,9 @@ public class ConsoleTextFileEditor {
         return getMessageResult(fileSystemResponse);
     }
 
-    public void printInfo(String name) {
+    public void printInfo(String input) {
+        String[] splittedInput = input.split(" ");
+        String name = splittedInput[1];
         FileSystemResponse<Map<String, String>> fileSystemResponse = manager.getInfo(name);
         if (checkIsError(fileSystemResponse)) {
             return;
