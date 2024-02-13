@@ -74,23 +74,18 @@ public class FileSystemManagement {
     public FileSystemResponse<Boolean> createFile(String name, String fileText) {
         File path = new File(currentDirectory.getPath() + "\\" + name);
         try {
-            if (path.createNewFile()) {
-                if (fileText != null) {
-                    try (FileWriter output = new FileWriter(path.getPath(), false)) {
-                        output.write(fileText);
-                    } catch (RuntimeException e) {
-                        e.printStackTrace();
-                    }
-                    return new FileSystemResponse<>(true);
-                }
-            } else {
+            if (!path.createNewFile()) {
                 return new FileSystemResponse<>("File with this name already exists.");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            if (fileText != null && !fileText.isEmpty()) {
+                try (FileWriter output = new FileWriter(path.getPath(), false)) {
+                    output.write(fileText);
+                }
+            }
+            return new FileSystemResponse<>(true);
+        } catch (Exception e) {
             return new FileSystemResponse<>(e.toString());
         }
-        return new FileSystemResponse<>("Unknown error");
     }
 
     public FileSystemResponse<Boolean> createDirectory(String name) {
