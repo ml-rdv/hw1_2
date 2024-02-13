@@ -23,7 +23,7 @@ public class FileSystemManagement {
     public FileSystemResponse<StringBuilder> getTextFileContents(String name) {
         String path = currentDirectory.getPath() + "\\" + name;
         File file = new File(path);
-        if (isDirectoryNotExists(path)) {
+        if (Files.notExists(Path.of(path))) {
             return new FileSystemResponse<>("File " + file.getName() + " does not exist.");
         }
         StringBuilder sb = new StringBuilder();
@@ -51,7 +51,7 @@ public class FileSystemManagement {
 
     public FileSystemResponse<List<String>> getDirectory(String path) {
         File directory = new File(path);
-        if (isDirectoryNotExists(path)) {
+        if (Files.notExists(Path.of(path))) {
             return new FileSystemResponse<>("Directory " + directory.getName() + " does not exist.");
         }
         currentDirectory = directory;
@@ -107,7 +107,7 @@ public class FileSystemManagement {
     public FileSystemResponse<Boolean> createDirectory(String name) {
         String path = currentDirectory.getPath() + "\\" + name;
         File directory = new File(path);
-        if (!isDirectoryNotExists(path)) {
+        if (!Files.notExists(Path.of(path))) {
             return new FileSystemResponse<>("Directory with this name already exists.");
         }
         return new FileSystemResponse<>(directory.mkdir());
@@ -124,7 +124,7 @@ public class FileSystemManagement {
     public FileSystemResponse<Boolean> editFile(String nameFile, String text) {
         String path = currentDirectory.getPath() + "\\" + nameFile;
         File file = new File(path);
-        if (isDirectoryNotExists(path)) {
+        if (Files.notExists(Path.of(path))) {
             return new FileSystemResponse<>("File " + file.getName() + " does not exist.");
         }
         try {
@@ -150,7 +150,7 @@ public class FileSystemManagement {
 
     public FileSystemResponse<Boolean> delete(String path, boolean deleteWithNestedDirectories) {
         File directory = new File(path);
-        if (isDirectoryNotExists(path)) {
+        if (Files.notExists(Path.of(path))) {
             return new FileSystemResponse<>("Directory or file " + directory.getName() + " does not exist.");
         }
         File[] list = directory.isDirectory() ? directory.listFiles() : null;
@@ -168,7 +168,8 @@ public class FileSystemManagement {
 
     public FileSystemResponse<Boolean> renameTo(String oldName, String newName) {
         File oldNameDirectory = new File(currentDirectory.getPath() + "\\" + oldName);
-        if (isDirectoryNotExists(currentDirectory.getPath() + "\\" + oldName)) {
+        String path = currentDirectory.getPath() + "\\" + oldName;
+        if (Files.notExists(Path.of(path))) {
             return new FileSystemResponse<>("Directory or file " + oldNameDirectory.getName() + " does not exist.");
         }
         File newNameDirectory = new File(currentDirectory.getPath() + "\\" + newName);
@@ -183,7 +184,7 @@ public class FileSystemManagement {
     public FileSystemResponse<Map<String, String>> getInfo(String name) {
         String path = currentDirectory.getPath() + "\\" + name;
         File directory = new File(path);
-        if (isDirectoryNotExists(path)) {
+        if (Files.notExists(Path.of(path))) {
             return new FileSystemResponse<>("Directory or file " + directory.getName() + " does not exist.");
         }
         Map<String, String> info = new HashMap<>();
@@ -223,11 +224,6 @@ public class FileSystemManagement {
             return count;
         }
         return count + 1;
-    }
-
-    private boolean isDirectoryNotExists(String path) {
-        File directory = new File(path);
-        return !directory.exists();
     }
 
     public File getCurrentDirectory() {
