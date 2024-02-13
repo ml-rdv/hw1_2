@@ -78,11 +78,10 @@ public class ConsoleTextFileEditorTest {
     @Test
     public void fileMustBeCreated() {
         consoleTextFileEditor.openDirectory(".\\src");
-        boolean result = consoleTextFileEditor.createFile("newFile", "File with text");
-
+        String messageIsSuccess = consoleTextFileEditor.createFile("newFile", "File with text");
         consoleTextFileEditor.delete(".\\src\\newFile");
 
-        Assertions.assertTrue(result);
+        Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
     }
 
     @Test
@@ -99,11 +98,11 @@ public class ConsoleTextFileEditorTest {
 
     @Test
     public void directoryMustBeCreated() {
-        boolean result = consoleTextFileEditor.createDirectory(".\\src\\TestDirectory");
+        String messageIsSuccess = consoleTextFileEditor.createDirectory(".\\src\\TestDirectory");
 
         consoleTextFileEditor.delete(".\\src\\TestDirectory");
 
-        Assertions.assertTrue(result);
+        Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
     }
 
     @Test
@@ -120,9 +119,9 @@ public class ConsoleTextFileEditorTest {
     @Test
     public void directoryMustBeDeleted() {
         consoleTextFileEditor.createDirectory(".\\src\\TestDirectory");
-        boolean result = consoleTextFileEditor.delete(".\\src\\TestDirectory");
+        String messageIsSuccess = consoleTextFileEditor.delete(".\\src\\TestDirectory");
 
-        Assertions.assertTrue(result);
+        Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
     }
 
     @Test
@@ -151,9 +150,9 @@ public class ConsoleTextFileEditorTest {
     public void fileMustBeDeleted() {
         consoleTextFileEditor.openDirectory(".\\src");
         consoleTextFileEditor.createFile("newFile", "File with text");
-        boolean result = consoleTextFileEditor.delete(".\\src\\newFile");
+        String messageIsSuccess = consoleTextFileEditor.delete(".\\src\\newFile");
 
-        Assertions.assertTrue(result);
+        Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
     }
 
     @Test
@@ -214,11 +213,11 @@ public class ConsoleTextFileEditorTest {
     public void fileMustBeRenamed() {
         consoleTextFileEditor.openDirectory(".\\src");
         consoleTextFileEditor.createFile("newFile.txt", "File with text");
-        boolean result = consoleTextFileEditor.renameTo("newFile.txt", "newName.txt");
+        String messageIsSuccess = consoleTextFileEditor.renameTo("newFile.txt", "newName.txt");
 
         consoleTextFileEditor.delete(".\\src\\newName.txt");
 
-        Assertions.assertTrue(result);
+        Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
     }
 
     @Test
@@ -247,11 +246,11 @@ public class ConsoleTextFileEditorTest {
     public void directoryMustBeRenamed() {
         consoleTextFileEditor.openDirectory(".\\src");
         consoleTextFileEditor.createDirectory("directory");
-        boolean result = consoleTextFileEditor.renameTo("directory", "newDirectory");
+        String messageIsSuccess = consoleTextFileEditor.renameTo("directory", "newDirectory");
 
         consoleTextFileEditor.delete(".\\src\\newDirectory.txt");
 
-        Assertions.assertTrue(result);
+        Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
     }
 
     @Test

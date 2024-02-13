@@ -67,8 +67,6 @@ public class ConsoleTextFileEditor {
     public void processCommand(String input) {
         String[] splittedInput = input.split(" ");
         String command = splittedInput[0];
-        String MESSAGE_FORMAT_SUCCESS = "%s %s has been successfully %s.\n";
-        String MESSAGE_FORMAT_NOT_SUCCESS = "%s %s has not been %s.\n";
         switch (command) {
             case "open" -> {
                 String name = splittedInput[1];
@@ -81,7 +79,6 @@ public class ConsoleTextFileEditor {
                 }
             }
             case "create" -> {
-                boolean success;
                 boolean isFile = splittedInput[1].equals("-f");
                 if (isFile) {
                     String fileText = "";
@@ -90,14 +87,12 @@ public class ConsoleTextFileEditor {
                         fileText = input.substring(indexFileText);
                     }
                     String nameFile = splittedInput[2];
-                    success = createFile(nameFile, fileText);
-                    System.out.printf((success ? MESSAGE_FORMAT_SUCCESS : MESSAGE_FORMAT_NOT_SUCCESS),
-                            "File", nameFile, "created");
+                    String messageResult = createFile(nameFile, fileText);
+                    System.out.printf(messageResult, "File", nameFile, "created");
                 } else {
                     String nameDirectory = splittedInput[1];
-                    success = createDirectory(nameDirectory);
-                    System.out.printf((success ? MESSAGE_FORMAT_SUCCESS : MESSAGE_FORMAT_NOT_SUCCESS),
-                            "Directory", nameDirectory, "created");
+                    String messageResult = createDirectory(nameDirectory);
+                    System.out.printf(messageResult, "Directory", nameDirectory, "created");
                 }
             }
             case "back" -> {
@@ -108,9 +103,8 @@ public class ConsoleTextFileEditor {
                     int indexFileText = input.lastIndexOf(splittedInput[2]);
                     String fileText = "\n" + input.substring(indexFileText);
                     String nameFile = splittedInput[1];
-                    boolean success = editFile(nameFile, fileText);
-                    System.out.printf((success ? MESSAGE_FORMAT_SUCCESS : MESSAGE_FORMAT_NOT_SUCCESS),
-                            "File", nameFile, "edited");
+                    String messageResult = editFile(nameFile, fileText);
+                    System.out.printf(messageResult, "File", nameFile, "edited");
                 } else {
                     System.out.println("Input all parameters.");
                 }
@@ -118,17 +112,15 @@ public class ConsoleTextFileEditor {
             case "delete" -> {
                 String name = splittedInput[1];
                 String path = manager.getCurrentDirectory().getPath() + "\\" + name;
-                boolean success = delete(path);
-                System.out.printf((success ? MESSAGE_FORMAT_SUCCESS : MESSAGE_FORMAT_NOT_SUCCESS),
-                        "Directory or file", name, "deleted");
+                String messageResult = delete(path);
+                System.out.printf(messageResult, "Directory or file", name, "deleted");
             }
             case "rename" -> {
                 if (splittedInput.length == 3) {
                     String oldName = splittedInput[1];
                     String newName = splittedInput[2];
-                    boolean success = renameTo(oldName, newName);
-                    System.out.printf((success ? MESSAGE_FORMAT_SUCCESS : MESSAGE_FORMAT_NOT_SUCCESS),
-                            "Directory or file", oldName, "renamed");
+                    String messageResult = renameTo(oldName, newName);
+                    System.out.printf(messageResult, "Directory or file", oldName, "renamed");
                 } else {
                     System.out.println("Input 3 parameters");
                 }
@@ -142,10 +134,24 @@ public class ConsoleTextFileEditor {
         System.out.println("Current path: " + manager.getCurrentDirectory().getPath());
     }
 
-    private void back() {
-        FileSystemResponse<Boolean> fileSystemResponse = manager.back();
+    private <T> boolean checkIsError(FileSystemResponse<T> fileSystemResponse) {
         if (fileSystemResponse.getMessageError() != null) {
             System.out.println(fileSystemResponse.getMessageError());
+            return true;
+        }
+        return false;
+    }
+
+    private <T> String getMessageResult(FileSystemResponse<T> fileSystemResponse) {
+        if (checkIsError(fileSystemResponse)) {
+            return FileSystemManagement.MESSAGE_FORMAT_NOT_SUCCESS;
+        }
+        return FileSystemManagement.MESSAGE_FORMAT_SUCCESS;
+    }
+
+    private void back() {
+        FileSystemResponse<Boolean> fileSystemResponse = manager.back();
+        if (checkIsError(fileSystemResponse)) {
             return;
         }
         openDirectory(manager.getCurrentDirectory().getPath());
@@ -153,8 +159,7 @@ public class ConsoleTextFileEditor {
 
     public boolean openFile(String name) {
         FileSystemResponse<StringBuilder> fileSystemResponse = manager.getFile(name);
-        if (fileSystemResponse.getMessageError() != null) {
-            System.out.println(fileSystemResponse.getMessageError());
+        if (checkIsError(fileSystemResponse)) {
             return false;
         }
         System.out.println(fileSystemResponse.getBody());
@@ -163,83 +168,63 @@ public class ConsoleTextFileEditor {
 
     public void openDirectory(String path) {
         FileSystemResponse<List<String>> fileSystemResponse = manager.getDirectory(path);
-        if (fileSystemResponse.getMessageError() != null) {
-            System.out.println(fileSystemResponse.getMessageError());
+        if (checkIsError(fileSystemResponse)) {
             return;
         }
         List<String> listFiles = fileSystemResponse.getBody();
         listFiles.forEach(System.out::println);
     }
 
-    public boolean createFile(String name, String fileText) {
+    public String createFile(String name, String fileText) {
         FileSystemResponse<Boolean> fileSystemResponse = manager.createFile(name, fileText);
-        if (fileSystemResponse.getMessageError() != null) {
-            System.out.println(fileSystemResponse.getMessageError());
-            return false;
-        }
-        return fileSystemResponse.getBody();
+        return getMessageResult(fileSystemResponse);
     }
 
-    public boolean createDirectory(String name) {
+    public String createDirectory(String name) {
         FileSystemResponse<Boolean> fileSystemResponse = manager.createDirectory(name);
-        if (fileSystemResponse.getMessageError() != null) {
-            System.out.println(fileSystemResponse.getMessageError());
-            return false;
-        }
-        return fileSystemResponse.getBody();
+        return getMessageResult(fileSystemResponse);
     }
 
-    public boolean editFile(String nameFile, String text) {
+    public String editFile(String nameFile, String text) {
         FileSystemResponse<Boolean> fileSystemResponse = manager.editFile(nameFile, text);
-        if (fileSystemResponse.getMessageError() != null) {
-            System.out.println(fileSystemResponse.getMessageError());
-            return false;
-        }
-        return fileSystemResponse.getBody();
+        return getMessageResult(fileSystemResponse);
     }
 
-    public boolean renameTo(String oldName, String newName) {
+    public String renameTo(String oldName, String newName) {
         FileSystemResponse<Boolean> fileSystemResponse = manager.renameTo(oldName, newName);
-        if (fileSystemResponse.getMessageError() != null) {
-            System.out.println(fileSystemResponse.getMessageError());
-            return false;
-        }
-        return fileSystemResponse.getBody();
+        return getMessageResult(fileSystemResponse);
     }
 
     public void printInfo(String name) {
         FileSystemResponse<Map<String, String>> fileSystemResponse = manager.getInfo(name);
-        if (fileSystemResponse.getMessageError() != null) {
-            System.out.println(fileSystemResponse.getMessageError());
+        if (checkIsError(fileSystemResponse)) {
             return;
         }
         Map<String, String> info = fileSystemResponse.getBody();
         info.forEach((key, value) -> System.out.println(key + " " + value));
     }
 
-    public boolean delete(String path) {
+    public String delete(String path) {
         FileSystemResponse<Boolean> fileSystemResponse = manager.delete(path, false);
-        if (fileSystemResponse.getMessageError() != null ||
-                (fileSystemResponse.getMessageError() != null && !fileSystemResponse.getMessageError().equals("Directory is not empty."))) {
-            System.out.println(fileSystemResponse.getMessageError());
-            return false;
-        }
-        if (fileSystemResponse.getBody()) {
-            return fileSystemResponse.getBody();
-        }
-        System.out.println("Directory is not empty. Are you sure you want to delete it? Yes/No/Cansel");
-        Scanner in = new Scanner(System.in);
-        String input;
-        while (true) {
-            input = in.nextLine();
-            if (input.equals("Yes")) {
-                manager.delete(path, true);
-                return true;
-            } else if (input.equals("No") || input.equals("Cansel")) {
-                return false;
-            } else {
-                System.out.println("Incorrect command. Try again.");
+        if (fileSystemResponse.getMessageError() != null
+                && fileSystemResponse.getMessageError().equals("Directory is not empty.")) {
+            System.out.println("Directory is not empty. Are you sure you want to delete it? Yes/No/Cansel");
+            Scanner in = new Scanner(System.in);
+            String input;
+            while (true) {
+                input = in.nextLine();
+                if (input.equalsIgnoreCase("Yes")) {
+                    manager.delete(path, true);
+                    return FileSystemManagement.MESSAGE_FORMAT_SUCCESS;
+                } else if (input.equalsIgnoreCase("No") || input.equalsIgnoreCase("Cansel")) {
+                    return FileSystemManagement.MESSAGE_FORMAT_NOT_SUCCESS;
+                } else {
+                    System.out.println("Incorrect command. Try again.");
+                }
             }
+        } else if (checkIsError(fileSystemResponse)) {
+            return FileSystemManagement.MESSAGE_FORMAT_NOT_SUCCESS;
         }
+        return FileSystemManagement.MESSAGE_FORMAT_SUCCESS;
     }
 }
