@@ -3,10 +3,8 @@ package InputOutputStream.ConsoleTextFileEditor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class ConsoleTextFileEditorTest {
@@ -82,33 +80,26 @@ public class ConsoleTextFileEditorTest {
         consoleTextFileEditor.editFile("newFile", "next text");
         Path path1 = Path.of(".\\src\\newFile");
         Path path2 = Path.of(".\\src\\newFile2");
-        long res = filesCompareByByte(path1, path2);
+        boolean filesAreSame = isFilesTheSame(path1, path2);
 
         consoleTextFileEditor.delete(".\\src\\newFile");
         consoleTextFileEditor.delete(".\\src\\newFile2");
 
-        Assertions.assertNotEquals(-1, res);
+        Assertions.assertFalse(filesAreSame);
     }
 
-    private long filesCompareByByte(Path path1, Path path2) throws IOException {
-        try (BufferedInputStream fis1 = new BufferedInputStream(new FileInputStream(path1.toFile()));
-             BufferedInputStream fis2 = new BufferedInputStream(new FileInputStream(path2.toFile()))) {
+    private boolean isFilesTheSame(Path path1, Path path2) throws IOException {
+        try (BufferedReader bf1 = Files.newBufferedReader(path1);
+             BufferedReader bf2 = Files.newBufferedReader(path2)) {
 
-            int ch;
-            long pos = 1;
-            while ((ch = fis1.read()) != -1) {
-                if (ch != fis2.read()) {
-                    return pos;
+            String line1, line2;
+            while ((line1 = bf1.readLine()) != null) {
+                line2 = bf2.readLine();
+                if (!line1.equals(line2)) {
+                    return false;
                 }
-                pos++;
             }
-            if (fis2.read() == -1) {
-                // files are the same
-                return -1;
-            } else {
-                // files are not the same
-                return pos;
-            }
+            return bf2.readLine() == null;
         }
     }
 
