@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ConsoleTextFileEditorTest {
 
@@ -21,53 +22,52 @@ public class ConsoleTextFileEditorTest {
     }
 
     @Test
-    public void fileMustBeOpened() {
+    public void fileMustBeOpened() throws IOException {
         consoleTextFileEditor = new ConsoleTextFileEditor();
         consoleTextFileEditor.openDirectory("src");
         consoleTextFileEditor.createFile("newFile.txt", "File with text");
         boolean result = consoleTextFileEditor.openFile("newFile.txt");
 
-        consoleTextFileEditor.delete("src\\newFile.txt");
+        Files.delete(Paths.get("src\\newFile.txt"));
 
         Assertions.assertTrue(result);
     }
 
     @Test
-    public void fileMustBeCreated() {
+    public void fileMustBeCreated() throws IOException {
         consoleTextFileEditor = new ConsoleTextFileEditor();
         consoleTextFileEditor.openDirectory("src");
         String messageIsSuccess = consoleTextFileEditor.createFile("newFile", "File with text");
-        consoleTextFileEditor.delete("src\\newFile");
+
+        Files.delete(Paths.get("src\\newFile"));
 
         Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
     }
 
     @Test
-    public void directoryMustBeCreated() {
+    public void directoryMustBeCreated() throws IOException {
         consoleTextFileEditor = new ConsoleTextFileEditor();
         consoleTextFileEditor.openDirectory("src");
         String messageIsSuccess = consoleTextFileEditor.createDirectory("TestDirectory");
 
-        consoleTextFileEditor.delete("src\\TestDirectory");
+        Files.delete(Paths.get("src\\TestDirectory"));
 
         Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
     }
 
     @Test
-    public void directoryMustBeDeleted() {
+    public void directoryMustBeDeleted() throws IOException {
         consoleTextFileEditor = new ConsoleTextFileEditor();
-        consoleTextFileEditor.openDirectory("src");
-        consoleTextFileEditor.createDirectory("TestDirectory");
+        Files.createDirectory(Paths.get("src\\TestDirectory"));
         String messageIsSuccess = consoleTextFileEditor.delete("src\\TestDirectory");
 
         Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
     }
 
     @Test
-    public void fileMustBeDeleted() {
+    public void fileMustBeDeleted() throws IOException {
         consoleTextFileEditor = new ConsoleTextFileEditor();
-        consoleTextFileEditor.openDirectory("src");
-        consoleTextFileEditor.createFile("newFile", "File with text");
+        Files.createFile(Paths.get("src\\newFile"));
         String messageIsSuccess = consoleTextFileEditor.delete("src\\newFile");
 
         Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
@@ -80,12 +80,12 @@ public class ConsoleTextFileEditorTest {
         consoleTextFileEditor.createFile("newFile", "File with text");
         consoleTextFileEditor.createFile("newFile2", "File with text");
         consoleTextFileEditor.editFile("newFile", "next text");
-        Path path1 = Path.of("src\\newFile");
-        Path path2 = Path.of("src\\newFile2");
+        Path path1 = Paths.get("src\\newFile");
+        Path path2 = Paths.get("src\\newFile2");
         boolean filesAreSame = isFilesTheSame(path1, path2);
 
-        consoleTextFileEditor.delete("src\\newFile");
-        consoleTextFileEditor.delete("src\\newFile2");
+        Files.delete(path1);
+        Files.delete(path2);
 
         Assertions.assertFalse(filesAreSame);
     }
@@ -106,25 +106,27 @@ public class ConsoleTextFileEditorTest {
     }
 
     @Test
-    public void fileMustBeRenamed() {
+    public void fileMustBeRenamed() throws IOException {
         consoleTextFileEditor = new ConsoleTextFileEditor();
-        consoleTextFileEditor.openDirectory("src");
-        consoleTextFileEditor.createFile("newFile.txt", "File with text");
-        String messageIsSuccess = consoleTextFileEditor.renameTo("newFile.txt", "newName.txt");
+        Files.createFile(Paths.get("src\\oldName.txt"));
 
-        consoleTextFileEditor.delete("src\\newName.txt");
+        consoleTextFileEditor.openDirectory("src");
+        String messageIsSuccess = consoleTextFileEditor.renameTo("oldName.txt", "newName.txt");
+
+        Files.delete(Paths.get("src\\newName.txt"));
 
         Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
     }
 
     @Test
-    public void directoryMustBeRenamed() {
+    public void directoryMustBeRenamed() throws IOException {
         consoleTextFileEditor = new ConsoleTextFileEditor();
+        Files.createDirectory(Paths.get("src\\directory"));
+
         consoleTextFileEditor.openDirectory("src");
-        consoleTextFileEditor.createDirectory("directory");
         String messageIsSuccess = consoleTextFileEditor.renameTo("directory", "newDirectory");
 
-        consoleTextFileEditor.delete("src\\newDirectory");
+        Files.delete(Paths.get("src\\newDirectory"));
 
         Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
     }
