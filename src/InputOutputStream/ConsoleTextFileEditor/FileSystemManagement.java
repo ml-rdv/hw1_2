@@ -35,7 +35,6 @@ public class FileSystemManagement {
                 }
                 return new FileSystemResponse<>(sb);
             } catch (IOException e) {
-                e.printStackTrace();
                 return new FileSystemResponse<>(e.toString());
             }
         } else {
@@ -115,7 +114,6 @@ public class FileSystemManagement {
             output.write(text);
             return new FileSystemResponse<>(true);
         } catch (Exception e) {
-            e.printStackTrace();
             return new FileSystemResponse<>(e.toString());
         }
     }
