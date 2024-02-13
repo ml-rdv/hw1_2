@@ -27,7 +27,7 @@ public class FileSystemManagement {
             return new FileSystemResponse<>("File " + file.getName() + " does not exist.");
         }
         StringBuilder sb = new StringBuilder();
-        if (extensionIsCorrect(file)) {
+        if (file.getPath().endsWith(".txt")) {
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -40,13 +40,6 @@ public class FileSystemManagement {
             }
         }
         return new FileSystemResponse<>("The file extension is incorrect.");
-    }
-
-    private boolean extensionIsCorrect(File fileDirectory) {
-        String fileName = fileDirectory.getName();
-        int dotIndex = fileName.lastIndexOf('.');
-        String extension = (dotIndex == -1) ? "" : fileName.substring(dotIndex);
-        return extension.equals(".txt");
     }
 
     public FileSystemResponse<List<String>> getDirectory(String path) {
