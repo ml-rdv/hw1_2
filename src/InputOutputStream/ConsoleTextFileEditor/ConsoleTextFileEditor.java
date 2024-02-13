@@ -221,7 +221,7 @@ public class ConsoleTextFileEditor {
     }
 
     public String delete(String path) {
-        FileSystemResponse<Boolean> fileSystemResponse = manager.delete(path, false);
+        FileSystemResponse<Boolean> fileSystemResponse = manager.delete(path);
         if (fileSystemResponse.getMessageError() != null
                 && fileSystemResponse.getMessageError().equals("Directory is not empty.")) {
             System.out.println("Directory is not empty. Are you sure you want to delete it? Yes/No/Cansel");
@@ -230,7 +230,7 @@ public class ConsoleTextFileEditor {
             while (true) {
                 input = in.nextLine();
                 if (input.equalsIgnoreCase("Yes")) {
-                    manager.delete(path, true);
+                    manager.deleteWithNestedDirectories(path);
                     return FileSystemManagement.MESSAGE_FORMAT_SUCCESS;
                 } else if (input.equalsIgnoreCase("No") || input.equalsIgnoreCase("Cansel")) {
                     return FileSystemManagement.MESSAGE_FORMAT_NOT_SUCCESS;

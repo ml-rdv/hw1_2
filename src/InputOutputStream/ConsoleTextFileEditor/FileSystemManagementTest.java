@@ -25,12 +25,11 @@ public class FileSystemManagementTest {
     @Test
     public void fileMustBeOpenedAndRead() {
         manager = new FileSystemManagement();
-        ConsoleTextFileEditor consoleTextFileEditor = new ConsoleTextFileEditor();
-        consoleTextFileEditor.openDirectory("src");
-        consoleTextFileEditor.createFile("newFile.txt", "File with text");
-        FileSystemResponse<StringBuilder> response = manager.getTextFileContents("src\\newFile.txt");
+        manager.getDirectory("src");
+        manager.createFile("newFile.txt", "File with text");
+        FileSystemResponse<StringBuilder> response = manager.getTextFileContents("newFile.txt");
 
-        consoleTextFileEditor.delete("src\\newFile.txt");
+        manager.delete("src\\newFile.txt");
 
         Assertions.assertEquals("File with text\n", response.getBody().toString());
     }
@@ -43,7 +42,7 @@ public class FileSystemManagementTest {
         FileSystemResponse<StringBuilder> response = manager.getTextFileContents("newFile");
         String message = response.getMessageError();
 
-        manager.delete("src\\newFile", false);
+        manager.delete("src\\newFile");
 
         Assertions.assertEquals("The file extension is incorrect.", message);
     }
@@ -56,7 +55,7 @@ public class FileSystemManagementTest {
         FileSystemResponse<Boolean> response = manager.createFile("newFile", "File with text");
         String message = response.getMessageError();
 
-        manager.delete("src\\newFile", false);
+        manager.delete("src\\newFile");
 
         Assertions.assertEquals("File with this name already exists.", message);
     }
@@ -64,11 +63,12 @@ public class FileSystemManagementTest {
     @Test
     public void directoryMustNotBeCreatedBecauseDirectoryWithThisNameAlreadyExists() {
         manager = new FileSystemManagement();
-        manager.createDirectory("src\\TestDirectory");
-        FileSystemResponse<Boolean> response = manager.createDirectory("src\\TestDirectory");
+        manager.getDirectory("src");
+        manager.createDirectory("TestDirectory");
+        FileSystemResponse<Boolean> response = manager.createDirectory("TestDirectory");
         String message = response.getMessageError();
 
-        manager.delete("src\\TestDirectory", false);
+        manager.delete("src\\TestDirectory");
 
         Assertions.assertEquals("Directory with this name already exists.", message);
     }
@@ -76,7 +76,16 @@ public class FileSystemManagementTest {
     @Test
     public void directoryMustNotBeDeletedBecauseDirectoryDoesNotExist() {
         manager = new FileSystemManagement();
-        FileSystemResponse<Boolean> response = manager.delete("src\\TestDirectory", false);
+        FileSystemResponse<Boolean> response = manager.delete("src\\TestDirectory");
+        String message = response.getMessageError();
+
+        Assertions.assertEquals("Directory or file TestDirectory does not exist.", message);
+    }
+
+    @Test
+    public void directoryMustNotBeDeletedWithNestedDirectoriesBecauseDirectoryDoesNotExist() {
+        manager = new FileSystemManagement();
+        FileSystemResponse<Boolean> response = manager.deleteWithNestedDirectories("src\\TestDirectory");
         String message = response.getMessageError();
 
         Assertions.assertEquals("Directory or file TestDirectory does not exist.", message);
@@ -89,10 +98,10 @@ public class FileSystemManagementTest {
         manager.createDirectory("p1");
         manager.getDirectory("src\\p1");
         manager.createDirectory("p2");
-        FileSystemResponse<Boolean> response = manager.delete("src\\p1", false);
+        FileSystemResponse<Boolean> response = manager.delete("src\\p1");
         String message = response.getMessageError();
 
-        manager.delete("src\\p1", true);
+        manager.deleteWithNestedDirectories("src\\p1");
 
         Assertions.assertEquals("Directory is not empty.", message);
     }
@@ -100,7 +109,7 @@ public class FileSystemManagementTest {
     @Test
     public void fileMustNotBeDeletedBecauseFileDoesNotExist() {
         manager = new FileSystemManagement();
-        FileSystemResponse<Boolean> response = manager.delete("src\\newFile", false);
+        FileSystemResponse<Boolean> response = manager.delete("src\\newFile");
         String message = response.getMessageError();
 
         Assertions.assertEquals("Directory or file newFile does not exist.", message);
@@ -124,8 +133,8 @@ public class FileSystemManagementTest {
         FileSystemResponse<Boolean> response = manager.renameTo("newFile", "newFile2");
         String message = response.getMessageError();
 
-        manager.delete("src\\newFile", false);
-        manager.delete("src\\newFile2", false);
+        manager.delete("src\\newFile");
+        manager.delete("src\\newFile2");
 
         Assertions.assertEquals("Directory or file with this name already exists.", message);
     }
@@ -148,8 +157,8 @@ public class FileSystemManagementTest {
         FileSystemResponse<Boolean> response = manager.renameTo("newFile", "newFile2");
         String message = response.getMessageError();
 
-        manager.delete("src\\newFile", false);
-        manager.delete("src\\newFile2", false);
+        manager.delete("src\\newFile");
+        manager.delete("src\\newFile2");
 
         Assertions.assertEquals("Directory or file with this name already exists.", message);
     }
@@ -168,7 +177,7 @@ public class FileSystemManagementTest {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
         String currentDateTime = dateFormat.format(currentDate);
 
-        manager.delete("src\\newFile.txt", false);
+        manager.delete("src\\newFile.txt");
 
         Assertions.assertEquals(absolutePathExpected, map.get("Absolute path: "));
         Assertions.assertEquals("8 bytes", map.get("Size: "));
@@ -196,7 +205,7 @@ public class FileSystemManagementTest {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
         String currentDateTime = dateFormat.format(currentDate);
 
-        manager.delete("src\\newDirectory", true);
+        manager.deleteWithNestedDirectories("src\\newDirectory");
 
         Assertions.assertEquals(absolutePathExpected, map.get("Absolute path: "));
         Assertions.assertEquals("0 bytes", map.get("Size: "));

@@ -146,22 +146,28 @@ public class FileSystemManagement {
         directory.delete();
     }
 
-    public FileSystemResponse<Boolean> delete(String path, boolean deleteWithNestedDirectories) {
+    public FileSystemResponse<Boolean> delete(String path) {
         File directory = new File(path);
         if (Files.notExists(Path.of(path))) {
             return new FileSystemResponse<>("Directory or file " + directory.getName() + " does not exist.");
         }
-        File[] list = directory.isDirectory() ? directory.listFiles() : null;
-        if (directory.isFile() || (list != null && list.length == 0)) {
-            deleteDirectory(directory);
+
+        File[] list = directory.listFiles();
+        if (list == null || list.length == 0) {
+            directory.delete();
             return new FileSystemResponse<>(true);
         }
-        if (!deleteWithNestedDirectories) {
-            return new FileSystemResponse<>("Directory is not empty.");
-        } else {
-            deleteDirectory(directory);
-            return new FileSystemResponse<>(true);
+        return new FileSystemResponse<>("Directory is not empty.");
+    }
+
+    public FileSystemResponse<Boolean> deleteWithNestedDirectories(String path) {
+        File directory = new File(path);
+        if (Files.notExists(Path.of(path))) {
+            return new FileSystemResponse<>("Directory or file " + directory.getName() + " does not exist.");
         }
+
+        deleteDirectory(directory);
+        return new FileSystemResponse<>(true);
     }
 
     public FileSystemResponse<Boolean> renameTo(String oldName, String newName) {
