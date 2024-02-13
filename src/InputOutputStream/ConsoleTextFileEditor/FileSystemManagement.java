@@ -196,13 +196,16 @@ public class FileSystemManagement {
             e.printStackTrace();
             return new FileSystemResponse<>(e.toString());
         }
-        LocalDateTime localDateTime = creationTimeFileTime != null ? creationTimeFileTime
-                .toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime() : null;
-        String creationTime = localDateTime != null ? localDateTime.format(
-                DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm")) : null;
-        info.put("Creation time: ", creationTime);
+        if (creationTimeFileTime != null) {
+            LocalDateTime localDateTime = creationTimeFileTime
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime();
+
+            String creationTime = localDateTime.format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm"));
+
+            info.put("Creation time: ", creationTime);
+        }
         if (directory.isDirectory()) {
             int numberNestedElements = countNestedElements(directory);
             info.put("Number of nested elements: ", String.valueOf(numberNestedElements));
@@ -214,7 +217,7 @@ public class FileSystemManagement {
         File[] files = directory.listFiles();
         int count = files != null ? files.length : 0;
         if (files != null) {
-            for (File file: files) {
+            for (File file : files) {
                 count += countNestedElements(file);
             }
         }
