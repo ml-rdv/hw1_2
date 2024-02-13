@@ -3,6 +3,7 @@ package InputOutputStream.ConsoleTextFileEditor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -156,15 +157,12 @@ public class FileSystemManagementTest {
     @Test
     public void shouldReturnInfoAboutFile() {
         manager = new FileSystemManagement();
-        manager.getDirectory(".\\src");
+        manager.getDirectory("src");
         manager.createFile("newFile.txt", "new file");
         FileSystemResponse<Map<String, String>> response = manager.getInfo("newFile.txt");
         Map<String, String> map = response.getBody();
 
-        boolean absolutePath = map.get("Absolute path: ").endsWith(".\\src\\newFile.txt");
-
-        boolean size = map.get("Size: ").equals("8 bytes");
-        String creationTime = map.get("Creation time: ");
+        String absolutePathExpected = Path.of("src/newFile.txt").toAbsolutePath().toString();
 
         Date currentDate = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
@@ -172,34 +170,38 @@ public class FileSystemManagementTest {
 
         manager.delete(".\\src\\newFile.txt", false);
 
-        Assertions.assertTrue(absolutePath);
-        Assertions.assertTrue(size);
-        Assertions.assertEquals(currentDateTime, creationTime);
+        Assertions.assertEquals(absolutePathExpected, map.get("Absolute path: "));
+        Assertions.assertEquals("8 bytes", map.get("Size: "));
+        Assertions.assertEquals(currentDateTime, map.get("Creation time: "));
     }
 
     @Test
     public void shouldReturnInfoAboutDirectory() {
         manager = new FileSystemManagement();
-        manager.getDirectory(".\\src");
+        manager.getDirectory("src");
         manager.createDirectory("newDirectory");
+        manager.getDirectory("src\\newDirectory");
+        manager.createDirectory("nestedDirectory1");
+        manager.createDirectory("nestedDirectory2");
+        manager.getDirectory("src\\newDirectory\\nestedDirectory1");
+        manager.createFile("nestedFile.txt", "It is a nested file");
+        manager.getDirectory("src");
+
         FileSystemResponse<Map<String, String>> response = manager.getInfo("newDirectory");
         Map<String, String> map = response.getBody();
 
-        boolean absolutePath = map.get("Absolute path: ").endsWith(".\\src\\newDirectory");
-
-        boolean size = map.get("Size: ").equals("0 bytes");
-
-        String creationTime = map.get("Creation time: ");
+        String absolutePathExpected = Path.of("src\\newDirectory").toAbsolutePath().toString();
 
         Date currentDate = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
         String currentDateTime = dateFormat.format(currentDate);
 
-        manager.delete(".\\src\\newDirectory", false);
+        manager.delete(".\\src\\newDirectory", true);
 
-        Assertions.assertTrue(absolutePath);
-        Assertions.assertTrue(size);
-        Assertions.assertEquals(currentDateTime, creationTime);
+        Assertions.assertEquals(absolutePathExpected, map.get("Absolute path: "));
+        Assertions.assertEquals("0 bytes", map.get("Size: "));
+        Assertions.assertEquals("3", map.get("Number of nested elements: "));
+        Assertions.assertEquals(currentDateTime, map.get("Creation time: "));
     }
 
     @Test
