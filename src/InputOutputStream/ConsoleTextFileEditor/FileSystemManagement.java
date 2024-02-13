@@ -12,9 +12,13 @@ import java.util.*;
 
 public class FileSystemManagement {
 
-    private File currentDirectory = new File(".");
+    private File currentDirectory = new File("");
     static String MESSAGE_FORMAT_SUCCESS = "%s %s has been successfully %s.\n";
     static String MESSAGE_FORMAT_NOT_SUCCESS = "%s %s has not been %s.\n";
+
+    public void setCurrentDirectory(File currentDirectory) {
+        this.currentDirectory = currentDirectory;
+    }
 
     public FileSystemResponse<StringBuilder> getFile(String name) {
         String path = currentDirectory.getPath() + "\\" + name;

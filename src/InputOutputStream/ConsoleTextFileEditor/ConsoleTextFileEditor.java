@@ -1,6 +1,8 @@
 package InputOutputStream.ConsoleTextFileEditor;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -45,7 +47,8 @@ public class ConsoleTextFileEditor {
     }
 
     public void start() {
-        openDirectory(".");
+        String path = setDirectory();
+        openDirectory(path);
         Scanner in = new Scanner(System.in);
         String command;
         while (true) {
@@ -57,6 +60,19 @@ public class ConsoleTextFileEditor {
             }
             processCommand(command);
         }
+    }
+
+    private String setDirectory() {
+        System.out.println("Input path of directory: ");
+        Scanner in = new Scanner(System.in);
+        String path = in.nextLine();
+        while (Files.notExists(Path.of(path))) {
+            System.out.println("Directory does not exist.");
+            path = in.nextLine();
+        }
+        File directory = new File(path);
+        manager.setCurrentDirectory(directory);
+        return path;
     }
 
     private void clearConsole() {
