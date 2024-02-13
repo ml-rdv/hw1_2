@@ -49,6 +49,10 @@ public class FileSystemManagement {
             return new FileSystemResponse<>("Directory " + directory.getName() + " does not exist.");
         }
         currentDirectory = directory;
+        return getListFiles();
+    }
+
+    private FileSystemResponse<List<String>> getListFiles() {
         File[] listFiles = currentDirectory.listFiles();
 
         if (listFiles == null) {
