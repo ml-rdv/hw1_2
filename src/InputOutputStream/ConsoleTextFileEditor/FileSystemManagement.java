@@ -38,8 +38,9 @@ public class FileSystemManagement {
                 e.printStackTrace();
                 return new FileSystemResponse<>(e.toString());
             }
+        } else {
+            return new FileSystemResponse<>("The file extension is incorrect.");
         }
-        return new FileSystemResponse<>("The file extension is incorrect.");
     }
 
     public FileSystemResponse<List<String>> getDirectory(String path) {
