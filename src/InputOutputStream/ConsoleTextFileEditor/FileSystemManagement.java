@@ -20,7 +20,7 @@ public class FileSystemManagement {
         this.currentDirectory = currentDirectory;
     }
 
-    public FileSystemResponse<StringBuilder> getFile(String name) {
+    public FileSystemResponse<StringBuilder> getTextFileContents(String name) {
         String path = currentDirectory.getPath() + "\\" + name;
         File file = new File(path);
         if (isDirectoryNotExists(path)) {

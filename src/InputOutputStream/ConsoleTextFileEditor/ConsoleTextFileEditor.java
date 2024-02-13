@@ -174,7 +174,7 @@ public class ConsoleTextFileEditor {
     }
 
     public boolean openFile(String name) {
-        FileSystemResponse<StringBuilder> fileSystemResponse = manager.getFile(name);
+        FileSystemResponse<StringBuilder> fileSystemResponse = manager.getTextFileContents(name);
         if (checkIsError(fileSystemResponse)) {
             return false;
         }

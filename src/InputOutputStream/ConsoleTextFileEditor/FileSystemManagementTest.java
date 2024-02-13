@@ -28,7 +28,7 @@ public class FileSystemManagementTest {
         ConsoleTextFileEditor consoleTextFileEditor = new ConsoleTextFileEditor();
         consoleTextFileEditor.openDirectory("src");
         consoleTextFileEditor.createFile("newFile.txt", "File with text");
-        FileSystemResponse<StringBuilder> response = manager.getFile("src\\newFile.txt");
+        FileSystemResponse<StringBuilder> response = manager.getTextFileContents("src\\newFile.txt");
 
         consoleTextFileEditor.delete("src\\newFile.txt");
 
@@ -40,7 +40,7 @@ public class FileSystemManagementTest {
         manager = new FileSystemManagement();
         manager.getDirectory("src");
         manager.createFile("newFile", "File with text");
-        FileSystemResponse<StringBuilder> response = manager.getFile("newFile");
+        FileSystemResponse<StringBuilder> response = manager.getTextFileContents("newFile");
         String message = response.getMessageError();
 
         manager.delete("src\\newFile", false);
