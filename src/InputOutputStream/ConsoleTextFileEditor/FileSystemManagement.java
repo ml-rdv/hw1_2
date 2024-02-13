@@ -204,24 +204,21 @@ public class FileSystemManagement {
                 DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm")) : null;
         info.put("Creation time: ", creationTime);
         if (directory.isDirectory()) {
-            int numberNestedElements = countNestedElements(directory, -1);
+            int numberNestedElements = countNestedElements(directory);
             info.put("Number of nested elements: ", String.valueOf(numberNestedElements));
         }
         return new FileSystemResponse<>(info);
     }
 
-    private int countNestedElements(File directory, int count) {
-        if (directory.isDirectory()) {
-            count += 1;
-            File[] files = directory.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    count = countNestedElements(file, count);
-                }
+    int countNestedElements(File directory) {
+        File[] files = directory.listFiles();
+        int count = files != null ? files.length : 0;
+        if (files != null) {
+            for (File file: files) {
+                count += countNestedElements(file);
             }
-            return count;
         }
-        return count + 1;
+        return count;
     }
 
     public File getCurrentDirectory() {
