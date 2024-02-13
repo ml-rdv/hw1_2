@@ -76,8 +76,8 @@ public class FileSystemManagement {
         try {
             if (path.createNewFile()) {
                 if (fileText != null) {
-                    try {
-                        fillOutFile(path.getPath(), fileText, false);
+                    try (FileWriter output = new FileWriter(path.getPath(), false)) {
+                        output.write(fileText);
                     } catch (RuntimeException e) {
                         e.printStackTrace();
                     }
@@ -91,15 +91,6 @@ public class FileSystemManagement {
             return new FileSystemResponse<>(e.toString());
         }
         return new FileSystemResponse<>("Unknown error");
-    }
-
-    private void fillOutFile(String path, String fileText, boolean append) throws RuntimeException {
-        File fileDirectory = new File(path);
-        try (FileWriter output = new FileWriter(fileDirectory.getPath(), append)) {
-            output.write(fileText);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public FileSystemResponse<Boolean> createDirectory(String name) {
@@ -125,10 +116,10 @@ public class FileSystemManagement {
         if (Files.notExists(Path.of(path))) {
             return new FileSystemResponse<>("File " + file.getName() + " does not exist.");
         }
-        try {
-            fillOutFile(file.getPath(), text, true);
+        try (FileWriter output = new FileWriter(file.getPath(), true)) {
+            output.write(text);
             return new FileSystemResponse<>(true);
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new FileSystemResponse<>(e.toString());
         }
