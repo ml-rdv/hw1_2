@@ -12,12 +12,17 @@ import java.util.*;
 
 public class FileSystemManagement {
 
-    private File currentDirectory = new File("");
+    private File currentDirectory;
     static String MESSAGE_FORMAT_SUCCESS = "%s %s has been successfully %s.\n";
     static String MESSAGE_FORMAT_NOT_SUCCESS = "%s %s has not been %s.\n";
 
-    public void setCurrentDirectory(File currentDirectory) {
-        this.currentDirectory = currentDirectory;
+    public FileSystemManagement(String directory) {
+        if (Files.exists(Path.of(directory))) {
+            this.currentDirectory = new File(directory);
+        } else {
+            String DEFAULT_DIR = "";
+            this.currentDirectory = new File(DEFAULT_DIR);
+        }
     }
 
     public FileSystemResponse<StringBuilder> getTextFileContents(String name) {
@@ -181,22 +186,24 @@ public class FileSystemManagement {
         FileTime creationTimeFileTime;
         try {
             creationTimeFileTime = (FileTime) Files.getAttribute(file, "creationTime");
-        } catch (IOException e) {
-            return new FileSystemResponse<>("Could not determine creation time");
-        }
-        if (creationTimeFileTime != null) {
             LocalDateTime localDateTime = creationTimeFileTime
                     .toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDateTime();
 
             String creationTime = localDateTime.format(DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm"));
-
             info.put("Creation time: ", creationTime);
+        } catch (IOException e) {
+            info.put("Creation time: ", "Could not determine creation time");
         }
         if (directory.isDirectory()) {
             int numberNestedElements = countNestedElements(directory);
-            info.put("Number of nested elements: ", String.valueOf(numberNestedElements));
+            info.put("Number of all nested elements: ", String.valueOf(numberNestedElements));
+
+            File dir = new File(directory.getPath());
+            File[] arrFiles = dir.listFiles();
+            int directoryLength = arrFiles != null ? arrFiles.length : 0;
+            info.put("Number of elements: ", String.valueOf(directoryLength));
         }
         return new FileSystemResponse<>(info);
     }

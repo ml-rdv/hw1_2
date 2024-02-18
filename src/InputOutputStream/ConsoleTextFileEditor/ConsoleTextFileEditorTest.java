@@ -1,26 +1,54 @@
 package InputOutputStream.ConsoleTextFileEditor;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class ConsoleTextFileEditorTest {
 
     private ConsoleTextFileEditor consoleTextFileEditor;
+    private static final String CLEAR_CONSOLE_COMMAND = "\033\\[H\033\\[J";
 
-    @Test
-    public void directoryMustBeOpened() {
-        consoleTextFileEditor = new ConsoleTextFileEditor();
-        consoleTextFileEditor.openDirectory("src");
-        File directory = new File("src");
+    @BeforeEach
+    void prepareWorkDirectory() throws IOException {
+        var testPath = Path.of("work");
+        var fileSystemManagement = new FileSystemManagement("");
+        fileSystemManagement.deleteWithNestedDirectories(testPath.toString());
 
-        Assertions.assertEquals(directory, consoleTextFileEditor.getCurrentDirectory());
+        Files.createDirectory(testPath);
     }
 
+    @Test
+    public void directoryMustBeOpened() throws IOException {
+        // папку work пришлось руками в коде установить как директорию по умолчанию
+        Files.createDirectories(Path.of("work\\dir"));
+
+        var commands = List.of("open dir", "finish");
+        var commandBytes = String.join("\n", commands).getBytes();
+
+        // в данном месте берём контроль над потоками ввода/выводы,
+        // чтобы мы могли сымитировать ввод нужной команды и вычитать результат System.out.println
+        System.setIn(new ByteArrayInputStream(commandBytes));
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(byteArrayOutputStream));
+
+        consoleTextFileEditor = new ConsoleTextFileEditor("work");
+        consoleTextFileEditor.start();
+
+        // здесь дополнительно сносим из  вывода команду на очистку, чтобы не мешала нам
+        var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "");
+
+        // если ожидаемый вывод получается очень большой на много строк, то можно
+        // сделать папку например testConsoleOutput и там положить текстовые файлы с большим выводом,
+        // а в тесте уже сравнивать то что лежит в файле с реальным выводом
+        Assertions.assertEquals("-d dir\r\nCurrent path: work\\dir\r\n", consoleOutput);
+    }
     @Test
     public void fileMustBeOpened() throws IOException {
         consoleTextFileEditor = new ConsoleTextFileEditor();

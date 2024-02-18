@@ -18,7 +18,7 @@ public class FileSystemManagementTest {
 
     @Test
     public void directoryMustNotBeReturnedAndOpenedBecauseDirectoryDoesNotExist() {
-        manager = new FileSystemManagement();
+        manager = new FileSystemManagement("");
         FileSystemResponse<List<String>> response = manager.getDirectory("src\\src");
         String message = response.getMessageError();
 
@@ -27,7 +27,7 @@ public class FileSystemManagementTest {
 
     @Test
     public void fileMustBeOpenedAndRead() throws IOException {
-        manager = new FileSystemManagement();
+        manager = new FileSystemManagement("");
         manager.getDirectory("src");
         manager.createFile("newFile.txt", "File with text");
         FileSystemResponse<StringBuilder> response = manager.getTextFileContents("newFile.txt");
@@ -39,7 +39,7 @@ public class FileSystemManagementTest {
 
     @Test
     public void fileMustNotBeOpenedBecauseOfExtension() throws IOException {
-        manager = new FileSystemManagement();
+        manager = new FileSystemManagement("");
         manager.getDirectory("src");
 
         Path path = Paths.get("src\\newFile");
@@ -55,7 +55,7 @@ public class FileSystemManagementTest {
 
     @Test
     public void fileMustNotBeCreatedBecauseFileWithThisNameAlreadyExists() throws IOException {
-        manager = new FileSystemManagement();
+        manager = new FileSystemManagement("");
         manager.getDirectory("src");
 
         Path path = Paths.get("src\\newFile");
@@ -71,7 +71,7 @@ public class FileSystemManagementTest {
 
     @Test
     public void directoryMustNotBeCreatedBecauseDirectoryWithThisNameAlreadyExists() throws IOException {
-        manager = new FileSystemManagement();
+        manager = new FileSystemManagement("");
         manager.getDirectory("src");
 
         Path path = Paths.get("src\\TestDirectory");
@@ -87,7 +87,7 @@ public class FileSystemManagementTest {
 
     @Test
     public void directoryMustNotBeDeletedBecauseDirectoryDoesNotExist() {
-        manager = new FileSystemManagement();
+        manager = new FileSystemManagement("");
         FileSystemResponse<Boolean> response = manager.delete("src\\TestDirectory");
         String message = response.getMessageError();
 
@@ -96,7 +96,7 @@ public class FileSystemManagementTest {
 
     @Test
     public void directoryMustNotBeDeletedWithNestedDirectoriesBecauseDirectoryDoesNotExist() {
-        manager = new FileSystemManagement();
+        manager = new FileSystemManagement("");
         FileSystemResponse<Boolean> response = manager.deleteWithNestedDirectories("src\\TestDirectory");
         String message = response.getMessageError();
 
@@ -105,7 +105,7 @@ public class FileSystemManagementTest {
 
     @Test
     public void directoryMustNotBeDeletedBecauseDirectoryIsNotEmpty() throws IOException {
-        manager = new FileSystemManagement();
+        manager = new FileSystemManagement("");
 
         Path newFilePath = Paths.get("src\\p1");
         Path newFilePath2 = Paths.get("src\\p1\\p2");
@@ -125,7 +125,7 @@ public class FileSystemManagementTest {
 
     @Test
     public void fileMustNotBeDeletedBecauseFileDoesNotExist() {
-        manager = new FileSystemManagement();
+        manager = new FileSystemManagement("");
         FileSystemResponse<Boolean> response = manager.delete("src\\newFile");
         String message = response.getMessageError();
 
@@ -134,7 +134,7 @@ public class FileSystemManagementTest {
 
     @Test
     public void fileMustNotBeEditedBecauseFileDoesNotExist() {
-        manager = new FileSystemManagement();
+        manager = new FileSystemManagement("");
         FileSystemResponse<Boolean> response = manager.editFile("newFile", "New text");
         String message = response.getMessageError();
 
@@ -143,7 +143,7 @@ public class FileSystemManagementTest {
 
     @Test
     public void fileMustNotBeRenamedBecauseFileWithThisNameAlreadyExists() throws IOException {
-        manager = new FileSystemManagement();
+        manager = new FileSystemManagement("");
         manager.getDirectory("src");
 
         Path path1 = Paths.get("src\\newFile");
@@ -162,7 +162,7 @@ public class FileSystemManagementTest {
 
     @Test
     public void fileMustNotBeRenamedBecauseFileDoesNotExist() {
-        manager = new FileSystemManagement();
+        manager = new FileSystemManagement("");
         FileSystemResponse<Boolean> response = manager.renameTo("newFile", "newFile2");
         String message = response.getMessageError();
 
@@ -171,7 +171,7 @@ public class FileSystemManagementTest {
 
     @Test
     public void directoryMustNotBeRenamedBecauseDirectoryWithThisNameAlreadyExists() throws IOException {
-        manager = new FileSystemManagement();
+        manager = new FileSystemManagement("");
         manager.getDirectory("src");
 
         Path path1 = Paths.get("src\\newFile");
@@ -190,7 +190,7 @@ public class FileSystemManagementTest {
 
     @Test
     public void shouldReturnInfoAboutFile() throws IOException {
-        manager = new FileSystemManagement();
+        manager = new FileSystemManagement("");
         manager.getDirectory("src");
         manager.createFile("newFile.txt", "new file");
         FileSystemResponse<Map<String, String>> response = manager.getInfo("newFile.txt");
@@ -211,7 +211,7 @@ public class FileSystemManagementTest {
 
     @Test
     public void shouldReturnInfoAboutDirectory() throws IOException {
-        manager = new FileSystemManagement();
+        manager = new FileSystemManagement("");
         manager.getDirectory("src");
 
         Path path = Paths.get("src\\newDirectory");
@@ -233,13 +233,14 @@ public class FileSystemManagementTest {
 
         Assertions.assertEquals(absolutePathExpected, map.get("Absolute path: "));
         Assertions.assertEquals("0 bytes", map.get("Size: "));
-        Assertions.assertEquals("3", map.get("Number of nested elements: "));
+        Assertions.assertEquals("3", map.get("Number of all nested elements: "));
+        Assertions.assertEquals("2", map.get("Number of elements: "));
         Assertions.assertEquals(currentDateTime, map.get("Creation time: "));
     }
 
     @Test
     public void shouldNotReturnInfoAboutDirectoryBecauseDirectoryDoesNotExist() {
-        manager = new FileSystemManagement();
+        manager = new FileSystemManagement("");
         FileSystemResponse<Map<String, String>> response = manager.getInfo("dir33");
         String message = response.getMessageError();
 
