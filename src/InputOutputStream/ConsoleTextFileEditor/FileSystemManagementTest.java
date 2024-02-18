@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 public class FileSystemManagementTest {
@@ -19,7 +18,7 @@ public class FileSystemManagementTest {
     @Test
     public void directoryMustNotBeReturnedAndOpenedBecauseDirectoryDoesNotExist() {
         manager = new FileSystemManagement();
-        FileSystemResponse<List<String>> response = manager.getDirectory("src\\src");
+        FileSystemResponse<Boolean> response = manager.setDirectory("src\\src");
         String message = response.getMessageError();
 
         Assertions.assertEquals("Directory src does not exist.", message);
@@ -28,9 +27,9 @@ public class FileSystemManagementTest {
     @Test
     public void fileMustBeOpenedAndRead() throws IOException {
         manager = new FileSystemManagement();
-        manager.getDirectory("src");
+        manager.setDirectory("src");
         manager.createFile("newFile.txt", "File with text");
-        FileSystemResponse<StringBuilder> response = manager.getTextFileContents("newFile.txt");
+        FileSystemResponse<String> response = manager.getTextFileContents("newFile.txt");
 
         Files.delete(Paths.get("src\\newFile.txt"));
 
@@ -40,12 +39,12 @@ public class FileSystemManagementTest {
     @Test
     public void fileMustNotBeOpenedBecauseOfExtension() throws IOException {
         manager = new FileSystemManagement();
-        manager.getDirectory("src");
+        manager.setDirectory("src");
 
         Path path = Paths.get("src\\newFile");
         Files.createFile(path);
 
-        FileSystemResponse<StringBuilder> response = manager.getTextFileContents("newFile");
+        FileSystemResponse<String> response = manager.getTextFileContents("newFile");
         String message = response.getMessageError();
 
         Files.delete(path);
@@ -56,7 +55,7 @@ public class FileSystemManagementTest {
     @Test
     public void fileMustNotBeCreatedBecauseFileWithThisNameAlreadyExists() throws IOException {
         manager = new FileSystemManagement();
-        manager.getDirectory("src");
+        manager.setDirectory("src");
 
         Path path = Paths.get("src\\newFile");
         Files.createFile(path);
@@ -72,7 +71,7 @@ public class FileSystemManagementTest {
     @Test
     public void directoryMustNotBeCreatedBecauseDirectoryWithThisNameAlreadyExists() throws IOException {
         manager = new FileSystemManagement();
-        manager.getDirectory("src");
+        manager.setDirectory("src");
 
         Path path = Paths.get("src\\TestDirectory");
         Files.createFile(path);
@@ -144,7 +143,7 @@ public class FileSystemManagementTest {
     @Test
     public void fileMustNotBeRenamedBecauseFileWithThisNameAlreadyExists() throws IOException {
         manager = new FileSystemManagement();
-        manager.getDirectory("src");
+        manager.setDirectory("src");
 
         Path path1 = Paths.get("src\\newFile");
         Path path2 = Paths.get("src\\newFile2");
@@ -172,7 +171,7 @@ public class FileSystemManagementTest {
     @Test
     public void directoryMustNotBeRenamedBecauseDirectoryWithThisNameAlreadyExists() throws IOException {
         manager = new FileSystemManagement();
-        manager.getDirectory("src");
+        manager.setDirectory("src");
 
         Path path1 = Paths.get("src\\newFile");
         Path path2 = Paths.get("src\\newFile2");
@@ -191,7 +190,7 @@ public class FileSystemManagementTest {
     @Test
     public void shouldReturnInfoAboutFile() throws IOException {
         manager = new FileSystemManagement();
-        manager.getDirectory("src");
+        manager.setDirectory("src");
         manager.createFile("newFile.txt", "new file");
         FileSystemResponse<Map<String, String>> response = manager.getInfo("newFile.txt");
         Map<String, String> map = response.getBody();
@@ -212,7 +211,7 @@ public class FileSystemManagementTest {
     @Test
     public void shouldReturnInfoAboutDirectory() throws IOException {
         manager = new FileSystemManagement();
-        manager.getDirectory("src");
+        manager.setDirectory("src");
 
         Path path = Paths.get("src\\newDirectory");
         Files.createDirectory(path);

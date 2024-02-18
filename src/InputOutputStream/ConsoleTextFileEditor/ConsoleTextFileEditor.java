@@ -60,7 +60,7 @@ public class ConsoleTextFileEditor {
                 in.close();
                 break;
             }
-            processCommand(command);
+            roadCommand(command);
         }
     }
 
@@ -69,7 +69,7 @@ public class ConsoleTextFileEditor {
         System.out.flush();
     }
 
-    public void processCommand(String input) {
+    public void roadCommand(String input) {
         String[] splittedInput = input.split(" ");
         String command = splittedInput[0];
         switch (command) {
@@ -170,7 +170,7 @@ public class ConsoleTextFileEditor {
     }
 
     public boolean openFile(String name) {
-        FileSystemResponse<StringBuilder> fileSystemResponse = manager.getTextFileContents(name);
+        FileSystemResponse<String> fileSystemResponse = manager.getTextFileContents(name);
         if (checkIsError(fileSystemResponse)) {
             return false;
         }
@@ -179,11 +179,12 @@ public class ConsoleTextFileEditor {
     }
 
     public void openDirectory(String path) {
-        FileSystemResponse<List<String>> fileSystemResponse = manager.getDirectory(path);
+        FileSystemResponse<Boolean> fileSystemResponse = manager.setDirectory(path);
         if (checkIsError(fileSystemResponse)) {
             return;
         }
-        List<String> listFiles = fileSystemResponse.getBody();
+        FileSystemResponse<List<String>> fSR_list_files = manager.getListFiles();
+        List<String> listFiles = fSR_list_files.getBody();
         listFiles.forEach(System.out::println);
     }
 

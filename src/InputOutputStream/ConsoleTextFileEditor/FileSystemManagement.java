@@ -29,11 +29,11 @@ public class FileSystemManagement {
         }
     }
 
-    public FileSystemResponse<StringBuilder> getTextFileContents(String name) {
+    public FileSystemResponse<String> getTextFileContents(String name) {
         String path = currentDirectory.getPath() + "\\" + name;
         File file = new File(path);
         if (Files.notExists(Path.of(path))) {
-            return new FileSystemResponse<>("File " + file.getName() + " does not exist.");
+            return FileSystemResponse.createErrorResponse("File " + file.getName() + " does not exist.");
         }
         StringBuilder sb = new StringBuilder();
         if (file.getPath().endsWith(".txt")) {
@@ -42,25 +42,25 @@ public class FileSystemManagement {
                 while ((line = reader.readLine()) != null) {
                     sb.append(line).append('\n');
                 }
-                return new FileSystemResponse<>(sb);
+                return new FileSystemResponse<>(sb.toString());
             } catch (IOException e) {
-                return new FileSystemResponse<>(e.toString());
+                return FileSystemResponse.createErrorResponse(e.toString());
             }
         } else {
-            return new FileSystemResponse<>("The file extension is incorrect.");
+            return FileSystemResponse.createErrorResponse("The file extension is incorrect.");
         }
     }
 
-    public FileSystemResponse<List<String>> getDirectory(String path) {
+    public FileSystemResponse<Boolean> setDirectory(String path) {
         File directory = new File(path);
         if (Files.notExists(Path.of(path))) {
-            return new FileSystemResponse<>("Directory " + directory.getName() + " does not exist.");
+            return FileSystemResponse.createErrorResponse("Directory " + directory.getName() + " does not exist.");
         }
         currentDirectory = directory;
-        return getListFiles();
+        return new FileSystemResponse<>(true);
     }
 
-    private FileSystemResponse<List<String>> getListFiles() {
+    public FileSystemResponse<List<String>> getListFiles() {
         File[] listFiles = currentDirectory.listFiles();
 
         if (listFiles == null) {
@@ -83,7 +83,7 @@ public class FileSystemManagement {
         File path = new File(currentDirectory.getPath() + "\\" + name);
         try {
             if (!path.createNewFile()) {
-                return new FileSystemResponse<>("File with this name already exists.");
+                return FileSystemResponse.createErrorResponse("File with this name already exists.");
             }
             if (fileText != null && !fileText.isEmpty()) {
                 try (FileWriter output = new FileWriter(path.getPath(), false)) {
@@ -92,22 +92,22 @@ public class FileSystemManagement {
             }
             return new FileSystemResponse<>(true);
         } catch (Exception e) {
-            return new FileSystemResponse<>(e.toString());
+            return FileSystemResponse.createErrorResponse(e.toString());
         }
     }
 
     public FileSystemResponse<Boolean> createDirectory(String name) {
         String path = currentDirectory.getPath() + "\\" + name;
         File directory = new File(path);
-        if (!Files.notExists(Path.of(path))) {
-            return new FileSystemResponse<>("Directory with this name already exists.");
+        if (Files.exists(Path.of(path))) {
+            return FileSystemResponse.createErrorResponse("Directory with this name already exists.");
         }
         return new FileSystemResponse<>(directory.mkdir());
     }
 
     public FileSystemResponse<Boolean> backToParentDirectory() {
         if (currentDirectory.getParent() == null) {
-            return new FileSystemResponse<>("It is a root directory.");
+            return FileSystemResponse.createErrorResponse("It is a root directory.");
         }
         currentDirectory = new File(currentDirectory.getParent());
         return new FileSystemResponse<>(true);
@@ -117,13 +117,13 @@ public class FileSystemManagement {
         String path = currentDirectory.getPath() + "\\" + nameFile;
         File file = new File(path);
         if (Files.notExists(Path.of(path))) {
-            return new FileSystemResponse<>("File " + file.getName() + " does not exist.");
+            return FileSystemResponse.createErrorResponse("File " + file.getName() + " does not exist.");
         }
         try (FileWriter output = new FileWriter(file.getPath(), true)) {
             output.write(text);
             return new FileSystemResponse<>(true);
         } catch (Exception e) {
-            return new FileSystemResponse<>(e.toString());
+            return FileSystemResponse.createErrorResponse(e.toString());
         }
     }
 
@@ -142,7 +142,7 @@ public class FileSystemManagement {
     public FileSystemResponse<Boolean> delete(String path) {
         File directory = new File(path);
         if (Files.notExists(Path.of(path))) {
-            return new FileSystemResponse<>("Directory or file " + directory.getName() + " does not exist.");
+            return FileSystemResponse.createErrorResponse("Directory or file " + directory.getName() + " does not exist.");
         }
 
         File[] list = directory.listFiles();
@@ -150,13 +150,13 @@ public class FileSystemManagement {
             directory.delete();
             return new FileSystemResponse<>(true);
         }
-        return new FileSystemResponse<>("Directory is not empty.");
+        return FileSystemResponse.createErrorResponse("Directory is not empty.");
     }
 
     public FileSystemResponse<Boolean> deleteWithNestedDirectories(String path) {
         File directory = new File(path);
         if (Files.notExists(Path.of(path))) {
-            return new FileSystemResponse<>("Directory or file " + directory.getName() + " does not exist.");
+            return FileSystemResponse.createErrorResponse("Directory or file " + directory.getName() + " does not exist.");
         }
 
         deleteDirectory(directory);
@@ -167,13 +167,13 @@ public class FileSystemManagement {
         File oldNameDirectory = new File(currentDirectory.getPath() + "\\" + oldName);
         String path = currentDirectory.getPath() + "\\" + oldName;
         if (Files.notExists(Path.of(path))) {
-            return new FileSystemResponse<>("Directory or file " + oldNameDirectory.getName() + " does not exist.");
+            return FileSystemResponse.createErrorResponse("Directory or file " + oldNameDirectory.getName() + " does not exist.");
         }
         File newNameDirectory = new File(currentDirectory.getPath() + "\\" + newName);
         if (oldNameDirectory.renameTo(newNameDirectory)) {
             return new FileSystemResponse<>(true);
         } else {
-            return new FileSystemResponse<>("Directory or file with this name already exists.");
+            return FileSystemResponse.createErrorResponse("Directory or file with this name already exists.");
         }
     }
 
@@ -181,7 +181,7 @@ public class FileSystemManagement {
         String path = currentDirectory.getPath() + "\\" + name;
         File directory = new File(path);
         if (Files.notExists(Path.of(path))) {
-            return new FileSystemResponse<>("Directory or file " + directory.getName() + " does not exist.");
+            return FileSystemResponse.createErrorResponse("Directory or file " + directory.getName() + " does not exist.");
         }
         Map<String, String> info = new HashMap<>();
         info.put("Absolute path: ", directory.getAbsolutePath());
