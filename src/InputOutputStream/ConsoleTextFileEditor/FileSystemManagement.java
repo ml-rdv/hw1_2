@@ -13,14 +13,18 @@ import java.util.*;
 public class FileSystemManagement {
 
     private File currentDirectory;
+    private final String DEFAULT_DIR = "";
     static String MESSAGE_FORMAT_SUCCESS = "%s %s has been successfully %s.\n";
     static String MESSAGE_FORMAT_NOT_SUCCESS = "%s %s has not been %s.\n";
+
+    public FileSystemManagement() {
+        this.currentDirectory = new File(DEFAULT_DIR);
+    }
 
     public FileSystemManagement(String directory) {
         if (Files.exists(Path.of(directory))) {
             this.currentDirectory = new File(directory);
         } else {
-            String DEFAULT_DIR = "";
             this.currentDirectory = new File(DEFAULT_DIR);
         }
     }
@@ -200,9 +204,8 @@ public class FileSystemManagement {
             int numberNestedElements = countNestedElements(directory);
             info.put("Number of all nested elements: ", String.valueOf(numberNestedElements));
 
-            File dir = new File(directory.getPath());
-            File[] arrFiles = dir.listFiles();
-            int directoryLength = arrFiles != null ? arrFiles.length : 0;
+            File[] arrFiles = directory.listFiles();
+            int directoryLength = arrFiles.length;
             info.put("Number of elements: ", String.valueOf(directoryLength));
         }
         return new FileSystemResponse<>(info);
