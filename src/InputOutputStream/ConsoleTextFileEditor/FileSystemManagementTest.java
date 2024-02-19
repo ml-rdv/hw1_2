@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,6 +33,7 @@ public class FileSystemManagementTest {
         String message = response.getMessageError();
 
         Assertions.assertEquals("Directory work does not exist.", message);
+        Assertions.assertTrue(Files.notExists(Path.of("work\\work")));
     }
 
     @Test
@@ -85,9 +87,12 @@ public class FileSystemManagementTest {
         FileSystemResponse<String> response = manager.createFile("newFile", "File with text");
         String messageBody = response.getBody();
 
-        Files.delete(Path.of("work\\newFile"));
+        Path path = Path.of("work\\newFile");
 
         Assertions.assertEquals("File newFile has been successfully created.\n", messageBody);
+        Assertions.assertTrue(Files.exists(path));
+
+        Files.delete(path);
     }
 
     @Test
@@ -115,20 +120,25 @@ public class FileSystemManagementTest {
         FileSystemResponse<String> response = manager.createDirectory("newDir");
         String messageBody = response.getBody();
 
-        Files.delete(Path.of("work\\newDir"));
+        Path path = Path.of("work\\newDir");
 
         Assertions.assertEquals("Directory newDir has been successfully created.\n", messageBody);
+        Assertions.assertTrue(Files.exists(path));
+
+        Files.delete(path);
     }
 
     @Test
     public void directoryMustBeDeleted() throws IOException {
         manager = new FileSystemManagement();
-        Files.createDirectory(Paths.get("work\\newDir"));
+        Path path = Paths.get("work\\newDir");
+        Files.createDirectory(path);
 
         FileSystemResponse<String> response = manager.delete("work\\newDir");
         String messageBody = response.getBody();
 
         Assertions.assertEquals("Directory or file newDir has been successfully deleted.\n", messageBody);
+        Assertions.assertTrue(Files.notExists(path));
     }
 
     @Test
@@ -141,6 +151,7 @@ public class FileSystemManagementTest {
 
         Assertions.assertEquals("Directory or file TestDirectory does not exist.", messageError);
         Assertions.assertEquals("Directory or file TestDirectory has been not deleted.\n", messageBody);
+        Assertions.assertTrue(Files.notExists(Path.of("work\\TestDirectory")));
     }
 
     @Test
@@ -153,6 +164,7 @@ public class FileSystemManagementTest {
 
         Assertions.assertEquals("Directory or file TestDirectory does not exist.", messageError);
         Assertions.assertEquals("Directory or file TestDirectory has been not deleted.\n", messageBody);
+        Assertions.assertTrue(Files.notExists(Path.of("work\\TestDirectory")));
     }
 
     @Test
@@ -167,25 +179,28 @@ public class FileSystemManagementTest {
 
         FileSystemResponse<String> response = manager.delete("work\\p1");
 
-        Files.delete(newFilePath2);
-        Files.delete(newFilePath);
-
         String messageError = response.getMessageError();
         String messageBody = response.getBody();
 
         Assertions.assertEquals("Directory is not empty.", messageError);
         Assertions.assertEquals("Directory or file p1 has been not deleted.\n", messageBody);
+        Assertions.assertTrue(Files.exists(Paths.get("work\\p1")));
+
+        Files.delete(newFilePath2);
+        Files.delete(newFilePath);
     }
 
     @Test
     public void fileMustBeDeleted() throws IOException {
         manager = new FileSystemManagement();
-        Files.createFile(Paths.get("work\\newFile"));
+        Path path = Paths.get("work\\newFile");
+        Files.createFile(path);
 
         FileSystemResponse<String> response = manager.delete("work\\newFile");
         String messageBody = response.getBody();
 
         Assertions.assertEquals("Directory or file newFile has been successfully deleted.\n", messageBody);
+        Assertions.assertTrue(Files.notExists(path));
     }
 
     @Test
@@ -198,6 +213,7 @@ public class FileSystemManagementTest {
 
         Assertions.assertEquals("Directory or file newFile does not exist.", messageError);
         Assertions.assertEquals("Directory or file newFile has been not deleted.\n", messageBody);
+        Assertions.assertTrue(Files.notExists(Path.of("work\\newFile")));
     }
 
     @Test
@@ -207,12 +223,18 @@ public class FileSystemManagementTest {
         Path path = Paths.get("work\\newFile");
         Files.createFile(path);
 
+        File file = new File("work\\newFile");
+        long creationTime = file.lastModified();
+
         FileSystemResponse<String> response = manager.editFile("newFile", "New text");
         String messageBody = response.getBody();
+
+        long modificationTime = file.lastModified();
 
         Files.delete(path);
 
         Assertions.assertEquals("File newFile has been successfully edited.\n", messageBody);
+        Assertions.assertNotEquals(creationTime, modificationTime);
     }
 
     @Test
@@ -225,6 +247,7 @@ public class FileSystemManagementTest {
 
         Assertions.assertEquals("File newFile does not exist.", messageError);
         Assertions.assertEquals("File newFile has been not edited.\n", messageBody);
+        Assertions.assertTrue(Files.notExists(Path.of("work\\newFile")));
     }
 
     @Test
@@ -236,9 +259,11 @@ public class FileSystemManagementTest {
         FileSystemResponse<String> response = manager.renameTo("newFile", "newFile2");
         String messageBody = response.getBody();
 
-        Files.delete(Paths.get("work\\newFile2"));
-
         Assertions.assertEquals("Directory or file newFile has been successfully renamed.\n", messageBody);
+        Assertions.assertTrue(Files.notExists(Path.of("work\\newFile")));
+        Assertions.assertTrue(Files.exists(Path.of("work\\newFile2")));
+
+        Files.delete(Paths.get("work\\newFile2"));
     }
 
     @Test
@@ -271,6 +296,7 @@ public class FileSystemManagementTest {
 
         Assertions.assertEquals("Directory or file newFile does not exist.", messageError);
         Assertions.assertEquals("Directory or file newFile has been not renamed.\n", messageBody);
+        Assertions.assertTrue(Files.notExists(Path.of("work\\newFile")));
     }
 
     @Test
@@ -282,9 +308,11 @@ public class FileSystemManagementTest {
         FileSystemResponse<String> response = manager.renameTo("newDir", "newDir2");
         String messageBody = response.getBody();
 
-        Files.delete(Paths.get("work\\newDir2"));
-
         Assertions.assertEquals("Directory or file newDir has been successfully renamed.\n", messageBody);
+        Assertions.assertTrue(Files.notExists(Path.of("work\\newDir")));
+        Assertions.assertTrue(Files.exists(Path.of("work\\newDir2")));
+
+        Files.delete(Paths.get("work\\newDir2"));
     }
 
     @Test
@@ -363,5 +391,6 @@ public class FileSystemManagementTest {
         String message = response.getMessageError();
 
         Assertions.assertEquals("Directory or file dir33 does not exist.", message);
+        Assertions.assertTrue(Files.notExists(Path.of("work\\dir33")));
     }
 }
