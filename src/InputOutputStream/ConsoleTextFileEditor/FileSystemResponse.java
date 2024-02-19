@@ -8,6 +8,11 @@ public class FileSystemResponse<T> {
         return new FileSystemResponse<>(messageError);
     }
 
+    public FileSystemResponse(T body, String messageError) {
+        this.body = body;
+        this.messageError = messageError;
+    }
+
     public FileSystemResponse(T body) {
         this.body = body;
     }

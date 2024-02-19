@@ -14,8 +14,6 @@ public class FileSystemManagement {
 
     private File currentDirectory;
     private final String DEFAULT_DIR = "";
-    static String MESSAGE_FORMAT_SUCCESS = "%s %s has been successfully %s.\n";
-    static String MESSAGE_FORMAT_NOT_SUCCESS = "%s %s has not been %s.\n";
 
     public FileSystemManagement() {
         this.currentDirectory = new File(DEFAULT_DIR);
@@ -79,30 +77,43 @@ public class FileSystemManagement {
         return new FileSystemResponse<>(list);
     }
 
-    public FileSystemResponse<Boolean> createFile(String name, String fileText) {
+    public FileSystemResponse<String> createFile(String name, String fileText) {
         File path = new File(currentDirectory.getPath() + "\\" + name);
+        FileSystemResponse<String> result;
         try {
             if (!path.createNewFile()) {
-                return FileSystemResponse.createErrorResponse("File with this name already exists.");
+                result = new FileSystemResponse<>(String.format("File %s has been not created.\n", name),
+                        "File with this name already exists.");
+                return result;
             }
             if (fileText != null && !fileText.isEmpty()) {
                 try (FileWriter output = new FileWriter(path.getPath(), false)) {
                     output.write(fileText);
                 }
             }
-            return new FileSystemResponse<>(true);
+            return new FileSystemResponse<>(String.format("File %s has been successfully created.\n", name));
         } catch (Exception e) {
-            return FileSystemResponse.createErrorResponse(e.toString());
+            result = new FileSystemResponse<>(String.format("File %s has been not created.\n", name),
+                    e.toString());
+            return result;
         }
     }
 
-    public FileSystemResponse<Boolean> createDirectory(String name) {
+    public FileSystemResponse<String> createDirectory(String name) {
         String path = currentDirectory.getPath() + "\\" + name;
         File directory = new File(path);
+        FileSystemResponse<String> result;
         if (Files.exists(Path.of(path))) {
-            return FileSystemResponse.createErrorResponse("Directory with this name already exists.");
+            result = new FileSystemResponse<>(String.format("Directory %s has been not created.\n", name),
+                    "Directory with this name already exists.");
+            return result;
         }
-        return new FileSystemResponse<>(directory.mkdir());
+        if (directory.mkdir()) {
+            result = new FileSystemResponse<>(String.format("Directory %s has been successfully created.\n", name));
+        } else {
+            result = FileSystemResponse.createErrorResponse(String.format("Directory %s has been not created.\n", name));
+        }
+        return result;
     }
 
     public FileSystemResponse<Boolean> backToParentDirectory() {
@@ -113,17 +124,22 @@ public class FileSystemManagement {
         return new FileSystemResponse<>(true);
     }
 
-    public FileSystemResponse<Boolean> editFile(String nameFile, String text) {
+    public FileSystemResponse<String> editFile(String nameFile, String text) {
         String path = currentDirectory.getPath() + "\\" + nameFile;
         File file = new File(path);
+        FileSystemResponse<String> result;
         if (Files.notExists(Path.of(path))) {
-            return FileSystemResponse.createErrorResponse("File " + file.getName() + " does not exist.");
+            result = new FileSystemResponse<>(String.format("File %s has been not edited.\n", nameFile),
+                    String.format("File %s does not exist.", file.getName()));
+            return result;
         }
         try (FileWriter output = new FileWriter(file.getPath(), true)) {
             output.write(text);
-            return new FileSystemResponse<>(true);
+            return new FileSystemResponse<>(String.format("File %s has been successfully edited.\n", nameFile));
         } catch (Exception e) {
-            return FileSystemResponse.createErrorResponse(e.toString());
+            result = new FileSystemResponse<>(String.format("File %s has been not edited.\n", nameFile),
+                    e.toString());
+            return result;
         }
     }
 
@@ -139,41 +155,56 @@ public class FileSystemManagement {
         directory.delete();
     }
 
-    public FileSystemResponse<Boolean> delete(String path) {
+    public FileSystemResponse<String> delete(String path) {
         File directory = new File(path);
+        FileSystemResponse<String> result;
         if (Files.notExists(Path.of(path))) {
-            return FileSystemResponse.createErrorResponse("Directory or file " + directory.getName() + " does not exist.");
+            result = new FileSystemResponse<>(String.format("Directory or file %s has been not deleted.\n", directory.getName()),
+                    String.format("Directory or file %s does not exist.", directory.getName()));
+            return result;
         }
 
         File[] list = directory.listFiles();
         if (list == null || list.length == 0) {
             directory.delete();
-            return new FileSystemResponse<>(true);
+            result = new FileSystemResponse<>(String.format("Directory or file %s has been successfully deleted.\n", directory.getName()));
+            return result;
         }
-        return FileSystemResponse.createErrorResponse("Directory is not empty.");
+        result = new FileSystemResponse<>(String.format("Directory or file %s has been not deleted.\n", directory.getName()),
+                "Directory is not empty.");
+        return result;
     }
 
-    public FileSystemResponse<Boolean> deleteWithNestedDirectories(String path) {
+    public FileSystemResponse<String> deleteWithNestedDirectories(String path) {
         File directory = new File(path);
+        FileSystemResponse<String> result;
         if (Files.notExists(Path.of(path))) {
-            return FileSystemResponse.createErrorResponse("Directory or file " + directory.getName() + " does not exist.");
+            result = new FileSystemResponse<>(String.format("Directory or file %s has been not deleted.\n", directory.getName()),
+                    String.format("Directory or file %s does not exist.", directory.getName()));
+            return result;
         }
 
         deleteDirectory(directory);
-        return new FileSystemResponse<>(true);
+        result = new FileSystemResponse<>(String.format("Directory or file %s has been successfully deleted.\n", directory.getName()));
+        return result;
     }
 
-    public FileSystemResponse<Boolean> renameTo(String oldName, String newName) {
+    public FileSystemResponse<String> renameTo(String oldName, String newName) {
         File oldNameDirectory = new File(currentDirectory.getPath() + "\\" + oldName);
         String path = currentDirectory.getPath() + "\\" + oldName;
+        FileSystemResponse<String> result;
         if (Files.notExists(Path.of(path))) {
-            return FileSystemResponse.createErrorResponse("Directory or file " + oldNameDirectory.getName() + " does not exist.");
+            result = new FileSystemResponse<>(String.format("Directory or file %s has been not renamed.\n", oldName),
+                    String.format("Directory or file %s does not exist.", oldName));
+            return result;
         }
         File newNameDirectory = new File(currentDirectory.getPath() + "\\" + newName);
         if (oldNameDirectory.renameTo(newNameDirectory)) {
-            return new FileSystemResponse<>(true);
+            return new FileSystemResponse<>(String.format("Directory or file %s has been successfully renamed.\n", oldName));
         } else {
-            return FileSystemResponse.createErrorResponse("Directory or file with this name already exists.");
+            result = new FileSystemResponse<>(String.format("Directory or file %s has been not renamed.\n", oldName),
+                    "Directory or file with this name already exists.");
+            return result;
         }
     }
 

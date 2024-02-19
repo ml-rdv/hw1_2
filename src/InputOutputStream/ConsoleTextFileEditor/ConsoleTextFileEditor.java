@@ -90,7 +90,7 @@ public class ConsoleTextFileEditor {
             String oldName = splittedInput[1];
             String newName = splittedInput[2];
             String messageResult = renameTo(oldName, newName);
-            System.out.printf(messageResult, "Directory or file", oldName, "renamed");
+            System.out.printf(messageResult);
         } else {
             System.out.println("Input 3 parameters");
         }
@@ -100,7 +100,7 @@ public class ConsoleTextFileEditor {
         String name = splittedInput[1];
         String path = manager.getCurrentDirectory().getPath() + "\\" + name;
         String messageResult = delete(path);
-        System.out.printf(messageResult, "Directory or file", name, "deleted");
+        System.out.println(messageResult);
     }
 
     private void beforeEdit(String input) {
@@ -110,7 +110,7 @@ public class ConsoleTextFileEditor {
             String fileText = "\n" + input.substring(indexFileText);
             String nameFile = splittedInput[1];
             String messageResult = editFile(nameFile, fileText);
-            System.out.printf(messageResult, "File", nameFile, "edited");
+            System.out.println(messageResult);
         } else {
             System.out.println("Input all parameters.");
         }
@@ -138,11 +138,11 @@ public class ConsoleTextFileEditor {
             }
             String nameFile = splittedInput[2];
             String messageResult = createFile(nameFile, fileText);
-            System.out.printf(messageResult, "File", nameFile, "created");
+            System.out.println(messageResult);
         } else {
             String nameDirectory = splittedInput[1];
             String messageResult = createDirectory(nameDirectory);
-            System.out.printf(messageResult, "Directory", nameDirectory, "created");
+            System.out.println(messageResult);
         }
     }
 
@@ -154,11 +154,9 @@ public class ConsoleTextFileEditor {
         return false;
     }
 
-    private <T> String getMessageResult(FileSystemResponse<T> fileSystemResponse) {
-        if (checkIsError(fileSystemResponse)) {
-            return FileSystemManagement.MESSAGE_FORMAT_NOT_SUCCESS;
-        }
-        return FileSystemManagement.MESSAGE_FORMAT_SUCCESS;
+    private String getMessageResult(FileSystemResponse<String> fileSystemResponse) {
+        checkIsError(fileSystemResponse);
+        return fileSystemResponse.getBody();
     }
 
     private void backToParentDirectory() {
@@ -169,13 +167,12 @@ public class ConsoleTextFileEditor {
         openDirectory(manager.getCurrentDirectory().getPath());
     }
 
-    public boolean openFile(String name) {
+    public void openFile(String name) {
         FileSystemResponse<String> fileSystemResponse = manager.getTextFileContents(name);
         if (checkIsError(fileSystemResponse)) {
-            return false;
+            return;
         }
         System.out.println(fileSystemResponse.getBody());
-        return true;
     }
 
     public void openDirectory(String path) {
@@ -189,22 +186,22 @@ public class ConsoleTextFileEditor {
     }
 
     public String createFile(String name, String fileText) {
-        FileSystemResponse<Boolean> fileSystemResponse = manager.createFile(name, fileText);
+        FileSystemResponse<String> fileSystemResponse = manager.createFile(name, fileText);
         return getMessageResult(fileSystemResponse);
     }
 
     public String createDirectory(String name) {
-        FileSystemResponse<Boolean> fileSystemResponse = manager.createDirectory(name);
+        FileSystemResponse<String> fileSystemResponse = manager.createDirectory(name);
         return getMessageResult(fileSystemResponse);
     }
 
     public String editFile(String nameFile, String text) {
-        FileSystemResponse<Boolean> fileSystemResponse = manager.editFile(nameFile, text);
+        FileSystemResponse<String> fileSystemResponse = manager.editFile(nameFile, text);
         return getMessageResult(fileSystemResponse);
     }
 
     public String renameTo(String oldName, String newName) {
-        FileSystemResponse<Boolean> fileSystemResponse = manager.renameTo(oldName, newName);
+        FileSystemResponse<String> fileSystemResponse = manager.renameTo(oldName, newName);
         return getMessageResult(fileSystemResponse);
     }
 
@@ -220,7 +217,7 @@ public class ConsoleTextFileEditor {
     }
 
     public String delete(String path) {
-        FileSystemResponse<Boolean> fileSystemResponse = manager.delete(path);
+        FileSystemResponse<String> fileSystemResponse = manager.delete(path);
         if (fileSystemResponse.getMessageError() != null
                 && fileSystemResponse.getMessageError().equals("Directory is not empty.")) {
             System.out.println("Directory is not empty. Are you sure you want to delete it? Yes/No/Cansel");
@@ -230,16 +227,15 @@ public class ConsoleTextFileEditor {
                 input = in.nextLine();
                 if (input.equalsIgnoreCase("Yes")) {
                     manager.deleteWithNestedDirectories(path);
-                    return FileSystemManagement.MESSAGE_FORMAT_SUCCESS;
+                    return fileSystemResponse.getBody();
                 } else if (input.equalsIgnoreCase("No") || input.equalsIgnoreCase("Cansel")) {
-                    return FileSystemManagement.MESSAGE_FORMAT_NOT_SUCCESS;
+                    return fileSystemResponse.getBody();
                 } else {
                     System.out.println("Incorrect command. Try again.");
                 }
             }
-        } else if (checkIsError(fileSystemResponse)) {
-            return FileSystemManagement.MESSAGE_FORMAT_NOT_SUCCESS;
         }
-        return FileSystemManagement.MESSAGE_FORMAT_SUCCESS;
+        checkIsError(fileSystemResponse);
+        return fileSystemResponse.getBody();
     }
 }
