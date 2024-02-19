@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,113 +50,162 @@ public class ConsoleTextFileEditorTest {
         // а в тесте уже сравнивать то что лежит в файле с реальным выводом
         Assertions.assertEquals("-d dir\r\nCurrent path: work\\dir\r\n", consoleOutput);
     }
+
     @Test
     public void fileMustBeOpened() throws IOException {
-        consoleTextFileEditor = new ConsoleTextFileEditor();
-        consoleTextFileEditor.openDirectory("src");
-        consoleTextFileEditor.createFile("newFile.txt", "File with text");
-        boolean result = consoleTextFileEditor.openFile("newFile.txt");
+        Path filePath = Paths.get("work\\newFile.txt");
+        Files.createFile(filePath);
+        Files.write(filePath, List.of("File with text"), StandardCharsets.UTF_8);
 
-        Files.delete(Paths.get("src\\newFile.txt"));
+        var commands = List.of("open newFile.txt", "finish");
+        var commandBytes = String.join("\n", commands).getBytes();
 
-        Assertions.assertTrue(result);
+        System.setIn(new ByteArrayInputStream(commandBytes));
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(byteArrayOutputStream));
+
+        consoleTextFileEditor = new ConsoleTextFileEditor("work");
+        consoleTextFileEditor.start();
+        var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
+                .replaceAll("-f newFile.txt\r\n", "")
+                .replaceAll("Current path: work\r\n", "");
+
+        Files.delete(filePath);
+        Assertions.assertEquals("File with text\n\r\n", consoleOutput);
     }
 
     @Test
     public void fileMustBeCreated() throws IOException {
-        consoleTextFileEditor = new ConsoleTextFileEditor();
-        consoleTextFileEditor.openDirectory("src");
-        String messageIsSuccess = consoleTextFileEditor.createFile("newFile", "File with text");
+        var commands = List.of("create -f newFile File with text", "finish");
+        var commandBytes = String.join("\n", commands).getBytes();
 
-        Files.delete(Paths.get("src\\newFile"));
+        System.setIn(new ByteArrayInputStream(commandBytes));
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(byteArrayOutputStream));
 
-        Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
+        consoleTextFileEditor = new ConsoleTextFileEditor("work");
+        consoleTextFileEditor.start();
+        var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
+                .replaceAll("Current path: work\r\n", "");
+
+        Files.delete(Paths.get("work\\newFile"));
+        Assertions.assertEquals("File newFile has been successfully created.\n", consoleOutput);
     }
 
     @Test
-    public void directoryMustBeCreated() throws IOException {
-        consoleTextFileEditor = new ConsoleTextFileEditor();
-        consoleTextFileEditor.openDirectory("src");
-        String messageIsSuccess = consoleTextFileEditor.createDirectory("TestDirectory");
+    public void directoryMustBeCreated() throws Exception {
+        var commands = List.of("create nestedDirectory", "finish");
+        var commandBytes = String.join("\n", commands).getBytes();
 
-        Files.delete(Paths.get("src\\TestDirectory"));
+        System.setIn(new ByteArrayInputStream(commandBytes));
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(byteArrayOutputStream));
 
-        Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
+        consoleTextFileEditor = new ConsoleTextFileEditor("work");
+        consoleTextFileEditor.start();
+        var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
+                .replaceAll("Current path: work\r\n", "");
+
+        Files.delete(Paths.get("work\\nestedDirectory"));
+        Assertions.assertEquals("Directory nestedDirectory has been successfully created.\n", consoleOutput);
     }
 
     @Test
     public void directoryMustBeDeleted() throws IOException {
-        consoleTextFileEditor = new ConsoleTextFileEditor();
-        Files.createDirectory(Paths.get("src\\TestDirectory"));
-        String messageIsSuccess = consoleTextFileEditor.delete("src\\TestDirectory");
+        Files.createDirectory(Path.of("work\\nestedDirectory"));
+        var commands = List.of("delete nestedDirectory", "finish");
+        var commandBytes = String.join("\n", commands).getBytes();
 
-        Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
+        System.setIn(new ByteArrayInputStream(commandBytes));
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(byteArrayOutputStream));
+
+        consoleTextFileEditor = new ConsoleTextFileEditor("work");
+        consoleTextFileEditor.start();
+        var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
+                .replaceAll("Current path: work\r\n", "")
+                .replaceAll("-d nestedDirectory\r\n", "");
+
+        Assertions.assertEquals("Directory or file nestedDirectory has been successfully deleted.\n", consoleOutput);
     }
 
     @Test
     public void fileMustBeDeleted() throws IOException {
-        consoleTextFileEditor = new ConsoleTextFileEditor();
-        Files.createFile(Paths.get("src\\newFile"));
-        String messageIsSuccess = consoleTextFileEditor.delete("src\\newFile");
+        Files.createFile(Path.of("work\\newFile"));
+        var commands = List.of("delete newFile", "finish");
+        var commandBytes = String.join("\n", commands).getBytes();
 
-        Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
+        System.setIn(new ByteArrayInputStream(commandBytes));
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(byteArrayOutputStream));
+
+        consoleTextFileEditor = new ConsoleTextFileEditor("work");
+        consoleTextFileEditor.start();
+        var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
+                .replaceAll("Current path: work\r\n", "")
+                .replaceAll("-f newFile\r\n", "");
+
+        Assertions.assertEquals("Directory or file newFile has been successfully deleted.\n", consoleOutput);
     }
 
     @Test
     public void fileMustBeEdited() throws IOException {
-        consoleTextFileEditor = new ConsoleTextFileEditor();
-        consoleTextFileEditor.openDirectory("src");
-        consoleTextFileEditor.createFile("newFile", "File with text");
-        consoleTextFileEditor.createFile("newFile2", "File with text");
-        consoleTextFileEditor.editFile("newFile", "next text");
-        Path path1 = Paths.get("src\\newFile");
-        Path path2 = Paths.get("src\\newFile2");
-        boolean filesAreSame = isFilesTheSame(path1, path2);
+        Path filePath = Path.of("work\\newFile");
+        Files.createFile(filePath);
+        var commands = List.of("edit newFile New text", "finish");
+        var commandBytes = String.join("\n", commands).getBytes();
 
-        Files.delete(path1);
-        Files.delete(path2);
+        System.setIn(new ByteArrayInputStream(commandBytes));
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(byteArrayOutputStream));
 
-        Assertions.assertFalse(filesAreSame);
-    }
+        consoleTextFileEditor = new ConsoleTextFileEditor("work");
+        consoleTextFileEditor.start();
+        var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
+                .replaceAll("Current path: work\r\n", "")
+                .replaceAll("-f newFile\r\n", "");
 
-    private boolean isFilesTheSame(Path path1, Path path2) throws IOException {
-        try (BufferedReader bf1 = Files.newBufferedReader(path1);
-             BufferedReader bf2 = Files.newBufferedReader(path2)) {
-
-            String line1, line2;
-            while ((line1 = bf1.readLine()) != null) {
-                line2 = bf2.readLine();
-                if (!line1.equals(line2)) {
-                    return false;
-                }
-            }
-            return bf2.readLine() == null;
-        }
+        Files.delete(filePath);
+        Assertions.assertEquals("File newFile has been successfully edited.\n", consoleOutput);
     }
 
     @Test
     public void fileMustBeRenamed() throws IOException {
-        consoleTextFileEditor = new ConsoleTextFileEditor();
-        Files.createFile(Paths.get("src\\oldName.txt"));
+        Files.createFile(Path.of("work\\oldNameFile"));
+        var commands = List.of("rename oldNameFile newFile", "finish");
+        var commandBytes = String.join("\n", commands).getBytes();
 
-        consoleTextFileEditor.openDirectory("src");
-        String messageIsSuccess = consoleTextFileEditor.renameTo("oldName.txt", "newName.txt");
+        System.setIn(new ByteArrayInputStream(commandBytes));
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(byteArrayOutputStream));
 
-        Files.delete(Paths.get("src\\newName.txt"));
+        consoleTextFileEditor = new ConsoleTextFileEditor("work");
+        consoleTextFileEditor.start();
+        var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
+                .replaceAll("Current path: work\r\n", "")
+                .replaceAll("-f oldNameFile\r\n", "");
 
-        Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
+        Files.delete(Paths.get("work\\newFile"));
+        Assertions.assertEquals("Directory or file oldNameFile has been successfully renamed.\n", consoleOutput);
     }
 
     @Test
     public void directoryMustBeRenamed() throws IOException {
-        consoleTextFileEditor = new ConsoleTextFileEditor();
-        Files.createDirectory(Paths.get("src\\directory"));
+        Files.createDirectory(Path.of("work\\tmp"));
+        var commands = List.of("rename tmp tmp2", "finish");
+        var commandBytes = String.join("\n", commands).getBytes();
 
-        consoleTextFileEditor.openDirectory("src");
-        String messageIsSuccess = consoleTextFileEditor.renameTo("directory", "newDirectory");
+        System.setIn(new ByteArrayInputStream(commandBytes));
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(byteArrayOutputStream));
 
-        Files.delete(Paths.get("src\\newDirectory"));
+        consoleTextFileEditor = new ConsoleTextFileEditor("work");
+        consoleTextFileEditor.start();
+        var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
+                .replaceAll("Current path: work\r\n", "")
+                .replaceAll("-d tmp\r\n", "");
 
-        Assertions.assertEquals(FileSystemManagement.MESSAGE_FORMAT_SUCCESS, messageIsSuccess);
+        Files.delete(Paths.get("work\\tmp2"));
+        Assertions.assertEquals("Directory or file tmp has been successfully renamed.\n", consoleOutput);
     }
 }
