@@ -39,6 +39,7 @@ import java.util.Scanner;
  */
 public class ConsoleTextFileEditor {
     private final FileSystemManagement manager;
+    private boolean isActivated = true;
 
     public ConsoleTextFileEditor() {
         this.manager = new FileSystemManagement("");
@@ -53,7 +54,7 @@ public class ConsoleTextFileEditor {
         String startingPath = manager.getCurrentDirectory().getPath();
         openDirectory(startingPath);
         String command;
-        while (true) {
+        while (isActivated) {
             command = in.nextLine();
             clearConsole();
             if (command.equals("finish")) {
@@ -67,6 +68,10 @@ public class ConsoleTextFileEditor {
     private void clearConsole() {
         System.out.print("\033[H\033[J");
         System.out.flush();
+    }
+
+    public void shutDown() {
+        isActivated = false;
     }
 
     public void roadCommand(String input) {
