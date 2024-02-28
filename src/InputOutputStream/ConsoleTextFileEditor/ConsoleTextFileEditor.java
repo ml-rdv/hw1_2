@@ -57,10 +57,6 @@ public class ConsoleTextFileEditor {
         while (isActivated) {
             command = in.nextLine();
             clearConsole();
-            if (command.equals("finish")) {
-                in.close();
-                break;
-            }
             roadCommand(command);
         }
     }
@@ -85,6 +81,10 @@ public class ConsoleTextFileEditor {
             case "delete" -> beforeDelete(splittedInput);
             case "rename" -> beforeRename(splittedInput);
             case "info" -> printInfo(input);
+            case "finish" -> {
+                shutDown();
+                return;
+            }
             default -> System.out.println("Command is not correct. Try again.");
         }
         System.out.println("Current path: " + manager.getCurrentDirectory().getPath());
