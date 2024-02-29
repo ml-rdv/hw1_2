@@ -1,5 +1,5 @@
 package FunctionalProgramming.Calculator;
 
-public interface Division {
-    double divide(int x, int y);
+public interface Division<Integer> {
+    Integer divide(int x, int y);
 }

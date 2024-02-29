@@ -1,5 +1,5 @@
 package FunctionalProgramming.Calculator;
 
-public interface Multiplication {
-    int multiply(int x, int y);
+public interface Multiplication<Integer> {
+    Integer multiply(int x, int y);
 }

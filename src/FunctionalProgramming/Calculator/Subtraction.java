@@ -1,5 +1,5 @@
 package FunctionalProgramming.Calculator;
 
-public interface Subtraction {
-    int subtract(int x, int y);
+public interface Subtraction<Integer> {
+    Integer subtract(int x, int y);
 }

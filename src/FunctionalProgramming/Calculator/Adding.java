@@ -1,5 +1,5 @@
 package FunctionalProgramming.Calculator;
 
-public interface Adding {
-    int add(int x, int y);
+public interface Adding<Integer> {
+    Integer add(int x, int y);
 }
