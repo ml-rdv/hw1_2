@@ -1,36 +1,43 @@
 package FunctionalProgramming.Calculator;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.Scanner;
+
+/**
+ * Реализовать калькулятор с операциями для 2х чисел в функциональном стиле
+ * Каждая операция (сложение, вычитание, …) должна быть функцией. Для них нужно
+ * создать отдельный функциональный интерфейс.
+ * В калькуляторе должен быть метод execute, который принимает 2 числа и операцию.
+ * Определение операции желательно сделать без условных операторов.
+ */
 public class Calculator {
-    public static int execute(int x, int y, Adding<Integer> operator) {
-        return operator.add(x, y);
-    }
-
-    public static int execute(int x, int y, Subtraction<Integer> operator) {
-        return operator.subtract(x, y);
-    }
-
-    public static int execute(int x, int y, Division<Integer> operator) {
-        return operator.divide(x, y);
-    }
-
-    public static int execute(int x, int y, Multiplication<Integer> operator) {
-        return operator.multiply(x, y);
+    public static int execute(int x, int y, Operation operator) {
+        return operator.calc(x, y);
     }
 
     public static void main(String[] args) {
-        int x = 10;
-        int y = 5;
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Input operator: ");
+        char str = sc.nextLine().charAt(0);
+        System.out.println("Input first number: ");
+        int x = sc.nextInt();
+        System.out.println("Input second number: ");
+        int y = sc.nextInt();
 
-        Multiplication<Integer> multiply = (x1, y1) -> x1 * y1;
-        System.out.println(execute(x, y, multiply));
+        Map<Character, Operation> operations = Map.of(
+                '+', Integer::sum,
+                '-', (x1, y1) -> x1 - y1,
+                '*', (x1, y1) -> x1 * y1,
+                '/', (x1, y1) -> (x1 / y1)
+        );
 
-        Adding<Integer> adding = Integer::sum;
-        System.out.println(execute(x, y, adding));
+        Operation operation = Optional.ofNullable(operations.get(str))
+                .orElseThrow(() -> {
+                    System.out.println("Operator is not correct.");
+                    return new RuntimeException();
+                });
 
-        Subtraction<Integer> subtraction = (x1, y1) -> x1 - y1;
-        System.out.println(execute(x, y, subtraction));
-
-        Division<Integer> division = (x1, y1) -> (x1 / y1);
-        System.out.println(execute(x, y, division));
+        System.out.println(execute(x, y, operation));
     }
 }

@@ -4,32 +4,27 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.function.Predicate.not;
+
 public class CustomerOptionalService {
     /**
-     * Метод должен вернуть адрес в формате страна_город, если покупателю больше 18 лет и у него есть хотя бы 1 заказ.
-     * Если покупателю меньше 18 или нет заказов, или нет адреса (отсутствие страны или города, считаем за невалидный кейс), то
-     * метод должен вернуть "unknown"
+     * Метод должен вернуть адрес в формате страна_город, если покупателю больше 18 лет
+     * и у него есть хотя бы 1 заказ.
+     * Если покупателю меньше 18 или нет заказов, или нет адреса (отсутствие страны или города,
+     * считаем за невалидный кейс), то метод должен вернуть "unknown"
      * <p>
      * Метод может принимать и корректно обрабатывать null
      */
     public String getAddressForView(Customer customer) {
-        Optional<Customer> customerOptional = Optional.ofNullable(customer)
-                .filter(customer1 -> customer1.age > 18);
-        if (customerOptional.isPresent()) {
-            Optional<Address> addressOptional = Optional.ofNullable(customerOptional.get().address());
-            if (addressOptional.isPresent()) {
-                Optional<String> countryOptional = Optional.ofNullable(addressOptional.get().country);
-                Optional<String> cituOptional = Optional.ofNullable(addressOptional.get().city);
-                if (countryOptional.isPresent()
-                        && cituOptional.isPresent()
-                        && !customerOptional.get().orders.isEmpty()) {
-                    Optional<String> resultOptional = addressOptional
-                            .map(address -> address.country() + "_" + address.city());
-                    return resultOptional.get();
-                }
-            }
-        }
-        return "unknown";
+        return Optional.ofNullable(customer)
+                .filter(customer1 -> customer1.age >= 18)
+                .filter(customer1 -> customer1.orders != null)
+                .filter(not(customer1 -> customer1.orders.isEmpty()))
+                .map(Customer::address)
+                .filter(address -> address.city() != null)
+                .filter(address -> address.country() != null)
+                .map(address -> address.country + "_" + address.city)
+                .orElse("unknown");
     }
 
     /**
@@ -59,16 +54,9 @@ public class CustomerOptionalService {
      */
     public void handleOrder(Customer customer, Order order) {
         Optional<Customer> customerOptional = addOrderToCustomer(customer, order);
-        if (customerOptional.isPresent()) {
-            System.out.printf("Заказ успешно добавлен для пользователя %s, " +
-                    "кол-во заказов = %d", customer.name, customer.orders.size());
-        } else {
-            throw new NullPointerException("Пользователь не найден");
-        }
-//        customerOptional.ifPresentOrElse(customer1
-//                        -> System.out.printf("Заказ успешно добавлен для пользователя %s, " +
-//                        "кол-во заказов = %d", customer1.name, customer1.orders.size()),
-//                () -> throw new NullPointerException("Пользователь не найден"));
+        Customer customer1 = customerOptional.orElseThrow();
+        System.out.printf("Заказ успешно добавлен для пользователя %s, " +
+                "кол-во заказов = %d", customer1.name, customer1.orders.size());
     }
 
 
