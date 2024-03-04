@@ -44,13 +44,14 @@ public class ConsoleTextFileEditorTest {
         consoleTextFileEditor = new ConsoleTextFileEditor("work");
         consoleTextFileEditor.start();
 
-        // здесь дополнительно сносим из  вывода команду на очистку, чтобы не мешала нам
-        var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "");
+        // здесь дополнительно сносим из вывода команду на очистку, чтобы не мешала нам
+        var consoleOutput = byteArrayOutputStream.toString()
+                .replaceAll(CLEAR_CONSOLE_COMMAND, "");
 
         // если ожидаемый вывод получается очень большой на много строк, то можно
         // сделать папку например testConsoleOutput и там положить текстовые файлы с большим выводом,
-        // а в тесте уже сравнивать то что лежит в файле с реальным выводом
-        Assertions.assertEquals("-d dir\r\nCurrent path: work\\dir\r\n", consoleOutput);
+        // а в тесте уже сравнивать то, что лежит в файле с реальным выводом
+        Assertions.assertEquals("-d dir\r\nCurrent path: C:\\Users\\MILA\\IdeaProjects\\hw1_2\\work\\dir\r\n", consoleOutput);
     }
 
     @Test
@@ -70,7 +71,7 @@ public class ConsoleTextFileEditorTest {
         consoleTextFileEditor.start();
         var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
                 .replaceAll("-f newFile.txt\r\n", "")
-                .replaceAll("Current path: work\r\n", "");
+                .replaceAll("Current path: C:\\\\Users\\\\MILA\\\\IdeaProjects\\\\hw1_2\\\\work\r\n", "");
 
         Files.delete(filePath);
         Assertions.assertEquals("File with text\n\r\n", consoleOutput);
@@ -88,7 +89,7 @@ public class ConsoleTextFileEditorTest {
         consoleTextFileEditor = new ConsoleTextFileEditor("work");
         consoleTextFileEditor.start();
         var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
-                .replaceAll("Current path: work\r\n", "");
+                .replaceAll("Current path: C:\\\\Users\\\\MILA\\\\IdeaProjects\\\\hw1_2\\\\work\r\n", "");
 
         Files.delete(Paths.get("work\\newFile"));
         Assertions.assertEquals("File newFile has been successfully created.\n\r\n", consoleOutput);
@@ -106,7 +107,7 @@ public class ConsoleTextFileEditorTest {
         consoleTextFileEditor = new ConsoleTextFileEditor("work");
         consoleTextFileEditor.start();
         var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
-                .replaceAll("Current path: work\r\n", "");
+                .replaceAll("Current path: C:\\\\Users\\\\MILA\\\\IdeaProjects\\\\hw1_2\\\\work\r\n", "");
 
         Files.delete(Paths.get("work\\nestedDirectory"));
         Assertions.assertEquals("Directory nestedDirectory has been successfully created.\n\r\n", consoleOutput);
@@ -125,10 +126,31 @@ public class ConsoleTextFileEditorTest {
         consoleTextFileEditor = new ConsoleTextFileEditor("work");
         consoleTextFileEditor.start();
         var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
-                .replaceAll("Current path: work\r\n", "")
+                .replaceAll("Current path: C:\\\\Users\\\\MILA\\\\IdeaProjects\\\\hw1_2\\\\work\r\n", "")
                 .replaceAll("-d nestedDirectory\r\n", "");
 
         Assertions.assertEquals("Directory or file nestedDirectory has been successfully deleted.\n\r\n", consoleOutput);
+    }
+
+    @Test
+    public void directoryMustNotBeDeletedBecauseDirectoryDoesNotExist() {
+        var commands = List.of("delete nestedDirectory", "finish");
+        var commandBytes = String.join("\n", commands).getBytes();
+
+        System.setIn(new ByteArrayInputStream(commandBytes));
+        var byteArrayOutputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(byteArrayOutputStream));
+
+        consoleTextFileEditor = new ConsoleTextFileEditor("work");
+        consoleTextFileEditor.start();
+        var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
+                .replaceAll("Current path: C:\\\\Users\\\\MILA\\\\IdeaProjects\\\\hw1_2\\\\work\r\n", "");
+
+        Assertions.assertEquals("""
+                Directory or file does not exist.\r
+                Directory or file nestedDirectory has been not deleted.
+                \r
+                """, consoleOutput);
     }
 
     @Test
@@ -144,7 +166,7 @@ public class ConsoleTextFileEditorTest {
         consoleTextFileEditor = new ConsoleTextFileEditor("work");
         consoleTextFileEditor.start();
         var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
-                .replaceAll("Current path: work\r\n", "")
+                .replaceAll("Current path: C:\\\\Users\\\\MILA\\\\IdeaProjects\\\\hw1_2\\\\work\r\n", "")
                 .replaceAll("-f newFile\r\n", "");
 
         Assertions.assertEquals("Directory or file newFile has been successfully deleted.\n\r\n", consoleOutput);
@@ -164,7 +186,7 @@ public class ConsoleTextFileEditorTest {
         consoleTextFileEditor = new ConsoleTextFileEditor("work");
         consoleTextFileEditor.start();
         var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
-                .replaceAll("Current path: work\r\n", "")
+                .replaceAll("Current path: C:\\\\Users\\\\MILA\\\\IdeaProjects\\\\hw1_2\\\\work\r\n", "")
                 .replaceAll("-f newFile\r\n", "");
 
         Files.delete(filePath);
@@ -184,7 +206,7 @@ public class ConsoleTextFileEditorTest {
         consoleTextFileEditor = new ConsoleTextFileEditor("work");
         consoleTextFileEditor.start();
         var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
-                .replaceAll("Current path: work\r\n", "")
+                .replaceAll("Current path: C:\\\\Users\\\\MILA\\\\IdeaProjects\\\\hw1_2\\\\work\r\n", "")
                 .replaceAll("-f oldNameFile\r\n", "");
 
         Files.delete(Paths.get("work\\newFile"));
@@ -204,7 +226,7 @@ public class ConsoleTextFileEditorTest {
         consoleTextFileEditor = new ConsoleTextFileEditor("work");
         consoleTextFileEditor.start();
         var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
-                .replaceAll("Current path: work\r\n", "")
+                .replaceAll("Current path: C:\\\\Users\\\\MILA\\\\IdeaProjects\\\\hw1_2\\\\work\r\n", "")
                 .replaceAll("-d tmp\r\n", "");
 
         Files.delete(Paths.get("work\\tmp2"));
@@ -232,7 +254,7 @@ public class ConsoleTextFileEditorTest {
         consoleTextFileEditor = new ConsoleTextFileEditor("work");
         consoleTextFileEditor.start();
         var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
-                .replaceAll("Current path: work\r\n", "")
+                .replaceAll("Current path: C:\\\\Users\\\\MILA\\\\IdeaProjects\\\\hw1_2\\\\work\r\n", "")
                 .replaceAll("-d tmp\r\n", "");
 
         Files.delete(path3);
@@ -265,7 +287,7 @@ public class ConsoleTextFileEditorTest {
         consoleTextFileEditor = new ConsoleTextFileEditor("work");
         consoleTextFileEditor.start();
         var consoleOutput = byteArrayOutputStream.toString().replaceAll(CLEAR_CONSOLE_COMMAND, "")
-                .replaceAll("Current path: work\r\n", "");
+                .replaceAll("Current path: C:\\\\Users\\\\MILA\\\\IdeaProjects\\\\hw1_2\\\\work\r\n", "");
 
         Assertions.assertEquals("Command is not correct. Try again.\r\n", consoleOutput);
     }

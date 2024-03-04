@@ -2,30 +2,30 @@ package InputOutputStream.ConsoleTextFileEditor;
 
 public class FileSystemResponse<T> {
     private T body;
-    private String messageError;
+    private String messageInfo;
 
-    public static <T> FileSystemResponse<T> createErrorResponse(String messageError) {
+    public static <T> FileSystemResponse<T> createInfoResponse(String messageError) {
         return new FileSystemResponse<>(messageError);
     }
 
-    public FileSystemResponse(T body, String messageError) {
+    public FileSystemResponse(T body, String messageInfo) {
         this.body = body;
-        this.messageError = messageError;
+        this.messageInfo = messageInfo;
     }
 
     public FileSystemResponse(T body) {
         this.body = body;
     }
 
-    private FileSystemResponse(String messageError) {
-        this.messageError = messageError;
+    private FileSystemResponse(String messageInfo) {
+        this.messageInfo = messageInfo;
     }
 
     public T getBody() {
         return body;
     }
 
-    public String getMessageError() {
-        return messageError;
+    public String getMessageInfo() {
+        return messageInfo;
     }
 }
