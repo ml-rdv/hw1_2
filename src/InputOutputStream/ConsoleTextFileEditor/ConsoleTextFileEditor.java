@@ -223,13 +223,16 @@ public class ConsoleTextFileEditor {
 
     public String delete(String path) {
         FileSystemResponse<DeleteResponse> fileSystemResponse = manager.delete(path);
+        DeleteResponse deleteResponse = fileSystemResponse.getBody();
 
-        if (fileSystemResponse.getBody().isDeleted()) {
+        if (deleteResponse.isDeleted()) {
             return fileSystemResponse.getMessageInfo();
-        } else if (fileSystemResponse.getBody().notExist()) {
+        }
+        if (deleteResponse.notExist()) {
             System.out.println("Directory or file does not exist.");
             return fileSystemResponse.getMessageInfo();
-        } else if (fileSystemResponse.getBody().isNotEmpty()) {
+        }
+        if (deleteResponse.isNotEmpty()) {
             System.out.println("Directory is not empty. Are you sure you want to delete it? Yes/No/Cansel");
             Scanner in = new Scanner(System.in);
             String input;

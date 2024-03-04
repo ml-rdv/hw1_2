@@ -31,10 +31,10 @@ public class FileSystemManagement {
         String path = currentDirectory.getPath() + "\\" + name;
         File file = new File(path);
         if (Files.notExists(Path.of(path))) {
-            return FileSystemResponse.createErrorResponse("File " + file.getName() + " does not exist.");
+            return FileSystemResponse.createInfoResponse("File " + file.getName() + " does not exist.");
         }
         if (!file.getPath().endsWith(".txt")) {
-            return FileSystemResponse.createErrorResponse("The file extension is incorrect.");
+            return FileSystemResponse.createInfoResponse("The file extension is incorrect.");
         }
         StringBuilder sb = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -44,14 +44,14 @@ public class FileSystemManagement {
             }
             return new FileSystemResponse<>(sb.toString());
         } catch (IOException e) {
-            return FileSystemResponse.createErrorResponse(e.toString());
+            return FileSystemResponse.createInfoResponse(e.toString());
         }
     }
 
     public FileSystemResponse<Boolean> setDirectory(String path) {
         File directory = new File(path);
         if (Files.notExists(Path.of(path))) {
-            return FileSystemResponse.createErrorResponse("Directory " + directory.getName() + " does not exist.");
+            return FileSystemResponse.createInfoResponse("Directory " + directory.getName() + " does not exist.");
         }
         currentDirectory = directory;
         return new FileSystemResponse<>(true);
@@ -104,13 +104,13 @@ public class FileSystemManagement {
         if (directory.mkdir()) {
             return new FileSystemResponse<>(String.format("Directory %s has been successfully created.\n", name));
         } else {
-            return FileSystemResponse.createErrorResponse(String.format("Directory %s has been not created.\n", name));
+            return FileSystemResponse.createInfoResponse(String.format("Directory %s has been not created.\n", name));
         }
     }
 
     public FileSystemResponse<Boolean> backToParentDirectory() {
         if (currentDirectory.getParent() == null) {
-            return FileSystemResponse.createErrorResponse("It is a root directory.");
+            return FileSystemResponse.createInfoResponse("It is a root directory.");
         }
         currentDirectory = new File(currentDirectory.getParent());
         return new FileSystemResponse<>(true);
@@ -147,19 +147,22 @@ public class FileSystemManagement {
     public FileSystemResponse<DeleteResponse> delete(String path) {
         File directory = new File(path);
         if (Files.notExists(Path.of(path))) {
-            return new FileSystemResponse<>(new DeleteResponse(false, false, true),
-                    String.format("Directory or file %s has been not deleted.\n", directory.getName()));
+            DeleteResponse deleteResponse = new DeleteResponse(false, false, true);
+            String message = String.format("Directory or file %s has been not deleted.\n", directory.getName());
+            return new FileSystemResponse<>(deleteResponse, message);
         }
 
         File[] list = directory.listFiles();
         if (list == null || list.length == 0) {
             directory.delete();
-            return new FileSystemResponse<>(new DeleteResponse(true),
-                    String.format("Directory or file %s has been successfully deleted.\n", directory.getName()));
+            DeleteResponse deleteResponse = new DeleteResponse(true);
+            String message = String.format("Directory or file %s has been successfully deleted.\n", directory.getName());
+            return new FileSystemResponse<>(deleteResponse, message);
         }
 
-        return new FileSystemResponse<>(new DeleteResponse(false, true, false),
-                String.format("Directory or file %s has been not deleted.\n", directory.getName()));
+        DeleteResponse deleteResponse = new DeleteResponse(false, true, false);
+        String message = String.format("Directory or file %s has been not deleted.\n", directory.getName());
+        return new FileSystemResponse<>(deleteResponse, message);
     }
 
     public FileSystemResponse<DeleteResponse> deleteWithNestedDirectories(String path) {
@@ -193,7 +196,7 @@ public class FileSystemManagement {
         String path = currentDirectory.getPath() + "\\" + name;
         File directory = new File(path);
         if (Files.notExists(Path.of(path))) {
-            return FileSystemResponse.createErrorResponse("Directory or file " + directory.getName() + " does not exist.");
+            return FileSystemResponse.createInfoResponse("Directory or file " + directory.getName() + " does not exist.");
         }
         Map<String, String> info = new HashMap<>();
         info.put("Absolute path: ", directory.getAbsolutePath());

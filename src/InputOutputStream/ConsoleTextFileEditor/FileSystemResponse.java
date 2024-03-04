@@ -4,7 +4,7 @@ public class FileSystemResponse<T> {
     private T body;
     private String messageInfo;
 
-    public static <T> FileSystemResponse<T> createErrorResponse(String messageError) {
+    public static <T> FileSystemResponse<T> createInfoResponse(String messageError) {
         return new FileSystemResponse<>(messageError);
     }
 
