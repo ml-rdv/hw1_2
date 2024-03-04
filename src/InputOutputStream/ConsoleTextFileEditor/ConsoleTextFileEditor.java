@@ -51,13 +51,13 @@ public class ConsoleTextFileEditor {
 
     public void start() {
         Scanner in = new Scanner(System.in);
-        String startingPath = manager.getCurrentDirectory().getPath();
+        String startingPath = manager.getCurrentDirectory().getAbsolutePath();
         openDirectory(startingPath);
         String command;
         while (isActivated) {
             command = in.nextLine();
             clearConsole();
-            roadCommand(command);
+            handleCommand(command);
         }
     }
 
@@ -70,7 +70,7 @@ public class ConsoleTextFileEditor {
         isActivated = false;
     }
 
-    public void roadCommand(String input) {
+    public void handleCommand(String input) {
         String[] splittedInput = input.split(" ");
         String command = splittedInput[0];
         switch (command) {
@@ -152,8 +152,8 @@ public class ConsoleTextFileEditor {
     }
 
     private <T> boolean checkIsError(FileSystemResponse<T> fileSystemResponse) {
-        if (fileSystemResponse.getMessageError() != null) {
-            System.out.println(fileSystemResponse.getMessageError());
+        if (fileSystemResponse.getMessageInfo() != null) {
+            System.out.println(fileSystemResponse.getMessageInfo());
             return true;
         }
         return false;
@@ -222,9 +222,14 @@ public class ConsoleTextFileEditor {
     }
 
     public String delete(String path) {
-        FileSystemResponse<String> fileSystemResponse = manager.delete(path);
-        if (fileSystemResponse.getMessageError() != null
-                && fileSystemResponse.getMessageError().equals("Directory is not empty.")) {
+        FileSystemResponse<DeleteResponse> fileSystemResponse = manager.delete(path);
+
+        if (fileSystemResponse.getBody().isDeleted()) {
+            return fileSystemResponse.getMessageInfo();
+        } else if (fileSystemResponse.getBody().notExist()) {
+            System.out.println("Directory or file does not exist.");
+            return fileSystemResponse.getMessageInfo();
+        } else if (fileSystemResponse.getBody().isNotEmpty()) {
             System.out.println("Directory is not empty. Are you sure you want to delete it? Yes/No/Cansel");
             Scanner in = new Scanner(System.in);
             String input;
@@ -232,15 +237,15 @@ public class ConsoleTextFileEditor {
                 input = in.nextLine();
                 if (input.equalsIgnoreCase("Yes")) {
                     manager.deleteWithNestedDirectories(path);
-                    return fileSystemResponse.getBody();
-                } else if (input.equalsIgnoreCase("No") || input.equalsIgnoreCase("Cansel")) {
-                    return fileSystemResponse.getBody();
+                    return fileSystemResponse.getMessageInfo();
+                } else if (input.equalsIgnoreCase("No")
+                        || input.equalsIgnoreCase("Cansel")) {
+                    return fileSystemResponse.getMessageInfo();
                 } else {
                     System.out.println("Incorrect command. Try again.");
                 }
             }
         }
-        checkIsError(fileSystemResponse);
-        return fileSystemResponse.getBody();
+        return "";
     }
 }
