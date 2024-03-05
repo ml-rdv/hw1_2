@@ -29,26 +29,24 @@ public class CustomerOptionalService {
 
     /**
      * Метод принимает покупателя и заказ
-     * Если покупатель == null или заказ == null или заказы покупателя == null, то возвращается Optional.empty(),
+     * Если покупатель == null или заказ == null или заказы покупателя == null,
+     * то возвращается Optional.empty(),
      * иначе заказ добавляется к покупателю и метод возвращает покупателя в Optional
      */
     public Optional<Customer> addOrderToCustomer(Customer customer, Order order) {
-        Optional<Customer> customerOptional = Optional.ofNullable(customer);
-        Optional<Order> orderOptional = Optional.ofNullable(order);
-        if (customerOptional.isPresent()) {
-            Optional<List<Order>> ordersOptional = Optional.ofNullable(customer.orders);
-            if (ordersOptional.isPresent() && orderOptional.isPresent()) {
-                customer.orders.add(order);
-                return customerOptional;
-            }
-        }
-        return Optional.empty();
+        Optional<Customer> customerOptional = Optional.ofNullable(order)
+                .flatMap(customer1 -> Optional.ofNullable(customer))
+                .filter(not(customer1 -> customer1.orders == null));
+        customerOptional.ifPresent(customer1 -> customer1.orders.add(order));
+
+        return customerOptional;
     }
 
 
     /**
      * Метод вызывает метод addOrderToCustomer()
-     * Если addOrderToCustomer возвращает Optional, который isPresent, тогда в консоль выводиться сообщение
+     * Если addOrderToCustomer возвращает Optional, который isPresent,
+     * тогда в консоль выводиться сообщение:
      * "заказ успешно добавлен для пользователя {}, кол-во заказов = {}",
      * иначе должно выбрасываться исключение
      */

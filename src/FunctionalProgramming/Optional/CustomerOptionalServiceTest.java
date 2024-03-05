@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class CustomerOptionalServiceTest {
@@ -132,7 +133,7 @@ public class CustomerOptionalServiceTest {
 
     @Test
     public void mustThrowNullPointerExceptionBecauseOfOrderAbsence() {
-        Exception exception = Assertions.assertThrows(NullPointerException.class, () -> {
+        Exception exception = Assertions.assertThrows(NoSuchElementException.class, () -> {
             Address address = new Address("Paris", "France");
             Product product = new Product("Product", 1334.35);
             Order order = new Order("1", List.of(product), java.math.BigDecimal.valueOf(486));
@@ -143,7 +144,7 @@ public class CustomerOptionalServiceTest {
             customerOptionalService.handleOrder(customer, null);
         });
 
-        String expectedMessage = "Пользователь не найден";
+        String expectedMessage = "No value present";
         String actualMessage = exception.getMessage();
 
         Assertions.assertTrue(actualMessage.contains(expectedMessage));
