@@ -3,9 +3,6 @@ package FunctionalProgramming.StreamAPI;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
-
-import static java.util.function.Predicate.not;
 
 public class CustomerStreamApiService {
     /**
@@ -75,7 +72,7 @@ public class CustomerStreamApiService {
      */
     public int sumAllOrderSize(List<Customer> customers) {
         return customers.stream()
-                .filter(not(customer -> customer.orders == null))
+                .filter(customer -> customer.orders != null)
                 .mapToInt(customer -> customer.orders.size())
                 .sum();
     }
@@ -86,8 +83,7 @@ public class CustomerStreamApiService {
      * Избавляться от BigDecimal в пользу double или float нельзя.
      */
     public BigDecimal countTotalPriceCustomer(Customer customer) {
-        List<Order> orders = customer.orders;
-        return orders.stream()
+        return customer.orders.stream()
                 .map(order -> order.totalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
@@ -97,13 +93,11 @@ public class CustomerStreamApiService {
      * Также заказы должны быть получены с учётом аргументов limit и skip
      */
     public Map<String, BigDecimal> getOrderIdToTotalPrice(List<Customer> customers, int limit, int skip) {
-        Map<String, BigDecimal> prices = new HashMap<>();
-        customers.stream()
+        return customers.stream()
                 .flatMap(customer -> customer.orders().stream())
                 .limit(limit)
                 .skip(skip)
-                .forEach(order -> prices.put(order.orderId, order.totalPrice));
-        return prices;
+                .collect(Collectors.toMap(Order::orderId, Order::totalPrice));
     }
 
     /**
@@ -134,8 +128,8 @@ public class CustomerStreamApiService {
         return customers.stream()
                 .flatMap(customer -> customer.orders.stream())
                 .flatMap(order -> order.products.stream())
-                .flatMapToDouble(product -> DoubleStream.of(product.productPrice))
-                .findAny()
+                .map(product -> product.productPrice)
+                .findFirst()
                 .orElse(0.0);
     }
 

@@ -35,7 +35,8 @@ public class CustomerOptionalService {
      */
     public Optional<Customer> addOrderToCustomer(Customer customer, Order order) {
         Optional<Customer> customerOptional = Optional.ofNullable(order)
-                .flatMap(customer1 -> Optional.ofNullable(customer))
+                // __ is order, same as .flatMap(order1 -> Option.ofNullable(customer))
+                .flatMap(__ -> Optional.ofNullable(customer))
                 .filter(not(customer1 -> customer1.orders == null));
         customerOptional.ifPresent(customer1 -> customer1.orders.add(order));
 
