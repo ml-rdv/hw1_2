@@ -51,10 +51,29 @@ public class CustomerStreamApiService {
      * Метод должен вернуть список уникальных имён покупателей (можно реализовать двумя способами)
      */
     public Collection<String> getUniqueNames(List<Customer> customers) {
+        /* Вариант 1
         return customers.stream()
                 .map(customer -> customer.name)
                 .distinct()
                 .toList();
+        */
+
+        /* Вариант 2
+        return customers.stream()
+                .map(customer -> customer.name)
+                .collect(toSet());
+        */
+
+        // Вариант 3
+        Collection<String> names = new ArrayList<>();
+        customers.stream()
+                .map(customer -> customer.name)
+                .forEach(name -> {
+                    if (!names.contains(name)) {
+                        names.add(name);
+                    }
+                });
+        return names;
     }
 
     /**
