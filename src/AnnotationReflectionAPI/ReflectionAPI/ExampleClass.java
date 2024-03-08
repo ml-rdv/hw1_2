@@ -1,4 +1,4 @@
-package AnnotationReflectionAPI.InformationAboutClass;
+package AnnotationReflectionAPI.ReflectionAPI;
 
 public class ExampleClass implements ExampleInterface {
     private int number;
@@ -28,5 +28,13 @@ public class ExampleClass implements ExampleInterface {
 
     private void printString() {
         System.out.println("This is private method");
+    }
+
+    @Override
+    public String toString() {
+        return "ExampleClass{" +
+                "number=" + number +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

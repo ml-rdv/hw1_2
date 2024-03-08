@@ -1,4 +1,4 @@
-package AnnotationReflectionAPI.InformationAboutClass;
+package AnnotationReflectionAPI.ReflectionAPI;
 
 public interface ExampleInterface {
     void printData();
