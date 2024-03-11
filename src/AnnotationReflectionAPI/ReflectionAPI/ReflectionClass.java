@@ -3,14 +3,10 @@ package AnnotationReflectionAPI.ReflectionAPI;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.Modifier;
 
 public class ReflectionClass {
-    static private Map<Integer, String> modifiers;
-
     public static void main(String[] args) {
-        modifiers = getModifiersInString();
 
         ExampleClass ec = new ExampleClass(1, "Ivan");
         printInfo(ec.getClass());
@@ -33,8 +29,9 @@ public class ReflectionClass {
         System.out.println("\nFields:");
         Field[] fields = cl.getDeclaredFields();
         for (Field field : fields) {
-            int modifier = field.getModifiers();
-            System.out.println(field.getName() + " " + modifiers.get(modifier));
+            System.out.println("Name: " + field.getName() + "\n"
+                            + "\tModifier: " + Modifier.toString(field.getModifiers()) + "\n"
+                            + "\tType: " + field.getType());
         }
 
         System.out.println("\nMethods:");
@@ -78,22 +75,5 @@ public class ReflectionClass {
             }
         }
         System.out.println(myClass);
-    }
-
-    private static Map<Integer, String> getModifiersInString() {
-        Map<Integer, String> modifiers = new HashMap<>();
-        modifiers.put(1024, "ABSTRACT");
-        modifiers.put(16, "FINAL");
-        modifiers.put(512, "INTERFACE");
-        modifiers.put(256, "NATIVE");
-        modifiers.put(2, "PRIVATE");
-        modifiers.put(4, "PROTECTED");
-        modifiers.put(1, "PUBLIC");
-        modifiers.put(8, "STATIC");
-        modifiers.put(2048, "STRICT");
-        modifiers.put(32, "SYNCHRONIZED");
-        modifiers.put(128, "TRANSIENT");
-        modifiers.put(64, "VOLATILE");
-        return modifiers;
     }
 }

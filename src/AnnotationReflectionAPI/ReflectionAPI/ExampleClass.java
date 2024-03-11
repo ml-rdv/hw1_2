@@ -2,7 +2,7 @@ package AnnotationReflectionAPI.ReflectionAPI;
 
 public class ExampleClass implements ExampleInterface {
     private int number;
-    private String name;
+    private final String name;
 
     public ExampleClass(int number, String name) {
         this.number = number;
@@ -17,9 +17,6 @@ public class ExampleClass implements ExampleInterface {
         this.number = number;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public void printData() {
