@@ -64,14 +64,15 @@ public class ProxyDemo {
         public Object invoke(Object proxy, Method method, Object[] args)
                 throws IllegalAccessException, IllegalArgumentException,
                 InvocationTargetException {
+            Object returnValue;
             if (enableIsTrue(original.getClass())) {
                 System.out.println("Arguments: " + Arrays.toString(args));
-                Object s = method.invoke(original, args);
-                System.out.println("Return value: " + s);
+                returnValue = method.invoke(original, args);
+                System.out.println("Return value: " + returnValue);
             } else {
-                method.invoke(original, args);
+                returnValue = method.invoke(original, args);
             }
-            return null;
+            return returnValue;
         }
 
         private static <T> boolean enableIsTrue(Class<T> cl) {
@@ -103,7 +104,7 @@ public class ProxyDemo {
         //Создаем прокси нашего объекта original
         SomeInterface originalProxy1 = createProxy(original);
         //Вызываем у прокси объекта один из методов нашего оригинального объекта
-        originalProxy1.originalMethod(12);
+        System.out.println(originalProxy1.originalMethod(12));
 
         System.out.println("\nClass with enable = true");
         OriginalEnabled originalEnabled = new OriginalEnabled();
