@@ -73,6 +73,11 @@ public class ProxyDemo {
             }
             return null;
         }
+
+        private static <T> boolean enableIsTrue(Class<T> cl) {
+            MyAnnotation annotation = cl.getAnnotation(MyAnnotation.class);
+            return annotation != null && annotation.enable();
+        }
     }
 
     private static SomeInterface createProxy(SomeInterface original) {
@@ -90,11 +95,6 @@ public class ProxyDemo {
                 interfaces,
                 myHandler);
         return originalProxy;
-    }
-
-    private static <T> boolean enableIsTrue(Class<T> cl) {
-        MyAnnotation annotation = cl.getAnnotation(MyAnnotation.class);
-        return annotation != null && annotation.enable();
     }
 
     public static void main(String[] args) {
