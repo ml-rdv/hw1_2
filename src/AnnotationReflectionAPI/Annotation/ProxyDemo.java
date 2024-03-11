@@ -19,9 +19,12 @@ import java.util.Arrays;
  * <p>
  * Прокси-класс — это некоторая «надстройка» над оригинальным классом,
  * которая позволяет нам при необходимости изменить его поведение.
+ * <p>
  * Создание прокси объекта происходит на уровне интерфейсов, а не классов.
  * Прокси создается для интерфейса.
  * Наличие интерфейса — обязательное требование.
+ * (только для java.lang.reflect.Proxy, есть другие способы создание прокси
+ * и там наличие интерфейсов не обязательны)
  * <p>
  * InvocationHandler — это специальный интерфейс, который позволяет перехватить любые
  * вызовы методов к нашему объекту и добавить нужное нам дополнительное поведение.
@@ -88,11 +91,13 @@ public class ProxyDemo {
         ClassLoader classLoader = SomeInterface.class.getClassLoader();
 
         //Получаем все интерфейсы, которые реализует оригинальный объект
-        Class[] interfaces = original.getClass().getInterfaces();
+        // Class[] interfaces = original.getClass().getInterfaces();
+        // Заменила на new Class[]{SomeInterface.class},
+        // т.к. не для всех интерфейсов может понадобиться прокся, а только для SomeInterface
 
         //Создаем прокси нашего объекта original
         SomeInterface originalProxy = (SomeInterface) Proxy.newProxyInstance(classLoader,
-                interfaces,
+                new Class[]{SomeInterface.class},
                 myHandler);
         return originalProxy;
     }
