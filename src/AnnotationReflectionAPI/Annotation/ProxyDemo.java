@@ -64,15 +64,14 @@ public class ProxyDemo {
         public Object invoke(Object proxy, Method method, Object[] args)
                 throws IllegalAccessException, IllegalArgumentException,
                 InvocationTargetException {
-            Object returnValue;
             if (enableIsTrue(original.getClass())) {
                 System.out.println("Arguments: " + Arrays.toString(args));
-                returnValue = method.invoke(original, args);
+                Object returnValue = method.invoke(original, args);
                 System.out.println("Return value: " + returnValue);
+                return returnValue;
             } else {
-                returnValue = method.invoke(original, args);
+                return method.invoke(original, args);
             }
-            return returnValue;
         }
 
         private static <T> boolean enableIsTrue(Class<T> cl) {
