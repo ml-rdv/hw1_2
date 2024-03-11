@@ -30,8 +30,8 @@ public class ReflectionClass {
         Field[] fields = cl.getDeclaredFields();
         for (Field field : fields) {
             System.out.println("Name: " + field.getName() + "\n"
-                            + "\tModifier: " + Modifier.toString(field.getModifiers()) + "\n"
-                            + "\tType: " + field.getType());
+                    + "\tModifier: " + getModifier(field) + "\n"
+                    + "\tType: " + field.getType());
         }
 
         System.out.println("\nMethods:");
@@ -41,6 +41,18 @@ public class ReflectionClass {
         }
 
         System.out.printf("\nNumber of implemented interfaces: %d\n\n\n", cl.getInterfaces().length);
+    }
+
+    private static String getModifier(Field field) {
+        if (Modifier.isPublic(field.getModifiers())) {
+            return "public";
+        } else if (Modifier.isProtected(field.getModifiers())) {
+            return "protected";
+        } else if (Modifier.isPrivate(field.getModifiers())) {
+            return "private";
+        } else {
+            return "default";
+        }
     }
 
     /**
