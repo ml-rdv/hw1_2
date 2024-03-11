@@ -1,8 +1,8 @@
 package AnnotationReflectionAPI.Annotation;
 
-import jdk.jfr.Enabled;
-
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * то вывод в консоль не должен отрабатывать, либо не должен создаваться прокси
  */
 @Target(ElementType.TYPE)
-@Enabled
+@Retention(RetentionPolicy.RUNTIME)
 public @interface MyAnnotation {
-
+    boolean enable() default false;
 }
