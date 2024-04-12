@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Также нужно реализовать решение проблемы (предложить несколько вариантов).
  */
 
-public class Main {
+public class Concurrent {
     static class ConcurrentUsingAtomicInteger {
         /*
         private int value = 0;
@@ -71,6 +71,16 @@ public class Main {
     static class ConcurrentUsingsynchronizedAndVolatile {
         // Чтобы избежать состояния гонки, использую synchronized + volatile
 //        private int value = 0;
+
+        /*
+        Почему нельзя использовать только volatile?
+        Операции над переменной помеченной volatile НЕ являются атомарными.
+        Атомарная операция выглядит единой и неделимой командой процессора,
+        которая может быть или уже выполненной, или ещё невыполненной.
+        А volatile атомарность не обеспечивается, потому что это сначала выполняется чтение(1),
+        потом изменение(2) в локальной памяти, а затем запись(3).
+        Такая операция не является атомарной и в неё может вклиниться поток посередине.
+         */
         private volatile int value = 0;
 
         public void doTheWorkInParallel() throws InterruptedException {
