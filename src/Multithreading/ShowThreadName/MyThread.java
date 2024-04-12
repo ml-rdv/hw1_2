@@ -2,6 +2,15 @@ package Multithreading.ShowThreadName;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Реализовать метод, который выводит название текущего потока в консоль,
+ * если булево поле isShowThreadName == true. После вывода имени потока, поле isShowThreadName
+ * должно стать false.
+ * Метод должен запускаться как минимум в 2 потоках. Ожидается, что в консоль будет выводиться
+ * название только 1 потока, но без синхронизации такой гарантии невозможно получить,
+ * поэтому необходимо синхронизировать работу метода всеми известными способами.
+ */
+
 public class MyThread {
     public static void main(String[] args) {
         FirstThread firstThread = new FirstThread();
@@ -39,7 +48,7 @@ public class MyThread {
     }
 
     public static void showThreadNameUsingMonitor(CommonThread thread) {
-        synchronized (thread){
+        synchronized (thread) {
             if (thread.isShowThreadName) {
                 System.out.println(thread.getClass().getName());
                 thread.isShowThreadName = false;
