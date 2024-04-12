@@ -37,6 +37,15 @@ public class MyThread {
             lock.unlock();
         }
     }
+
+    public static void showThreadNameUsingMonitor(CommonThread thread) {
+        synchronized (thread){
+            if (thread.isShowThreadName) {
+                System.out.println(thread.getClass().getName());
+                thread.isShowThreadName = false;
+            }
+        }
+    }
 }
 
 class CommonThread {
