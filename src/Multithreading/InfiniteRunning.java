@@ -1,4 +1,4 @@
-package Multithreading.InfiniteRunning;
+package Multithreading;
 
 /**
  * Запустить код. Объяснить почему он бесконечно выполняется.
