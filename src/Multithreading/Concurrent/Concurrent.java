@@ -68,20 +68,12 @@ public class Concurrent {
         }
     }
 
-    static class ConcurrentUsingsynchronizedAndVolatile {
-        // Чтобы избежать состояния гонки, использую synchronized + volatile
-//        private int value = 0;
-
-        /*
-        Почему нельзя использовать только volatile?
-        Операции над переменной помеченной volatile НЕ являются атомарными.
-        Атомарная операция выглядит единой и неделимой командой процессора,
-        которая может быть или уже выполненной, или ещё невыполненной.
-        А volatile атомарность не обеспечивается, потому что это сначала выполняется чтение(1),
-        потом изменение(2) в локальной памяти, а затем запись(3).
-        Такая операция не является атомарной и в неё может вклиниться поток посередине.
-         */
-        private volatile int value = 0;
+    static class ConcurrentUsingSynchronized {
+        // Чтобы избежать состояния гонки, использую synchronized
+        // Обновлено: можно без volatile, т.к. синхронизация на объекте и 2 потока не могут одновременно
+        // изменять value (ТОЛЬКО В ЭТОМ СЛУЧАЕ, т.к. у нас 1 блок синхронизации, где и происходит
+        // изменения переменной)
+        private int value = 0;
 
         public void doTheWorkInParallel() throws InterruptedException {
             int repeatTime = 1000;
@@ -114,7 +106,7 @@ public class Concurrent {
         @Execution(ExecutionMode.CONCURRENT)
         @RepeatedTest(5000)
         void test() throws InterruptedException {
-            var concurrent = new ConcurrentUsingsynchronizedAndVolatile();
+            var concurrent = new ConcurrentUsingSynchronized();
             concurrent.doTheWorkInParallel();
 
             int expectedValue = 100_000;
