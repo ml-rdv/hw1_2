@@ -20,11 +20,10 @@ public class ConcurrentCollectionsTest {
     @RepeatedTest(100)
     void should_parallel_add_elements_to_list() throws InterruptedException {
 //        var numbers = new ArrayList<>();
-//        Мы не можем изменять структуру коллекции в цикле foreach, т.к. классический класс ArrayList
-//        основан на fail fast подходе.
-//        Для этого нужно использовать итератор или класс CopyOnWriteArrayList, который основан
-//        на fail safe подходе, то есть не вызывает исключений при изменении структуры коллекции,
-//        потому что работает с её клоном
+//        Проблема из-за состояния гонки. 2 потока одновременно добавляют элементы в 1 ячейку памяти.
+//        Нужно использовать потокобезопасный класс CopyOnWriteArrayList, который использует синхронизацию
+//        "под капотом" и не вызывает исключений при изменении структуры коллекции, потому что работает
+//        с её клоном.
         var numbers = new CopyOnWriteArrayList<>();
 
         Thread thread = new Thread(() -> {
@@ -48,7 +47,7 @@ public class ConcurrentCollectionsTest {
     @Test
     void should_remove_all_entry_from_map() {
 //        var map = new HashMap<String, Integer>();
-//        Аналогично. Мы не можем изменять структуру коллекции в цикле foreach, т.к. классический
+//        Мы не можем изменять структуру коллекции в цикле foreach, т.к. классический
 //        класс HashMap основан на fail fast подходе.
 //        Для этого нужно использовать итератор или класс ConcurrentHashMap, который основан на fail safe
 //        подходе, то есть не вызывает исключений при изменении структуры коллекции,
