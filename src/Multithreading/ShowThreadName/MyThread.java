@@ -12,75 +12,58 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 
 public class MyThread {
+    static boolean isShowThreadName1 = true;
+    static boolean isShowThreadName2 = true;
+    static boolean isShowThreadName3 = true;
+
     public static void main(String[] args) {
-        FirstThread firstThread = new FirstThread();
-        Thread t1 = new Thread(firstThread);
-
-        SecondThread secondThread = new SecondThread();
-        Thread t2 = new Thread(secondThread);
-
-        ThirdThread thirdThread = new ThirdThread();
-        Thread t3 = new Thread(thirdThread);
+        Thread t1 = new Thread(MyThread::showThreadNameUsingSynchronized);
+        Thread t2 = new Thread(MyThread::showThreadNameUsingSynchronized);
 
         t1.start();
         t2.start();
+
+        Thread t3 = new Thread(MyThread::showThreadNameUsingLock);
+        Thread t4 = new Thread(MyThread::showThreadNameUsingLock);
+
         t3.start();
+        t4.start();
+
+        MyThread myThread = new MyThread();
+
+        Thread t5 = new Thread(myThread::showThreadNameUsingMonitor);
+        Thread t6 = new Thread(myThread::showThreadNameUsingMonitor);
+
+        t5.start();
+        t6.start();
     }
 
-    public static synchronized void showThreadNameUsingSynchronized(CommonThread thread) {
-        if (thread.isShowThreadName) {
-            System.out.println(thread.getClass().getName());
-            thread.isShowThreadName = false;
+    public static synchronized void showThreadNameUsingSynchronized() {
+        if (isShowThreadName1) {
+            System.out.println(Thread.currentThread().getName());
+            isShowThreadName1 = false;
         }
     }
 
-    public static void showThreadNameUsingLock(CommonThread thread) {
+    public static void showThreadNameUsingLock() {
         ReentrantLock lock = new ReentrantLock();
         lock.lock();
         try {
-            if (thread.isShowThreadName) {
-                System.out.println(thread.getClass().getName());
-                thread.isShowThreadName = false;
+            if (isShowThreadName2) {
+                System.out.println(Thread.currentThread().getName());
+                isShowThreadName2 = false;
             }
         } finally {
             lock.unlock();
         }
     }
 
-    public static void showThreadNameUsingMonitor(CommonThread thread) {
-        synchronized (thread) {
-            if (thread.isShowThreadName) {
-                System.out.println(thread.getClass().getName());
-                thread.isShowThreadName = false;
+    public void showThreadNameUsingMonitor() {
+        synchronized (this) {
+            if (isShowThreadName3) {
+                System.out.println(Thread.currentThread().getName());
+                isShowThreadName3 = false;
             }
         }
-    }
-}
-
-class CommonThread {
-    boolean isShowThreadName = true;
-}
-
-class FirstThread extends CommonThread implements Runnable {
-    @Override
-    public void run() {
-        MyThread.showThreadNameUsingLock(this);
-        MyThread.showThreadNameUsingLock(this);
-    }
-}
-
-class SecondThread extends CommonThread implements Runnable {
-    @Override
-    public void run() {
-        MyThread.showThreadNameUsingLock(this);
-        MyThread.showThreadNameUsingLock(this);
-    }
-}
-
-class ThirdThread extends CommonThread implements Runnable {
-    @Override
-    public void run() {
-        MyThread.showThreadNameUsingLock(this);
-        MyThread.showThreadNameUsingLock(this);
     }
 }
