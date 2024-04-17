@@ -1,6 +1,4 @@
-package Multithreading.CashRegister;
-
-import java.util.concurrent.atomic.AtomicBoolean;
+package Multithreading;
 
 /**
  * Реализовать класс касса. Касса может обслуживать только 1 покупателя, когда покупатель подходит к кассе,
@@ -12,12 +10,40 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 
 public class CashRegister {
-    static CashRegister buyer = new CashRegister();
-    static final CashRegister monitor1 = new CashRegister();
-    static final CashRegister monitor2 = new CashRegister();
-    static AtomicBoolean isCashRegisterBusy = new AtomicBoolean(false);
+    static final Object monitor = new Object();
+    static volatile boolean isCashRegisterBusy = false;
 
+
+    public void payUsingWait(int number) throws InterruptedException {
+        if (isCashRegisterBusy) {
+            waiting(number);
+        }
+        paying(number);
+    }
+
+    private void waiting(int number) throws InterruptedException {
+        synchronized (monitor) {
+            System.out.printf("Касса занята, покупатель %d ожидает\n", number);
+            monitor.wait();
+        }
+    }
+
+    private void paying(int number) throws InterruptedException {
+        synchronized (monitor) {
+            isCashRegisterBusy = true;
+            System.out.printf("Покупатель %d занял кассу\n", number);
+            Thread.sleep(1000);
+            System.out.printf("Покупатель %d освободил кассу\n", number);
+            isCashRegisterBusy = false;
+            monitor.notifyAll();
+        }
+    }
+}
+
+class Main {
     public static void main(String[] args) {
+        CashRegister buyer = new CashRegister();
+
         for (int i = 1; i < 6; i++) {
             int finalI = i;
             // Создание покупателей в цикле
@@ -31,29 +57,4 @@ public class CashRegister {
         }
     }
 
-    public void payUsingWait(int number) throws InterruptedException {
-        if (isCashRegisterBusy.get()) {
-            waiting(number);
-        } else {
-            paying(number);
-        }
-    }
-
-    private void waiting(int number) throws InterruptedException {
-        synchronized (monitor1) {
-            System.out.printf("Касса занята, покупатель %d ожидает\n", number);
-            wait();
-        }
-    }
-
-    private void paying(int number) throws InterruptedException {
-        synchronized (monitor2) {
-            isCashRegisterBusy.getAndSet(true);
-            System.out.printf("Покупатель %d занял кассу\n", number);
-            Thread.sleep(1000);
-            System.out.printf("Покупатель %d освободил кассу\n", number);
-            isCashRegisterBusy.getAndSet(false);
-            notifyAll();
-        }
-    }
 }

@@ -11,12 +11,13 @@ package Multithreading.TwoThreads;
 
 public class TwoThreads {
     static int count = 0;
+
     public static void main(String[] args) throws InterruptedException {
         Thread firstThread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 System.out.println(count);
                 try {
-                    Thread.currentThread().sleep(1);
+                    Thread.sleep(1L);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                     break;
@@ -28,7 +29,7 @@ public class TwoThreads {
             while (count != n) {
                 count++;
                 try {
-                    Thread.currentThread().sleep(1);
+                    Thread.sleep(1L);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }

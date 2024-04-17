@@ -1,4 +1,4 @@
-package Multithreading.ShowThreadName;
+package Multithreading;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -11,25 +11,25 @@ import java.util.concurrent.locks.ReentrantLock;
  * поэтому необходимо синхронизировать работу метода всеми известными способами.
  */
 
-public class MyThread {
+public class ShowThreadName {
     static boolean isShowThreadName1 = true;
     static boolean isShowThreadName2 = true;
     static boolean isShowThreadName3 = true;
 
     public static void main(String[] args) {
-        Thread t1 = new Thread(MyThread::showThreadNameUsingSynchronized);
-        Thread t2 = new Thread(MyThread::showThreadNameUsingSynchronized);
+        Thread t1 = new Thread(ShowThreadName::showThreadNameUsingSynchronized);
+        Thread t2 = new Thread(ShowThreadName::showThreadNameUsingSynchronized);
 
         t1.start();
         t2.start();
 
-        Thread t3 = new Thread(MyThread::showThreadNameUsingLock);
-        Thread t4 = new Thread(MyThread::showThreadNameUsingLock);
+        Thread t3 = new Thread(ShowThreadName::showThreadNameUsingLock);
+        Thread t4 = new Thread(ShowThreadName::showThreadNameUsingLock);
 
         t3.start();
         t4.start();
 
-        MyThread myThread = new MyThread();
+        ShowThreadName myThread = new ShowThreadName();
 
         Thread t5 = new Thread(myThread::showThreadNameUsingMonitor);
         Thread t6 = new Thread(myThread::showThreadNameUsingMonitor);
@@ -45,8 +45,9 @@ public class MyThread {
         }
     }
 
+    static ReentrantLock lock = new ReentrantLock();
+
     public static void showThreadNameUsingLock() {
-        ReentrantLock lock = new ReentrantLock();
         lock.lock();
         try {
             if (isShowThreadName2) {
