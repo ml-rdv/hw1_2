@@ -1,4 +1,4 @@
-package Multithreading.TwoThreads;
+package Multithreading;
 
 /**
  * Реализовать 2 потока через класс Thread.

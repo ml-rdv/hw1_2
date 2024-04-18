@@ -1,4 +1,4 @@
-package Multithreading.DoubleBlocking;
+package Multithreading;
 
 /**
  * Какая проблема представлена в данном коде? Предложить и реализовать решение проблемы.

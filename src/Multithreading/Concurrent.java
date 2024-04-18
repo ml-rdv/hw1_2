@@ -1,4 +1,4 @@
-package Multithreading.Concurrent;
+package Multithreading;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
