@@ -10,24 +10,34 @@ public class DoubleBlocking {
     - В роли монитора следует использовать final объекты, объекты класса Account не являются final
     - Использование входных параметров в роли монитора опасно тем, что 2 потока могут выполнить
     метод в случае передачи в метод разных параметров
+    Потенциальный DeadLock
      */
+
+    static Object mutex = new Object();
+
     static void transferMoney(Account a1, Account a2, int summa) {
-        synchronized (a1) {
-            synchronized (a2) {
+        if (a1.hashCode() == a2.hashCode()) {
+            // уменьшаем производительность, увеличиваем безопасность
+            synchronized (mutex) {
+                synchronized (a1) {
+                    synchronized (a2) {
+                        a1.money = a1.money - summa;
+                        a2.money = a2.money + summa;
+                    }
+                }
+            }
+            return;
+        }
+        // 1 из решений проблемы DeadLock = упорядочивание
+        final Account first = (a1.hashCode() > a2.hashCode()) ? a2 : a1;
+        final Account second = (a1.hashCode() > a2.hashCode()) ? a1 : a2;
+
+        synchronized (first) {
+            synchronized (second) {
                 a1.money = a1.money - summa;
                 a2.money = a2.money + summa;
             }
         }
-    }
-
-    /*
-    Сомневаюсь, что это правильное решение, т.к. обычная синхронизация на методе
-    довольная ограничивающая.
-    Позволяет только 1 потому в момент времени выполнять метод
-     */
-    static synchronized void transferMoney2(Account a1, Account a2, int summa) {
-        a1.money = a1.money - summa;
-        a2.money = a2.money + summa;
     }
 
     static class Account {
@@ -45,8 +55,8 @@ public class DoubleBlocking {
         Account a3 = new Account();
         a3.money = 0;
         for (int i = 0; i < 100; i++) {
-            new Thread(() -> DoubleBlocking.transferMoney2(a1, a2, 1)).start();
-            new Thread(() -> DoubleBlocking.transferMoney2(a2, a3, 1)).start();
+            new Thread(() -> DoubleBlocking.transferMoney(a1, a2, 1)).start();
+            new Thread(() -> DoubleBlocking.transferMoney(a2, a1, 1)).start();
         }
         try {
             Thread.sleep(3000);

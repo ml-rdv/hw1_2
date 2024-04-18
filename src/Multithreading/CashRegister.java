@@ -13,26 +13,17 @@ public class CashRegister {
     static final Object monitor = new Object();
     static volatile boolean isCashRegisterBusy = false;
 
-
     public void payUsingWait(int number) throws InterruptedException {
-        if (isCashRegisterBusy) {
-            waiting(number);
-        }
-        paying(number);
-    }
-
-    private void waiting(int number) throws InterruptedException {
         synchronized (monitor) {
-            System.out.printf("Касса занята, покупатель %d ожидает\n", number);
-            monitor.wait();
-        }
-    }
-
-    private void paying(int number) throws InterruptedException {
-        synchronized (monitor) {
+            while (isCashRegisterBusy) {
+                System.out.printf("Касса занята, покупатель %d ожидает\n", number);
+                monitor.wait();
+            }
             isCashRegisterBusy = true;
-            System.out.printf("Покупатель %d занял кассу\n", number);
-            Thread.sleep(1000);
+        }
+        System.out.printf("Покупатель %d занял кассу\n", number);
+        Thread.sleep(1000);
+        synchronized (monitor) {
             System.out.printf("Покупатель %d освободил кассу\n", number);
             isCashRegisterBusy = false;
             monitor.notifyAll();
